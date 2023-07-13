@@ -1,75 +1,86 @@
 body {
-	font-family: 'VT323', monospace;
-	font-size: larger;
-	text-align: center;
-	background-color: #222;
 	color: #FFF;
+	text-align: center;
+	font-family: 'consolas', monospace;
+	background-image: linear-gradient(to top, #351726, #453047);
+	background-attachment: fixed;
 }
 
 div {
 	display: block;
 }
 
-p {
+p,
+ul {
 	margin-top: 0px;
 }
 
 .win-outer {
 	position: absolute;
-	top: 100px;
-	left: 240px;
 	text-align: left;
 	border: 5px solid #777;
-	box-shadow:
-		5px 3px #bfbfbf;
+	box-shadow: 5px 3px #999;
 	background-color: #EEE;
 	color: #000;
 }
 
-.win-titlebar {
+.win-titlebar,
+.win-minimized {
+	font-family: 'VT323';
 	display: flex;
 	font-size: x-large;
-	border-bottom: 5px solid #777;
 	padding-left: 10px;
-	box-shadow:
-		inset 5px 3px #bfbfbf;
+	cursor: move;
+	user-select: none;
+	border-bottom: 5px solid #777;
+	background-image: linear-gradient(to right, #70d88c, #d8f644)
+}
+
+.win-minimized {
+	padding-right: 10px;
+	color: black;
+	border: 5px solid #777;
+	display: inline-table;
+	cursor: pointer;
+	margin: 5px;
+	width: 200px;
 }
 
 .win-titlebar p {
 	margin: 0px;
-	padding-top: 10px;
+	padding-top: 5px;
 }
 
 .win-close {
 	margin: 5px;
-	margin-top: 10px;
 	margin-left: auto;
 	border: black solid 2px;
 	float: right;
-	background-position: center;
-	background-repeat: no-repeat;
 	display: block;
+	cursor: pointer;
 	width: 20px;
 	height: 20px;
+	background-position: center;
+	background-repeat: no-repeat;
 	background-image: url("/assets/close-window.png");
 	background-color: #F33;
+	box-shadow: 2px 2px #d4d4d4;
 }
 
 .win-content {
 	padding: 10px;
-	width: 300px;
-	height: 250px;
-	box-shadow:
-		inset 5px 3px #bfbfbf;
 }
 
 footer {
-	font-size: xx-large;
 	position: fixed;
 	left: 0;
 	bottom: 0;
 	width: 100%;
 	text-align: left;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	border-top: 5px solid #777;
+	background-image: linear-gradient(black, #222);
 }
 
 .hidden {
