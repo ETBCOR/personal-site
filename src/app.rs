@@ -39,15 +39,17 @@ fn HomePage(cx: Scope) -> impl IntoView {
     let about_hidden = create_rw_signal(cx, false);
     let projects_hidden = create_rw_signal(cx, false);
     let education_hidden = create_rw_signal(cx, false);
-    let hidden_sigs = vec![about_hidden, projects_hidden, education_hidden];
-
     let file_hidden = create_rw_signal(cx, true);
-    let (file_src, set_file_src) = create_signal(cx, "/404/");
+    let loading_hidden = create_rw_signal(cx, false);
+
+    let hidden_sigs = vec![about_hidden, projects_hidden, education_hidden];
+    let (file_src, set_file_src) = create_signal(cx, None);
 
     view! { cx,
-        <AboutWindow hidden=about_hidden/>
+        <LoadingWindow hidden=loading_hidden/>
         <EducationWindow hidden=education_hidden/>
-        <ProjectsWindow hidden=projects_hidden file_win_hidden=file_hidden file_win_src=set_file_src/>
+        <ProjectsWindow hidden=projects_hidden file_win_src=set_file_src/>
+        <AboutWindow hidden=about_hidden/>
         <FileWindow hidden=file_hidden src=file_src/>
         <Footer hidden_sigs=hidden_sigs/>
     }
@@ -126,7 +128,7 @@ fn Window(
         <div
             id=window_id
             class="win-outer"
-            class:hidden={move || hidden.get()}
+            class:hidden={move || hidden()}
             style:left=move || format!("{}px", x())
             style:top=move || format!("{}px", y())>
             <div
@@ -151,13 +153,11 @@ fn AboutWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
     let content = view! { cx,
         <div>
             <p>
-                "Hi! My name is Ethan Corgatelli. You can contact me on discord: "
-                <i><a target="_blank" href="http://www.discordapp.com/users/207897365141520384">"etbcor"</a></i>
-                ", or via email: "
-                <i><a target="_blank" href="mailto:etbcor@gmail.com">"etbcor@gmail.com"</a></i>
-                ". My GitHub profile is here: "
-                <i><a target="_blank" href="https://www.github.com/ETBCOR">"ETBCOR"</a></i>
-                ". (I'm "<b><i>"etbcor"</i></b>" on most platforms!) Thanks for checking out my site!"
+                "Hi! My name is Ethan Corgatelli. I make programs and music and stuff. You can contact me on discord: "
+                <i><ExternalLink href="http://www.discordapp.com/users/207897365141520384" display="etbcor"/></i>
+                ", or via email: "<i><ExternalLink href="mailto:etbcor@gmail.com" display="etbcor@gmail.com"/></i>
+                ". My GitHub profile is here: "<i><ExternalLink href="https://www.github.com/ETBCOR" display="ETBCOR"/></i>". "
+                <i>"I'm "<u>"etbcor"</u>" on most platforms!"</i><br/>"Thanks for checking out my site!"
             </p>
 
         </div>
@@ -168,8 +168,79 @@ fn AboutWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
             window_id="about-win"
             window_title="About Me"
             window_content=content
-            window_width=460
-            start_pos=(320, 10)
+            window_width=630
+            start_pos=(105, 20)
+            hidden=hidden
+        />
+    }
+}
+
+#[component]
+fn ProjectsWindow(
+    cx: Scope,
+    hidden: RwSignal<bool>,
+    file_win_src: WriteSignal<Option<&'static str>>,
+) -> impl IntoView {
+    let fws = file_win_src;
+    let content = view! { cx, <div><ul>
+        <li><b>"CS415 | Computational Biology: Sequence Analysis"</b><ul class="spaced">
+            <li><FileLink src="https://drive.google.com/file/d/17M8KI3B6rCj2_WLL-YlbxBoK0WzTyexO/preview" display="GA Simulation Runner" file_win_src=fws/>
+            " | "<ExternalLink href="https://github.com/ETBCOR/cs415/tree/main/project01" display="Github Repository"/></li>
+
+            <li><FileLink src="https://drive.google.com/file/d/1v9XjTqRlf4iGjHskT7yp_KUyVBUU7WgE/preview" display="Parameter Set Estimation" file_win_src=fws/>
+            " | "<ExternalLink href="https://colab.research.google.com/drive/1zQtt-kDBhycueP_qyhzc9VnFeZe0wPmu?usp=sharing" display="Colab Notebook"/></li>
+
+            <li><FileLink src="https://drive.google.com/file/d/1n-nyTQzjcGy9lpTvs-WYdBcTaDUbZfap/preview" display="Pairwise Alignment Matrix Calculation" file_win_src=fws/>
+            " | "<ExternalLink href="https://colab.research.google.com/drive/1mMGnMO63KR-wHriGNYxBxF5YNwk_r7AP?usp=sharing" display="Colab Notebook"/></li>
+        </ul></li>
+
+        <li><b>"CS445 | Compiler Design"</b><ul class="spaced"><li>
+            "I implemented a compiler for the \"C minus\" langauge"<br/>"(spec "
+            <FileLink src="https://drive.google.com/file/d/12o5aSATedS28eJwsHIOHR7uf3DdZY20V/preview" display="here" file_win_src=fws/>
+            ") in this class. Repository "<ExternalLink href="https://github.com/ETBCOR/cs445" display="here"/>"."
+        </li></ul></li>
+
+        <li><b>"CS452 | Real-Time Operating Systems"</b><ul class="spaced"><li>
+            "I created multiple programs run on embedded systems (Feather RP2040 & ESP32) in this class. Repository "
+            <ExternalLink href="https://github.com/ETBCOR/cs452/" display="here"/>"."
+        </li></ul></li>
+
+        <li><b>"CS470 | Artificial Intelligence"</b><ul class="spaced">
+            <li>
+                <FileLink src="https://drive.google.com/file/d/1ICaQOsGKwJ7RfE21xBHvozQkfQGkw43G/preview" display="Pathfinding Algorithms" file_win_src=fws/>
+                " | "<ExternalLink href="https://github.com/ETBCOR/cs470/tree/master/proj1" display="Github Repository"/>
+            </li>
+            <li>
+                <FileLink src="https://drive.google.com/file/d/1fK-F2X7uwnOk8CrDosopO1pRl6xlBc1u/preview" display="Connect-4 Bot Using Minmax" file_win_src=fws/>
+                " | "<ExternalLink href="https://github.com/ETBCOR/cs470/tree/master/proj2" display="Github Repository"/>
+            </li>
+            <li>
+                <FileLink src="https://drive.google.com/file/d/1Qr5B0yZ8s3aY3Ywdd4KCYq_7y5bXfCTg/preview" display="Map Coloring Algorithms" file_win_src=fws/>
+                " | "<ExternalLink href="https://github.com/ETBCOR/cs470/tree/master/proj3" display="Github Repository"/>
+            </li>
+        </ul></li>
+
+        <li><b>"CS472 | Evolutionary Computation"</b><ul class="spaced">
+        </ul></li>
+
+        <li><b>"CS475 | Machine Learning"</b><ul class="spaced">
+        </ul></li>
+
+        <li><b>"CS480 & CS481 | Senior Capstone Design"</b><ul class="spaced">
+        </ul></li>
+
+        <li><b>"Other"</b><ul class="spaced">
+            <li>"I have worked on many other projects (academic and personal), not listed here."</li>
+        </ul></li>
+    </ul></div> };
+
+    view! { cx,
+        <Window
+            window_id="projects-win"
+            window_title="Projects"
+            window_content=content
+            window_width=550
+            start_pos=(875, 69)
             hidden=hidden
         />
     }
@@ -180,14 +251,14 @@ fn EducationWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
     let content = view! { cx, <div>
         <h3>"Bachelor's Degree in Computer Science"</h3>
         <p>
-            "I spent 2019-2023 at the "<a target="_blank" href="https://www.uidaho.edu/">"University of Idaho"</a>
-            ", getting my "<a target="_blank" href="https://catalog.uidaho.edu/courses/cs/">"B.S.C.S."</a>", as well as my "
-            <a target="_blank" href="https://catalog.uidaho.edu/courses/span/">"Spanish minor"</a>"."
+            "I spent 2019-2023 at the "<ExternalLink href="https://www.uidaho.edu/" display="University of Idaho"/>
+            ", getting my "<ExternalLink href="https://catalog.uidaho.edu/courses/cs/" display="B.S.C.S."/>
+            ", as well as my "<ExternalLink href="https://catalog.uidaho.edu/courses/span/" display="Spanish minor"/>"."
         </p>
 
-        <p><details style="max-height: 200px; overflow-y: auto;">
-            <summary>"Click here for a list of the CS classes I took at UI"</summary>
-            <ul style="font-family: consolas;">
+        <p><details style="max-height: 125px; overflow-y: auto">
+            <summary><u>"CS classes I took at UI"</u></summary>
+            <ul style="font-family: consolas; font-size: 10pt; line-height: 95%">
                 <li>"CS120 | Computer Science I"</li>
                 <li>"CS121 | Computer Science II"</li>
                 <li>"CS150 | Computer Organization and Architecture"</li>
@@ -211,15 +282,15 @@ fn EducationWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
         </details></p>
 
         <h3>"K thru 12"</h3>
-        "I was homeschooled from preschool through higschool, with two exceptions:"
+        "I was homeschooled from kindergarten through higschool, with two exceptions:"
         <ol>
             <li>"I did a year of Montessori in like 5th grade"</li>
             <li>"in high school, I was half-time homeschooled and half-time public school (at Idaho Falls High School)"</li>
         </ol>
 
-        <p>"I gained an interest for coding around the age of 10. "
-        "A friend of mine showed me "<a target="_blank" href="https://www.codecademy.com/">"codecademy.com"</a>
-        " (back when it was still free!), which was very influential for me starting out."</p>
+        <p>"I gained an interest for coding around the age of 10. A friend of mine showed me "
+        <ExternalLink href="https://www.codecademy.com/" display="codecademy.com"/>
+        " (back when it was still completely free!), which was very influential for me starting out."</p>
     </div> };
 
     view! { cx,
@@ -227,74 +298,24 @@ fn EducationWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
             window_id="education-win"
             window_title="Education"
             window_content=content
-            window_width=550
-            start_pos=(10, 215)
+            window_width=400
+            start_pos=(70, 240)
             hidden=hidden
         />
     }
 }
 
 #[component]
-fn ProjectsWindow(
+fn FileWindow(
     cx: Scope,
     hidden: RwSignal<bool>,
-    file_win_hidden: RwSignal<bool>,
-    file_win_src: WriteSignal<&'static str>,
+    src: ReadSignal<Option<&'static str>>,
 ) -> impl IntoView {
-    let open_file = move |src: &'static str| {
-        file_win_src.set(src);
-        file_win_hidden.set(false);
-    };
-    let content = view! { cx, <div>
-    <ul>
-        <li>"Computational Biology: Sequence Analysis"<ul>
-            <li><a href="" on:mousedown=move |_| open_file("https://drive.google.com/file/d/17M8KI3B6rCj2_WLL-YlbxBoK0WzTyexO/preview")>"GA Simulation Runner"</a>
-            " | "<a target="_blank" href="https://github.com/ETBCOR/cs415/tree/main/project01">"Github Repository"</a></li>
-            <li><a href="" on:mousedown=move |_| open_file("https://drive.google.com/file/d/1v9XjTqRlf4iGjHskT7yp_KUyVBUU7WgE/preview")>"Parameter Set Estimation"</a>
-            " | "<a target="_blank" href="https://colab.research.google.com/drive/1zQtt-kDBhycueP_qyhzc9VnFeZe0wPmu?usp=sharing">"Colab Notebook"</a></li>
-            <li><a href="" on:mousedown=move |_| open_file("https://drive.google.com/file/d/1n-nyTQzjcGy9lpTvs-WYdBcTaDUbZfap/preview")>"Pairwise Alignment Matrix Calculation"</a>
-            " | "<a target="_blank" href="https://colab.research.google.com/drive/1mMGnMO63KR-wHriGNYxBxF5YNwk_r7AP?usp=sharing">"Colab Notebook"</a></li>
-        </ul></li>
-
-        <li>"Compiler Design"<ul>
-            <li>"I implemented a compiler for the \"C minus\" langauge"<br/>"(spec "<a href="" on:mousedown=move |_| open_file("https://drive.google.com/file/d/12o5aSATedS28eJwsHIOHR7uf3DdZY20V/preview")>"here"</a>"). "
-            "Repository "<a target="_blank" href="https://github.com/ETBCOR/cs445">"here"</a>"."</li>
-        </ul></li>
-
-        <li>"Artificial Intelligence"<ul>
-            <li><a href="" on:mousedown=move |_| open_file("https://drive.google.com/file/d/1ICaQOsGKwJ7RfE21xBHvozQkfQGkw43G/preview")>"Pathfinding Algorithms"</a>
-            " | "<a target="_blank" href="https://github.com/ETBCOR/cs470/tree/master/proj1">"Github Repository"</a></li>
-            <li><a href="" on:mousedown=move |_| open_file("https://drive.google.com/file/d/1fK-F2X7uwnOk8CrDosopO1pRl6xlBc1u/preview")>"Connect-4 Bot"</a>
-            " | "<a target="_blank" href="https://github.com/ETBCOR/cs470/tree/master/proj2">"Github Repository"</a></li>
-            <li><a href="" on:mousedown=move |_| open_file("https://drive.google.com/file/d/1Qr5B0yZ8s3aY3Ywdd4KCYq_7y5bXfCTg/preview")>"Map Coloring Algorithms"</a>
-            " | "<a target="_blank" href="https://github.com/ETBCOR/cs470/tree/master/proj3">"Github Repository"</a></li>
-        </ul></li>
-
-        <li>"Other CS Classes"<ul>
-            <li>"I have worked on many more projects in all of my other 100-300 level CS classes at UI, which aren't listed here."</li>
-        </ul></li>
-    </ul>
-    </div> };
-
-    view! { cx,
-        <Window
-            window_id="projects-win"
-            window_title="Projects"
-            window_content=content
-            window_width=550
-            start_pos=(875, 69)
-            hidden=hidden
-        />
-    }
-}
-
-#[component]
-fn FileWindow(cx: Scope, hidden: RwSignal<bool>, src: ReadSignal<&'static str>) -> impl IntoView {
     let content = view! { cx, <div>
         <iframe
-            src=move || src()
+            src=move || { if src().is_some() { hidden.set(false); } src().unwrap_or("") }
             allow="autoplay"
-            style="width: 100%; height: 800px;"
+            style="width: 100%; height: 800px"
         ></iframe>
     </div> };
 
@@ -307,5 +328,41 @@ fn FileWindow(cx: Scope, hidden: RwSignal<bool>, src: ReadSignal<&'static str>) 
             start_pos=(30, 30)
             hidden=hidden
         />
+    }
+}
+
+#[component]
+fn LoadingWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
+    let content = view! { cx, <div style="background-image: radial-gradient(#93E1D8, #DDFFF7)">
+        <img src="/assets/Infinity-10s-200px.svg" style="width: 100%; height: 100px" draggable="false"/>
+    </div> };
+
+    view! { cx,
+        <Window
+            window_id="loading-win"
+            window_title="Loading Meaning"
+            window_content=content
+            window_width=225
+            start_pos=(575, 275)
+            hidden=hidden
+        />
+    }
+}
+
+#[component]
+fn FileLink(
+    cx: Scope,
+    src: &'static str,
+    display: &'static str,
+    file_win_src: WriteSignal<Option<&'static str>>,
+) -> impl IntoView {
+    view! { cx, <a href="" on:mousedown=move |_| file_win_src.set(Some(src))>{display}</a> }
+}
+
+#[component]
+fn ExternalLink(cx: Scope, href: &'static str, display: &'static str) -> impl IntoView {
+    view! { cx,
+        <a target="_blank" href=href>{display}</a>
+        <a class="external-link"></a>
     }
 }
