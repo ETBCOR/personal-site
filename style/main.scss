@@ -1,5 +1,5 @@
 body {
-	color: #FFF;
+	color: black;
 	text-align: center;
 	font-family: 'Josefin Sans', sans-serif;
 	font-size: large;
@@ -7,6 +7,18 @@ body {
 	background-attachment: fixed;
 	overflow: hidden;
 	position: sticky;
+}
+
+a:link {
+	color: #AA4465;
+}
+
+a:visited {
+	color: #aa4465;
+}
+
+a:hover {
+	color: #462255;
 }
 
 div {
@@ -22,6 +34,10 @@ h4,
 h5,
 ul {
 	margin-top: 1px;
+}
+
+ul {
+	padding-left: 20px;
 }
 
 .win-outer {
