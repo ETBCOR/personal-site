@@ -1,9 +1,12 @@
 body {
 	color: #FFF;
 	text-align: center;
-	font-family: 'consolas', monospace;
-	background-image: linear-gradient(to top, #351726, #453047);
+	font-family: 'Josefin Sans', sans-serif;
+	font-size: large;
+	background-image: linear-gradient(to top, #93E1D8, #DDFFF7);
 	background-attachment: fixed;
+	overflow: hidden;
+	position: sticky;
 }
 
 div {
@@ -11,39 +14,34 @@ div {
 }
 
 p,
+ol,
+h1,
+h2,
+h3,
+h4,
+h5,
 ul {
-	margin-top: 0px;
+	margin-top: 1px;
 }
 
 .win-outer {
 	position: absolute;
 	text-align: left;
-	border: 5px solid #777;
-	box-shadow: 5px 3px #999;
+	border: #AA4465 solid 5px;
+	box-shadow: 5px 3px #462255;
 	background-color: #EEE;
 	color: #000;
 }
 
-.win-titlebar,
-.win-minimized {
+.win-titlebar {
 	font-family: 'VT323';
-	display: flex;
 	font-size: x-large;
+	display: flex;
 	padding-left: 10px;
 	cursor: move;
 	user-select: none;
-	border-bottom: 5px solid #777;
-	background-image: linear-gradient(to right, #70d88c, #d8f644)
-}
-
-.win-minimized {
-	padding-right: 10px;
-	color: black;
-	border: 5px solid #777;
-	display: inline-table;
-	cursor: pointer;
-	margin: 5px;
-	width: 200px;
+	border-bottom: #AA4465 solid 5px;
+	background-image: linear-gradient(to right, #93E1D8, #DDFFF7)
 }
 
 .win-titlebar p {
@@ -51,10 +49,26 @@ ul {
 	padding-top: 5px;
 }
 
-.win-close {
+.win-minimized {
+	font-family: 'VT323';
+	font-size: x-large;
+	display: flex;
+	padding: 5px;
+	// padding-right: 10px;
+	color: black;
+	border: #AA4465 solid 5px;
+	display: inline-table;
+	cursor: pointer;
 	margin: 5px;
+	width: 200px;
+	box-shadow: 5px 3px #462255;
+	background-image: linear-gradient(to right, #93E1D8, #DDFFF7)
+}
+
+.win-close {
+	margin: 7px;
 	margin-left: auto;
-	border: black solid 2px;
+	// border: #93E1D8 solid 2px;
 	float: right;
 	display: block;
 	cursor: pointer;
@@ -63,13 +77,18 @@ ul {
 	background-position: center;
 	background-repeat: no-repeat;
 	background-image: url("/assets/close-window.png");
-	background-color: #F33;
-	box-shadow: 2px 2px #d4d4d4;
+	background-color: #aa4465;
+	box-shadow: 2px 2px #462255;
 }
 
 .win-content {
 	padding: 10px;
 }
+
+details:not([open]) {
+	cursor: pointer;
+}
+
 
 footer {
 	position: fixed;
@@ -79,10 +98,11 @@ footer {
 	text-align: left;
 	padding-top: 5px;
 	padding-bottom: 5px;
-	border-top: 5px solid #777;
-	background-image: linear-gradient(black, #222);
+	border-top: 5px solid #AA4465;
+	background-image: linear-gradient(to top, #222, #ddfff7);
 }
 
 .hidden {
 	visibility: hidden;
+	display: none;
 }
