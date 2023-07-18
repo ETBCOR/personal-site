@@ -707,9 +707,9 @@ dependencies = [
 
 [[package]]
 name = "default-struct-builder"
-version = "0.3.0"
+version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8524037e95db86f0743cd338cef6a3f28b6e322d2ecbeb0dd2a057c550e24986"
+checksum = "4d935de49bbc61cf2487127ec53de614d7aabe0e5932cb6b1880f386976e9b4a"
 dependencies = [
  "darling 0.20.3",
  "proc-macro2",
@@ -979,8 +979,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "be4136b2a15dd319360be1c07d9933517ccf0be8f16bf62a3bee4f0d618df427"
 dependencies = [
  "cfg-if",
+ "js-sys",
  "libc",
  "wasi",
+ "wasm-bindgen",
 ]
 
 [[package]]
@@ -1296,10 +1298,11 @@ dependencies = [
 
 [[package]]
 name = "leptos-use"
-version = "0.4.1"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "37b76f8a145c3791c4d42e0938f302d68ca9d5ad6505b93fb6b67b582a895070"
+checksum = "b8ba43b3131f5dc6a69de57f5f7bf4f488a7e691ead586685bb797c95701677f"
 dependencies = [
+ "cfg-if",
  "default-struct-builder",
  "js-sys",
  "lazy_static",
@@ -1820,12 +1823,14 @@ dependencies = [
  "actix-web",
  "cfg-if",
  "console_error_panic_hook",
+ "getrandom",
  "http",
  "leptos",
  "leptos-use",
  "leptos_actix",
  "leptos_meta",
  "leptos_router",
+ "rand",
  "wasm-bindgen",
  "web-sys",
 ]

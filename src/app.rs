@@ -2,7 +2,26 @@ use leptos::{ev::MouseEvent, *};
 use leptos_meta::*;
 use leptos_router::*;
 use leptos_use::{use_event_listener, use_event_listener_with_options};
+// use rand::{distributions::Slice, Rng};
+use rand::seq::SliceRandom;
 use web_sys::AddEventListenerOptions;
+
+#[rustfmt::skip]
+const ABSTRACT_NOUNS: [&str; 96] = [
+    "Joy", "Hope", "Love", "Peace", "Serenity", "Happiness", "Bliss", "Gratitude", "Contentment", "Harmony",
+    "Beauty", "Abundance", "Faith", "Trust", "Wonder", "Inspiration", "Courage", "Freedom", "Unity",
+    "Compassion", "Generosity", "Empathy", "Kindness", "Forgiveness", "Patience", "Respect", "Gentleness",
+    "Humility", "Graciousness", "Acceptance", "Radiance", "Positivity", "Enthusiasm", "Laughter", "Elation",
+    "Zeal", "Determination", "Confidence", "Belief", "Optimism", "Sincerity", "Hopefulness", "Foresight",
+    "Integrity", "Authenticity", "Nobility", "Honesty", "Loyalty", "Resilience", "Appreciation", "Vitality",
+    "Curiosity", "Imagination", "Wonderment", "Exploration", "Ingenuity", "Creativity", "Innovation",
+    "Empowerment", "Success", "Satisfaction", "Fulfillment", "Excitement", "Thrill",
+    "Delight", "Exhilaration", "Peacefulness", "Tranquility", "Stillness", "Clarity", "Serendipity",
+    "Enlightenment", "Progress", "Growth", "Transformation", "Expansion", "Meaning", "Grace", "Blessing",
+    "Brilliance", "Wonderfulness", "Affection", "Warmth", "Caring", "Tenderness", "Nurturing", "Support",
+    "Encouragement", "Balance", "Moderation", "Simplicity", "Adaptability", "Flexibility", "Openness",
+    "Belonging", "Ingenuity"
+];
 
 #[component]
 pub fn App(cx: Scope) -> impl IntoView {
@@ -20,6 +39,7 @@ pub fn App(cx: Scope) -> impl IntoView {
         <Link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
         <Link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet"/>
         <Link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,600;0,700;1,700&display=swap" rel="stylesheet"/>
+        <Link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet"/>
 
         // content for this welcome page
         <Router>
@@ -41,15 +61,19 @@ fn HomePage(cx: Scope) -> impl IntoView {
     let education_hidden = create_rw_signal(cx, false);
     let file_hidden = create_rw_signal(cx, true);
     let loading_hidden = create_rw_signal(cx, false);
+    let ad_hidden = create_rw_signal(cx, false);
+    let more_about_hidden = create_rw_signal(cx, true);
 
     let hidden_sigs = vec![about_hidden, projects_hidden, education_hidden];
     let (file_src, set_file_src) = create_signal(cx, None);
 
     view! { cx,
+        <AdWindow hidden=ad_hidden/>
         <LoadingWindow hidden=loading_hidden/>
         <EducationWindow hidden=education_hidden/>
         <ProjectsWindow hidden=projects_hidden file_win_src=set_file_src/>
-        <AboutWindow hidden=about_hidden/>
+        <AboutWindow hidden=about_hidden more_hidden=more_about_hidden/>
+        <MoreAboutWindow hidden=more_about_hidden/>
         <FileWindow hidden=file_hidden src=file_src/>
         <Footer hidden_sigs=hidden_sigs/>
     }
@@ -65,7 +89,8 @@ fn NotFound(cx: Scope) -> impl IntoView {
     }
 
     view! { cx,
-        <h1>"404: Page Not Found"</h1>
+        <h1>"- 404 -"</h1>
+        <h2>"Page Not Found"</h2>
     }
 }
 
@@ -82,8 +107,8 @@ fn Footer(cx: Scope, hidden_sigs: Vec<RwSignal<bool>>) -> impl IntoView {
     view! { cx,
         <footer>
             <div class="win-minimized" on:mousedown=min_about class:hidden={move || !about()}>"About Me"</div>
-            <div class="win-minimized" on:mousedown=min_projects class:hidden={move || !projects()}>"Projects"</div>
             <div class="win-minimized" on:mousedown=min_education class:hidden={move || !education()}>"Education"</div>
+            <div class="win-minimized" on:mousedown=min_projects class:hidden={move || !projects()}>"Projects"</div>
         </footer>
     }
 }
@@ -92,7 +117,7 @@ fn Footer(cx: Scope, hidden_sigs: Vec<RwSignal<bool>>) -> impl IntoView {
 fn Window(
     cx: Scope,
     window_id: &'static str,
-    window_title: &'static str,
+    window_title: String,
     window_content: HtmlElement<html::Div>,
     window_width: i32,
     start_pos: (i32, i32),
@@ -124,6 +149,20 @@ fn Window(
         );
     };
 
+    let get_title = move || {
+        if window_title.starts_with("Loading") {
+            let split: Vec<_> = window_title.split_whitespace().collect();
+            view! { cx, <p>
+                "Loading "
+                <span style="font-family: 'Cedarville Cursive', cursive; font-size: 12pt; font-style: oblique">{
+                    split[1].to_string()
+                }</span>
+            </p> }
+        } else {
+            view! { cx, <p>{ &window_title }</p> }
+        }
+    };
+
     view! { cx,
         <div
             id=window_id
@@ -134,7 +173,7 @@ fn Window(
             <div
                 class="win-titlebar"
                 on:mousedown=drag>
-                <p>{window_title}</p>
+                { get_title }
                 <a
                     class="win-close"
                     on:mousedown=move |_| hidden.set(true)></a>
@@ -149,7 +188,7 @@ fn Window(
 }
 
 #[component]
-fn AboutWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
+fn AboutWindow(cx: Scope, hidden: RwSignal<bool>, more_hidden: RwSignal<bool>) -> impl IntoView {
     let content = view! { cx,
         <div>
             <p>
@@ -157,7 +196,10 @@ fn AboutWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
                 <i><ExternalLink href="http://www.discordapp.com/users/207897365141520384" display="etbcor"/></i>
                 ", or via email: "<i><ExternalLink href="mailto:etbcor@gmail.com" display="etbcor@gmail.com"/></i>
                 ". My GitHub profile is here: "<i><ExternalLink href="https://www.github.com/ETBCOR" display="ETBCOR"/></i>". "
-                <i>"I'm "<u>"etbcor"</u>" on most platforms!"</i><br/>"Thanks for checking out my site!"
+                <i>"I'm "<u>"etbcor"</u>" on most platforms!"</i><br/>" Click "
+                <a href="" on:click=move |_| more_hidden.set(false)>"here"</a>
+                " to read more about me. Thanks for checking out my site!"
+
             </p>
 
         </div>
@@ -166,10 +208,33 @@ fn AboutWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
     view! { cx,
         <Window
             window_id="about-win"
-            window_title="About Me"
+            window_title="About Me".to_string()
             window_content=content
-            window_width=630
+            window_width=640
             start_pos=(105, 20)
+            hidden=hidden
+        />
+    }
+}
+
+#[component]
+fn MoreAboutWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
+    let content = view! { cx, <div>
+        <p>"Hello! ¡Hola! toki!"</p>
+        <p>"I'm Friday / Ethan / jan Itan / ijo tan anpa nanpa."</p>
+        <p>"I write code!"</p>
+        <p>"I make music!"</p>
+        <p>"I'm planning on extending this window in the future!"</p>
+
+    </div> };
+
+    view! { cx,
+        <Window
+            window_id="more-about-win"
+            window_title="More About Me".to_string()
+            window_content=content
+            window_width=500
+            start_pos=(165, 200)
             hidden=hidden
         />
     }
@@ -195,9 +260,11 @@ fn ProjectsWindow(
         </ul></li>
 
         <li><b>"CS445 | Compiler Design"</b><ul class="spaced"><li>
-            "I implemented a compiler for the \"C minus\" langauge"<br/>"(spec "
+            "I fully implemented a compiler for the \"C minus\" langauge"<br/>"(spec "
             <FileLink src="https://drive.google.com/file/d/12o5aSATedS28eJwsHIOHR7uf3DdZY20V/preview" display="here" file_win_src=fws/>
-            ") in this class. Repository "<ExternalLink href="https://github.com/ETBCOR/cs445" display="here"/>"."
+            ") in "<ExternalLink href="http://www2.cs.uidaho.edu/~mdwilder/cs445/" display="this class"/>
+            ". I feel that this is the single largest project I've ever completed. Repository "
+            <ExternalLink href="https://github.com/ETBCOR/cs445" display="here"/>"."
         </li></ul></li>
 
         <li><b>"CS452 | Real-Time Operating Systems"</b><ul class="spaced"><li>
@@ -220,16 +287,23 @@ fn ProjectsWindow(
             </li>
         </ul></li>
 
-        <li><b>"CS472 | Evolutionary Computation"</b><ul class="spaced">
-        </ul></li>
-
         <li><b>"CS475 | Machine Learning"</b><ul class="spaced">
+            <li>
+                "In "<ExternalLink href="http://marvin.cs.uidaho.edu/Teaching/CS475/index.html" display="this class"/>
+                " I completed 8 assignments machine learning topics of varying difficulty. Although the repo is a bit messy, the link is "
+                <ExternalLink href="https://github.com/ETBCOR/cs475" display="here"/>"."
+            </li>
         </ul></li>
 
         <li><b>"CS480 & CS481 | Senior Capstone Design"</b><ul class="spaced">
+            "My capstone project was to design calibration software for a laser communication device for "
+            <ExternalLink href="https://www.hansenphotonics.com/" display="Hansen Photonics Inc"/>
+            ". I was on a team with three other CS majors. The resulting software was simple, yet effective. "
+            "And the creation process is well documented (contact me for details). Repository "
+            <ExternalLink href="https://github.com/Hunter-SE/FibAir-Repository" display="here"/>"."
         </ul></li>
 
-        <li><b>"Other"</b><ul class="spaced">
+        <li><b>"Other"</b><ul>
             <li>"I have worked on many other projects (academic and personal), not listed here."</li>
         </ul></li>
     </ul></div> };
@@ -237,10 +311,10 @@ fn ProjectsWindow(
     view! { cx,
         <Window
             window_id="projects-win"
-            window_title="Projects"
+            window_title="Projects".to_string()
             window_content=content
             window_width=550
-            start_pos=(875, 69)
+            start_pos=(820, 50)
             hidden=hidden
         />
     }
@@ -258,7 +332,7 @@ fn EducationWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
 
         <p><details style="max-height: 125px; overflow-y: auto">
             <summary><u>"CS classes I took at UI"</u></summary>
-            <ul style="font-family: consolas; font-size: 10pt; line-height: 95%">
+            <ul style="font-family: consolas; font-size: 10pt; font-style: bold; line-height: 110%">
                 <li>"CS120 | Computer Science I"</li>
                 <li>"CS121 | Computer Science II"</li>
                 <li>"CS150 | Computer Organization and Architecture"</li>
@@ -274,7 +348,6 @@ fn EducationWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
                 <li>"CS445 | Compiler Design"</li>
                 <li>"CS452 | Real-Time Operating Systems"</li>
                 <li>"CS470 | Artificial Intelligence"</li>
-                <li>"CS472 | Evolutionary Computation"</li>
                 <li>"CS475 | Machine Learning"</li>
                 <li>"CS480 | CS Senior Capstone Design I"</li>
                 <li>"CS481 | CS Senior Capstone Design II"</li>
@@ -296,7 +369,7 @@ fn EducationWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
     view! { cx,
         <Window
             window_id="education-win"
-            window_title="Education"
+            window_title="Education".to_string()
             window_content=content
             window_width=400
             start_pos=(70, 240)
@@ -322,7 +395,7 @@ fn FileWindow(
     view! { cx,
         <Window
             window_id="file-win"
-            window_title="File Viewer"
+            window_title="File Viewer".to_string()
             window_content=content
             window_width=800
             start_pos=(30, 30)
@@ -333,17 +406,38 @@ fn FileWindow(
 
 #[component]
 fn LoadingWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
-    let content = view! { cx, <div style="background-image: radial-gradient(#93E1D8, #DDFFF7)">
-        <img src="/assets/Infinity-10s-200px.svg" style="width: 100%; height: 100px" draggable="false"/>
+    let mut rng = rand::thread_rng();
+    let noun: &'static str = ABSTRACT_NOUNS.choose(&mut rng).unwrap();
+    let title = format!("Loading {}", noun);
+    let content = view! { cx, <div>
+        <img src="/assets/infinity.svg" style="width: 100%; height: 100px" draggable="false"/>
     </div> };
 
     view! { cx,
         <Window
             window_id="loading-win"
-            window_title="Loading Meaning"
+            window_title=title
             window_content=content
             window_width=225
-            start_pos=(575, 275)
+            start_pos=(540, 475)
+            hidden=hidden
+        />
+    }
+}
+
+#[component]
+fn AdWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
+    let content = view! { cx, <div style="height: 100px">
+        <img src="/assets/ur-ad-here.png" style="height: 100px; width: 200px; image-rendering: pixelated" draggable="false"/>
+    </div> };
+
+    view! { cx,
+        <Window
+            window_id="ad-win"
+            window_title="Advertisement".to_string()
+            window_content=content
+            window_width=200
+            start_pos=(300, 22)
             hidden=hidden
         />
     }

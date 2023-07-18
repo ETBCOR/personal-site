@@ -17,8 +17,10 @@ leptos = { version = "0.4", features = ["nightly"] }
 leptos_meta = { version = "0.4", features = ["nightly"] }
 leptos_actix = { version = "0.4", optional = true }
 leptos_router = { version = "0.4", features = ["nightly"] }
-leptos-use = { version = "0.4.1" }
+leptos-use = { version = "0.6.0" }
 web-sys = "0.3.64"
+rand = "*"
+getrandom = { version = "0.2", features = ["js"] }
 
 [features]
 csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr"]
