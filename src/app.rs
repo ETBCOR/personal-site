@@ -114,10 +114,10 @@ fn Footer(cx: Scope, hidden_sigs: Vec<RwSignal<bool>>) -> impl IntoView {
 
     view! { cx,
         <footer>
-            <div class="win-minimized" on:mousedown=min_about class:hidden={move || !about()}>"About Me"</div>
-            <div class="win-minimized" on:mousedown=min_education class:hidden={move || !education()}>"Education"</div>
-            <div class="win-minimized" on:mousedown=min_projects class:hidden={move || !projects()}>"Projects"</div>
-            <div class="win-minimized" on:mousedown=min_skills class:hidden={move || !skills()}>"Skills"</div>
+            <div class="title win-minimized" on:mousedown=min_about class:hidden={move || !about()}>"About Me"</div>
+            <div class="title win-minimized" on:mousedown=min_education class:hidden={move || !education()}>"Education"</div>
+            <div class="title win-minimized" on:mousedown=min_projects class:hidden={move || !projects()}>"Projects"</div>
+            <div class="title win-minimized" on:mousedown=min_skills class:hidden={move || !skills()}>"Skills"</div>
         </footer>
     }
 }
@@ -128,6 +128,9 @@ fn Window(
     window_id: &'static str,
     window_title: String,
     window_content: HtmlElement<html::Div>,
+    #[prop(default = None)] window_tabs: Option<
+        Vec<(HtmlElement<html::Div>, HtmlElement<html::Div>)>,
+    >,
     window_width: i32,
     start_pos: (i32, i32),
     hidden: RwSignal<bool>,
@@ -161,15 +164,33 @@ fn Window(
     let get_title = move || {
         if window_title.starts_with("Loading") {
             let split: Vec<_> = window_title.split_whitespace().collect();
-            view! { cx, <p>
+            view! { cx, <p class="title">
                 "Loading "
                 <span style="font-family: 'Cedarville Cursive', cursive; font-size: 12pt; font-style: oblique">{
                     split[1].to_string()
                 }</span>
             </p> }
         } else {
-            view! { cx, <p>{ &window_title }</p> }
+            view! { cx, <p class="title">{ &window_title }</p> }
         }
+    };
+
+    let get_content = match window_tabs {
+        Some(tabs) => {
+            let (titles, tabs): (Vec<_>, Vec<_>) = tabs.into_iter().unzip();
+
+            view! { cx,
+                <div>
+                    <div class="tab-titlebar"> { titles } </div>
+                    <div class="win-content" style:width=move || format!("{}px", window_width)> { tabs } </div>
+                </div>
+            }
+        }
+        None => view! { cx,
+            <div class="win-content" style:width=move || format!("{}px", window_width)>
+                { window_content }
+            </div>
+        },
     };
 
     view! { cx,
@@ -187,11 +208,7 @@ fn Window(
                     class="win-close"
                     on:mousedown=move |_| hidden.set(true)></a>
             </div>
-            <div
-                class="win-content"
-                style:width=move || format!("{}px", window_width)>
-                {window_content}
-            </div>
+            { get_content }
         </div>
     }
 }
@@ -415,28 +432,75 @@ fn EducationWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
 
 #[component]
 fn SkillsWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
-    let content = view! { cx, <div><ul>
-        <li class="spaced"><b>"Data structures and algorithms"</b>
-        ": my B.S.C.S. has given me a strong foundation in the fundamentals of Computer Science. "
-        "I am experienced in designing and analyzing various data structures and algorithms."</li>
-        <li class="spaced">"I'm proficient in multiple "<b>"programming languages"</b>":"<ul>
-            <li><b style="font-family: 'VT323'">"C / C++"</b>" were the primary languages taught at my univirsity, so I'm very comfortable with them."</li>
-            <li><b style="font-family: 'VT323'">"Rust"</b>" is currently my favorite language. I learned about it at some point in 2022, and recently started using it for all my school projects, so I'm at an intermediate/advanced level."</li>
-            <li><b style="font-family: 'VT323'">"Python"</b>" isn't usually what I reach to first for my projects, but I'm still proficient with it, and have used it for a few."</li>
-            <li><b style="font-family: 'VT323'">""</b>"...and more! Including "<b style="font-family: 'VT323'">"JavaScript"</b>", "<b style="font-family: 'VT323'">"Java"</b>", and even some "<b style="font-family: 'VT323'">"Prolog"</b>"!"</li>
-        </ul></li>
-        <li class="spaced">"I'm also fluent in multiple "<b>"spoekn languages"</b>":"<ul>
-            <li>"English (native)"</li>
-            <li>"Spanish (fluent)"</li>
-            <li>"toki pona (fluent) (a minimalist constructed language)"</li>
-        </ul></li>
-    </ul></div> };
+    let active_tab = create_rw_signal(cx, "Technical");
+
+    let content = view! { cx,
+        <div>"Failed to load tabs for this window"</div>
+    };
+
+    let tabs = vec![
+        (
+            view! { cx, <div on:click=move |_| active_tab.set("Technical") class="title" class:active=move || active_tab().eq("Technical")>"Technical"</div> },
+            view! { cx, <div class:hidden=move || !active_tab().eq("Technical")><ul>
+                <li class="spaced"><b>"Data structures and algorithms"</b>
+                ": my B.S.C.S. has given me a strong foundation in the fundamentals of Computer Science. "
+                "I am experienced in designing and analyzing various data structures and algorithms."</li>
+
+                <li class="spaced">"I'm proficient in multiple "<b>"programming languages"</b>":"<ul>
+                    <li><span class="title">"C / C++"</span>" were the primary languages taught at my univirsity, so I'm very comfortable with them."</li>
+                    <li><span class="title">"Rust"</span>" is currently my favorite language. I learned about it at some point in 2022, "
+                        "and recently started using it for all my school projects, so I'm at an intermediate/advanced level."</li>
+                    <li><span class="title">"Python"</span>" isn't usually what I reach to first "
+                        "for my projects, but I'm still proficient with it, and have used it for a few."</li>
+                    <li><span class="title">""</span>"...and more, including "<span class="title">"JavaScript"</span>", "
+                    <span class="title">"Java"</span>", and even some "<span class="title">"Prolog"</span>"!"</li>
+                </ul></li>
+
+                <li class="spaced">
+                    "I'm farmiliar with "<b>"software development concepts"</b>", including testing and version control techniques, "
+                    <span class="title">"agile"</span>", "<span class="title">"continuous integration"
+                    </span>" and "<span class="title">"the software development life cycle"</span>"."
+                </li>
+
+                <li class="spaced">
+                    "I have a solid understanding of "<b>"networking"</b>" and "<b>"web development"</b>", including how to work with protocols like "
+                    <span class="title">"IP"</span>", "<span class="title">"HTTP"</span>", "<span class="title">"TCP"</span>" and "<span class="title">"UDP"</span>
+                    ", as well as technologies like "<span class="title">"HTML"</span>", "<span class="title">"CSS"</span>" and "<span class="title">"JavaScript"</span>"."
+                </li>
+
+                <li class="spaced">
+                    "I know how to write code for "<b>"embedded systems"</b>" using the principles of "
+                    <span class="title">"real-time operating systems"</span>"."
+                </li>
+            </ul></div> },
+        ),
+        (
+            view! { cx, <div on:click=move |_| active_tab.set("Audio / Visual") class="title" class:active=move || active_tab().eq("Audio / Visual")>"Audio / Visual"</div> },
+            view! { cx, <div>
+
+            </div> },
+        ),
+        (
+            view! { cx, <div on:click=move |_| active_tab.set("Other") class="title" class:active=move || active_tab().eq("Other")>"Other"</div> },
+            view! { cx, <div class:hidden=move || !active_tab().eq("Other")><ul>
+                <li class="spaced">"I'm fluent in three "<b>"spoekn languages"</b>":"<ul>
+                    <li><span class="title">"English"</span>" (native)"</li>
+                    <li><span class="title">"Spanish"</span>" (fluent)"</li>
+                    <li><ExternalLink href="https://tokipona.org/" display="toki pona" title_style=true/>" (fluent)"</li>
+                </ul></li>
+
+                <li>"I have great "<b>"interpersonal"</b>" and "<b>"conflict-resolution"</b>
+                " skills; I'm able to meaningfully communicate with people, even when we have conflicting views."</li>
+            </ul></div> },
+        ),
+    ];
 
     view! { cx,
         <Window
             window_id="skills-win"
             window_title="Skills".to_string()
             window_content=content
+            window_tabs=Some(tabs)
             window_width=550
             start_pos=(775, 425)
             hidden=hidden
@@ -520,9 +584,14 @@ fn FileLink(
 }
 
 #[component]
-fn ExternalLink(cx: Scope, href: &'static str, display: &'static str) -> impl IntoView {
+fn ExternalLink(
+    cx: Scope,
+    href: &'static str,
+    display: &'static str,
+    #[prop(default = false)] title_style: bool,
+) -> impl IntoView {
     view! { cx,
-        <a target="_blank" href=href>{display}</a>
+        <a target="_blank" href=href class:title=title_style>{display}</a>
         <a class="external-link"></a>
     }
 }
