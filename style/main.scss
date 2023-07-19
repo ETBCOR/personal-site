@@ -126,55 +126,10 @@ div.win-content :last-child {
 
 #loading-win>.win-content {
 	padding: 0px;
-	background: linear-gradient(124deg, #ff9281, #da6e6e, #d8bf6b, #dedf91, #74e186, #7edce1, #7871e1, #dd7fe5, #e384ec);
+	background: linear-gradient(124deg, #ef9e91, #f9a4a4, #d8bf6b, #dedf91, #74e186, #7edce1, #a29cef, #d593db, #ebc0ef);
 	background-size: 1800% 1800%;
 
-	-webkit-animation: rainbow 60s ease infinite;
-	-z-animation: rainbow 60s ease infinite;
-	-o-animation: rainbow 60s ease infinite;
 	animation: rainbow 60s ease infinite;
-}
-
-@-webkit-keyframes rainbow {
-	0% {
-		background-position: 0% 82%
-	}
-
-	50% {
-		background-position: 100% 19%
-	}
-
-	100% {
-		background-position: 0% 82%
-	}
-}
-
-@-moz-keyframes rainbow {
-	0% {
-		background-position: 0% 82%
-	}
-
-	50% {
-		background-position: 100% 19%
-	}
-
-	100% {
-		background-position: 0% 82%
-	}
-}
-
-@-o-keyframes rainbow {
-	0% {
-		background-position: 0% 82%
-	}
-
-	50% {
-		background-position: 100% 19%
-	}
-
-	100% {
-		background-position: 0% 82%
-	}
 }
 
 @keyframes rainbow {
@@ -189,6 +144,12 @@ div.win-content :last-child {
 	100% {
 		background-position: 0% 82%
 	}
+}
+
+#projects-win>.win-content,
+#skills-win>.win-content {
+	height: 300px;
+	overflow-y: auto;
 }
 
 #ad-win>.win-content {

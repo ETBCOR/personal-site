@@ -7,7 +7,7 @@ use rand::seq::SliceRandom;
 use web_sys::AddEventListenerOptions;
 
 #[rustfmt::skip]
-const ABSTRACT_NOUNS: [&str; 96] = [
+const ABSTRACT_NOUNS: [&str; 95] = [
     "Joy", "Hope", "Love", "Peace", "Serenity", "Happiness", "Bliss", "Gratitude", "Contentment", "Harmony",
     "Beauty", "Abundance", "Faith", "Trust", "Wonder", "Inspiration", "Courage", "Freedom", "Unity",
     "Compassion", "Generosity", "Empathy", "Kindness", "Forgiveness", "Patience", "Respect", "Gentleness",
@@ -19,8 +19,7 @@ const ABSTRACT_NOUNS: [&str; 96] = [
     "Delight", "Exhilaration", "Peacefulness", "Tranquility", "Stillness", "Clarity", "Serendipity",
     "Enlightenment", "Progress", "Growth", "Transformation", "Expansion", "Meaning", "Grace", "Blessing",
     "Brilliance", "Wonderfulness", "Affection", "Warmth", "Caring", "Tenderness", "Nurturing", "Support",
-    "Encouragement", "Balance", "Moderation", "Simplicity", "Adaptability", "Flexibility", "Openness",
-    "Belonging", "Ingenuity"
+    "Balance", "Moderation", "Simplicity", "Adaptability", "Flexibility", "Openness", "Belonging", "Ingenuity"
 ];
 
 #[component]
@@ -59,17 +58,24 @@ fn HomePage(cx: Scope) -> impl IntoView {
     let about_hidden = create_rw_signal(cx, false);
     let projects_hidden = create_rw_signal(cx, false);
     let education_hidden = create_rw_signal(cx, false);
+    let skills_hidden = create_rw_signal(cx, false);
     let file_hidden = create_rw_signal(cx, true);
     let loading_hidden = create_rw_signal(cx, false);
     let ad_hidden = create_rw_signal(cx, false);
     let more_about_hidden = create_rw_signal(cx, true);
 
-    let hidden_sigs = vec![about_hidden, projects_hidden, education_hidden];
+    let hidden_sigs = vec![
+        about_hidden,
+        projects_hidden,
+        education_hidden,
+        skills_hidden,
+    ];
     let (file_src, set_file_src) = create_signal(cx, None);
 
     view! { cx,
         <AdWindow hidden=ad_hidden/>
         <LoadingWindow hidden=loading_hidden/>
+        <SkillsWindow hidden=skills_hidden/>
         <EducationWindow hidden=education_hidden/>
         <ProjectsWindow hidden=projects_hidden file_win_src=set_file_src/>
         <AboutWindow hidden=about_hidden more_hidden=more_about_hidden/>
@@ -99,16 +105,19 @@ fn Footer(cx: Scope, hidden_sigs: Vec<RwSignal<bool>>) -> impl IntoView {
     let about = hidden_sigs[0];
     let projects = hidden_sigs[1];
     let education = hidden_sigs[2];
+    let skills = hidden_sigs[3];
 
     let min_about = move |_| about.update(|h| *h = !*h);
     let min_projects = move |_| projects.update(|h| *h = !*h);
     let min_education = move |_| education.update(|h| *h = !*h);
+    let min_skills = move |_| skills.update(|h| *h = !*h);
 
     view! { cx,
         <footer>
             <div class="win-minimized" on:mousedown=min_about class:hidden={move || !about()}>"About Me"</div>
             <div class="win-minimized" on:mousedown=min_education class:hidden={move || !education()}>"Education"</div>
             <div class="win-minimized" on:mousedown=min_projects class:hidden={move || !projects()}>"Projects"</div>
+            <div class="win-minimized" on:mousedown=min_skills class:hidden={move || !skills()}>"Skills"</div>
         </footer>
     }
 }
@@ -211,7 +220,7 @@ fn AboutWindow(cx: Scope, hidden: RwSignal<bool>, more_hidden: RwSignal<bool>) -
             window_title="About Me".to_string()
             window_content=content
             window_width=640
-            start_pos=(105, 20)
+            start_pos=(60, 20)
             hidden=hidden
         />
     }
@@ -222,6 +231,7 @@ fn MoreAboutWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
     let content = view! { cx, <div>
         <p>"Hello! ¡Hola! toki!"</p>
         <p>"I'm Friday / Ethan / jan Itan / ijo tan anpa nanpa."</p>
+        <p>"I speak English (native), Spanish (advanced), and toki pona ("</p>
         <p>"I write code!"</p>
         <p>"I make music!"</p>
         <p>"I'm planning on extending this window in the future!"</p>
@@ -234,7 +244,7 @@ fn MoreAboutWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
             window_title="More About Me".to_string()
             window_content=content
             window_width=500
-            start_pos=(165, 200)
+            start_pos=(120, 200)
             hidden=hidden
         />
     }
@@ -248,63 +258,86 @@ fn ProjectsWindow(
 ) -> impl IntoView {
     let fws = file_win_src;
     let content = view! { cx, <div><ul>
-        <li><b>"CS415 | Computational Biology: Sequence Analysis"</b><ul class="spaced">
-            <li><FileLink src="https://drive.google.com/file/d/17M8KI3B6rCj2_WLL-YlbxBoK0WzTyexO/preview" display="GA Simulation Runner" file_win_src=fws/>
-            " | "<ExternalLink href="https://github.com/ETBCOR/cs415/tree/main/project01" display="Github Repository"/></li>
+        <li><b>"Projects From CS Classes"</b><ul>
+            <li class="spaced">
+                <b>"CS415 | Computational Biology: Sequence Analysis"</b>
+                <br/>
+                <FileLink src="https://drive.google.com/file/d/17M8KI3B6rCj2_WLL-YlbxBoK0WzTyexO/preview" display="GA Simulation Runner" file_win_src=fws/>
+                " | "<ExternalLink href="https://github.com/ETBCOR/cs415/tree/main/project01" display="Github Repository"/>
+                <br/>
+                <FileLink src="https://drive.google.com/file/d/1v9XjTqRlf4iGjHskT7yp_KUyVBUU7WgE/preview" display="Parameter Set Estimation" file_win_src=fws/>
+                " | "<ExternalLink href="https://colab.research.google.com/drive/1zQtt-kDBhycueP_qyhzc9VnFeZe0wPmu?usp=sharing" display="Colab Notebook"/>
+                <br/>
+                <FileLink src="https://drive.google.com/file/d/1n-nyTQzjcGy9lpTvs-WYdBcTaDUbZfap/preview" display="Pairwise Alignment Matrix Calculation" file_win_src=fws/>
+                " | "<ExternalLink href="https://colab.research.google.com/drive/1mMGnMO63KR-wHriGNYxBxF5YNwk_r7AP?usp=sharing" display="Colab Notebook"/>
+            </li>
 
-            <li><FileLink src="https://drive.google.com/file/d/1v9XjTqRlf4iGjHskT7yp_KUyVBUU7WgE/preview" display="Parameter Set Estimation" file_win_src=fws/>
-            " | "<ExternalLink href="https://colab.research.google.com/drive/1zQtt-kDBhycueP_qyhzc9VnFeZe0wPmu?usp=sharing" display="Colab Notebook"/></li>
+            <li class="spaced">
+                <b>"CS445 | Compiler Design"</b>
+                <br/>
+                "I fully implemented a compiler for the \"C minus\" langauge (spec "
+                <FileLink src="https://drive.google.com/file/d/12o5aSATedS28eJwsHIOHR7uf3DdZY20V/preview" display="here" file_win_src=fws/>
+                ") in "<ExternalLink href="http://www2.cs.uidaho.edu/~mdwilder/cs445/" display="this class"/>
+                ". I feel that this is the single largest project I've ever completed. Repository "
+                <ExternalLink href="https://github.com/ETBCOR/cs445" display="here"/>"."
+            </li>
 
-            <li><FileLink src="https://drive.google.com/file/d/1n-nyTQzjcGy9lpTvs-WYdBcTaDUbZfap/preview" display="Pairwise Alignment Matrix Calculation" file_win_src=fws/>
-            " | "<ExternalLink href="https://colab.research.google.com/drive/1mMGnMO63KR-wHriGNYxBxF5YNwk_r7AP?usp=sharing" display="Colab Notebook"/></li>
-        </ul></li>
+            <li class="spaced">
+                <b>"CS452 | Real-Time Operating Systems"</b>
+                <br/>
+                "I created multiple programs run on embedded systems (Feather RP2040 & ESP32) in this class. Repository "
+                <ExternalLink href="https://github.com/ETBCOR/cs452/" display="here"/>"."
+            </li>
 
-        <li><b>"CS445 | Compiler Design"</b><ul class="spaced"><li>
-            "I fully implemented a compiler for the \"C minus\" langauge"<br/>"(spec "
-            <FileLink src="https://drive.google.com/file/d/12o5aSATedS28eJwsHIOHR7uf3DdZY20V/preview" display="here" file_win_src=fws/>
-            ") in "<ExternalLink href="http://www2.cs.uidaho.edu/~mdwilder/cs445/" display="this class"/>
-            ". I feel that this is the single largest project I've ever completed. Repository "
-            <ExternalLink href="https://github.com/ETBCOR/cs445" display="here"/>"."
-        </li></ul></li>
-
-        <li><b>"CS452 | Real-Time Operating Systems"</b><ul class="spaced"><li>
-            "I created multiple programs run on embedded systems (Feather RP2040 & ESP32) in this class. Repository "
-            <ExternalLink href="https://github.com/ETBCOR/cs452/" display="here"/>"."
-        </li></ul></li>
-
-        <li><b>"CS470 | Artificial Intelligence"</b><ul class="spaced">
-            <li>
+            <li class="spaced">
+                <b>"CS470 | Artificial Intelligence"</b>
+                <br/>
                 <FileLink src="https://drive.google.com/file/d/1ICaQOsGKwJ7RfE21xBHvozQkfQGkw43G/preview" display="Pathfinding Algorithms" file_win_src=fws/>
                 " | "<ExternalLink href="https://github.com/ETBCOR/cs470/tree/master/proj1" display="Github Repository"/>
-            </li>
-            <li>
+                <br/>
                 <FileLink src="https://drive.google.com/file/d/1fK-F2X7uwnOk8CrDosopO1pRl6xlBc1u/preview" display="Connect-4 Bot Using Minmax" file_win_src=fws/>
                 " | "<ExternalLink href="https://github.com/ETBCOR/cs470/tree/master/proj2" display="Github Repository"/>
-            </li>
-            <li>
+                <br/>
                 <FileLink src="https://drive.google.com/file/d/1Qr5B0yZ8s3aY3Ywdd4KCYq_7y5bXfCTg/preview" display="Map Coloring Algorithms" file_win_src=fws/>
                 " | "<ExternalLink href="https://github.com/ETBCOR/cs470/tree/master/proj3" display="Github Repository"/>
             </li>
-        </ul></li>
 
-        <li><b>"CS475 | Machine Learning"</b><ul class="spaced">
-            <li>
+            <li class="spaced">
+                <b>"CS475 | Machine Learning"</b>
+                <br/>
                 "In "<ExternalLink href="http://marvin.cs.uidaho.edu/Teaching/CS475/index.html" display="this class"/>
                 " I completed 8 assignments machine learning topics of varying difficulty. Although the repo is a bit messy, the link is "
                 <ExternalLink href="https://github.com/ETBCOR/cs475" display="here"/>"."
             </li>
+
+            <li class="spaced">
+                <b>"CS480 & CS481 | Senior Capstone Design"</b>
+                <br/>
+                "My capstone project was to design calibration software for a laser communication device for "
+                <ExternalLink href="https://www.hansenphotonics.com/" display="Hansen Photonics Inc"/>
+                ". I was on a team with three other CS majors. The resulting software was simple, yet effective. "
+                "And the creation process is well documented (contact me for details). Repository "
+                <ExternalLink href="https://github.com/Hunter-SE/FibAir-Repository" display="here"/>"."
+            </li>
         </ul></li>
 
-        <li><b>"CS480 & CS481 | Senior Capstone Design"</b><ul class="spaced">
-            "My capstone project was to design calibration software for a laser communication device for "
-            <ExternalLink href="https://www.hansenphotonics.com/" display="Hansen Photonics Inc"/>
-            ". I was on a team with three other CS majors. The resulting software was simple, yet effective. "
-            "And the creation process is well documented (contact me for details). Repository "
-            <ExternalLink href="https://github.com/Hunter-SE/FibAir-Repository" display="here"/>"."
-        </ul></li>
+        <li><b>"Other Projects"</b><ul>
+            <li class="spaced">
+                "This portfolio website, which I built from scratch using "
+                <ExternalLink href="https://leptos.dev/" display="leptos"/>" (a full-stack web framework built with "
+                <ExternalLink href="https://www.rust-lang.org/" display="Rust"/>" (my favorite programming language!))."
+            </li>
 
-        <li><b>"Other"</b><ul>
-            <li>"I have worked on many other projects (academic and personal), not listed here."</li>
+            <li class="spaced">
+                "I designed a font for the constructed language called toki pona. Repository "
+                <ExternalLink href="https://github.com/ETBCOR/nasin-nanpa" display="here"/>"."
+            </li>
+
+            <li class="spaced">
+                "I have "<ExternalLink href="https://www.instagram.com/ecridisedits/" display="an Instagram page"/>" full of cool audio/visaully synced edits I made with After Effects."
+            </li>
+
+            <li>"I have worked on quite a few other projects (this list is nonexhaustive)."</li>
         </ul></li>
     </ul></div> };
 
@@ -314,7 +347,7 @@ fn ProjectsWindow(
             window_title="Projects".to_string()
             window_content=content
             window_width=550
-            start_pos=(820, 50)
+            start_pos=(775, 20)
             hidden=hidden
         />
     }
@@ -372,7 +405,24 @@ fn EducationWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
             window_title="Education".to_string()
             window_content=content
             window_width=400
-            start_pos=(70, 240)
+            start_pos=(25, 240)
+            hidden=hidden
+        />
+    }
+}
+
+#[component]
+fn SkillsWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
+    let content = view! { cx, <div>
+    </div> };
+
+    view! { cx,
+        <Window
+            window_id="skills-win"
+            window_title="Skills".to_string()
+            window_content=content
+            window_width=550
+            start_pos=(775, 425)
             hidden=hidden
         />
     }
@@ -419,7 +469,7 @@ fn LoadingWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
             window_title=title
             window_content=content
             window_width=225
-            start_pos=(540, 475)
+            start_pos=(495, 325)
             hidden=hidden
         />
     }
@@ -437,7 +487,7 @@ fn AdWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
             window_title="Advertisement".to_string()
             window_content=content
             window_width=200
-            start_pos=(300, 22)
+            start_pos=(255, 22)
             hidden=hidden
         />
     }
