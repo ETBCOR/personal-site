@@ -75,10 +75,10 @@ fn HomePage(cx: Scope) -> impl IntoView {
     view! { cx,
         <AdWindow hidden=ad_hidden/>
         <LoadingWindow hidden=loading_hidden/>
-        <SkillsWindow hidden=skills_hidden/>
+        <AboutWindow hidden=about_hidden more_hidden=more_about_hidden/>
         <EducationWindow hidden=education_hidden/>
         <ProjectsWindow hidden=projects_hidden file_win_src=set_file_src/>
-        <AboutWindow hidden=about_hidden more_hidden=more_about_hidden/>
+        <SkillsWindow hidden=skills_hidden/>
         <MoreAboutWindow hidden=more_about_hidden/>
         <FileWindow hidden=file_hidden src=file_src/>
         <Footer hidden_sigs=hidden_sigs/>
@@ -197,17 +197,19 @@ fn Window(
 }
 
 #[component]
+#[allow(unused_variables)]
 fn AboutWindow(cx: Scope, hidden: RwSignal<bool>, more_hidden: RwSignal<bool>) -> impl IntoView {
     let content = view! { cx,
         <div>
             <p>
                 "Hi! My name is Ethan Corgatelli. I make programs and music and stuff. You can contact me on discord: "
-                <i><ExternalLink href="http://www.discordapp.com/users/207897365141520384" display="etbcor"/></i>
-                ", or via email: "<i><ExternalLink href="mailto:etbcor@gmail.com" display="etbcor@gmail.com"/></i>
-                ". My GitHub profile is here: "<i><ExternalLink href="https://www.github.com/ETBCOR" display="ETBCOR"/></i>". "
-                <i>"I'm "<u>"etbcor"</u>" on most platforms!"</i><br/>" Click "
-                <a href="" on:click=move |_| more_hidden.set(false)>"here"</a>
-                " to read more about me. Thanks for checking out my site!"
+                <ExternalLink href="http://www.discordapp.com/users/207897365141520384" display="etbcor"/>
+                ", or via email: "<ExternalLink href="mailto:etbcor@gmail.com" display="etbcor@gmail.com"/>
+                ". My GitHub profile is here: "<ExternalLink href="https://www.github.com/ETBCOR" display="ETBCOR"/>". "
+                <i>"I'm "<u>"etbcor"</u>" on most platforms!"</i>
+                <br/>
+                // " Click "<a href="" on:click=move |_| more_hidden.set(false)>"here"</a>" to read more about me."
+                " Thanks for checking out my site!"
 
             </p>
 
@@ -220,7 +222,7 @@ fn AboutWindow(cx: Scope, hidden: RwSignal<bool>, more_hidden: RwSignal<bool>) -
             window_title="About Me".to_string()
             window_content=content
             window_width=640
-            start_pos=(60, 20)
+            start_pos=(25, 20)
             hidden=hidden
         />
     }
@@ -260,7 +262,7 @@ fn ProjectsWindow(
     let content = view! { cx, <div><ul>
         <li><b>"Projects From CS Classes"</b><ul>
             <li class="spaced">
-                <b>"CS415 | Computational Biology: Sequence Analysis"</b>
+                <b>"CS415 | Computational Biology: Sequence Alignment"</b>
                 <br/>
                 <FileLink src="https://drive.google.com/file/d/17M8KI3B6rCj2_WLL-YlbxBoK0WzTyexO/preview" display="GA Simulation Runner" file_win_src=fws/>
                 " | "<ExternalLink href="https://github.com/ETBCOR/cs415/tree/main/project01" display="Github Repository"/>
@@ -329,7 +331,7 @@ fn ProjectsWindow(
             </li>
 
             <li class="spaced">
-                "I designed a font for the constructed language called toki pona. Repository "
+                "I designed a font for sitelen pona (the writing system of a constructed language). Repository "
                 <ExternalLink href="https://github.com/ETBCOR/nasin-nanpa" display="here"/>"."
             </li>
 
@@ -337,7 +339,7 @@ fn ProjectsWindow(
                 "I have "<ExternalLink href="https://www.instagram.com/ecridisedits/" display="an Instagram page"/>" full of cool audio/visaully synced edits I made with After Effects."
             </li>
 
-            <li>"I have worked on quite a few other projects (this list is nonexhaustive)."</li>
+            <li>"I have worked on quite a few other projects, both personal projects and projects for school (this list is nonexhaustive)."</li>
         </ul></li>
     </ul></div> };
 
@@ -377,7 +379,7 @@ fn EducationWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
                 <li>"CS385 | Theory of Computation"</li>
                 <li>"CS395 | Analysis of Algorithms"</li>
                 <li>"CS400 | Contemporary Issues in CS"</li>
-                <li>"CS415 | Computational Biology: Sequence Analysis"</li>
+                <li>"CS415 | Computational Biology: Sequence Alignment"</li>
                 <li>"CS445 | Compiler Design"</li>
                 <li>"CS452 | Real-Time Operating Systems"</li>
                 <li>"CS470 | Artificial Intelligence"</li>
@@ -413,8 +415,22 @@ fn EducationWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
 
 #[component]
 fn SkillsWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
-    let content = view! { cx, <div>
-    </div> };
+    let content = view! { cx, <div><ul>
+        <li class="spaced"><b>"Data structures and algorithms"</b>
+        ": my B.S.C.S. has given me a strong foundation in the fundamentals of Computer Science. "
+        "I am experienced in designing and analyzing various data structures and algorithms."</li>
+        <li class="spaced">"I'm proficient in multiple "<b>"programming languages"</b>":"<ul>
+            <li><b style="font-family: 'VT323'">"C / C++"</b>" were the primary languages taught at my univirsity, so I'm very comfortable with them."</li>
+            <li><b style="font-family: 'VT323'">"Rust"</b>" is currently my favorite language. I learned about it at some point in 2022, and recently started using it for all my school projects, so I'm at an intermediate/advanced level."</li>
+            <li><b style="font-family: 'VT323'">"Python"</b>" isn't usually what I reach to first for my projects, but I'm still proficient with it, and have used it for a few."</li>
+            <li><b style="font-family: 'VT323'">""</b>"...and more! Including "<b style="font-family: 'VT323'">"JavaScript"</b>", "<b style="font-family: 'VT323'">"Java"</b>", and even some "<b style="font-family: 'VT323'">"Prolog"</b>"!"</li>
+        </ul></li>
+        <li class="spaced">"I'm also fluent in multiple "<b>"spoekn languages"</b>":"<ul>
+            <li>"English (native)"</li>
+            <li>"Spanish (fluent)"</li>
+            <li>"toki pona (fluent) (a minimalist constructed language)"</li>
+        </ul></li>
+    </ul></div> };
 
     view! { cx,
         <Window
