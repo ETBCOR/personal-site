@@ -5,7 +5,7 @@ WORKDIR /work
 COPY . .
 
 RUN mkdir -p target/site
-RUN cargo clipp -- -D warnings
+RUN cargo clippy -- -D warnings
 RUN cargo leptos build --release
 
 FROM scratch as app
