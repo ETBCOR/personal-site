@@ -4,7 +4,7 @@ RUN apk update && \
     apk add --no-cache bash binaryen gcc git g++ libc-dev make npm openssl-dev protobuf-dev protoc
 
 RUN rustup target add wasm32-unknown-unknown
-RUN rustup component add clippy
+RUN rustup component add clippy --toolchain nightly-x86_64-unknown-linux-musl
 
 RUN cargo install cargo-generate
 RUN cargo install cargo-leptos
