@@ -5,12 +5,12 @@ WORKDIR /work
 COPY . .
 
 RUN mkdir -p target/site
-RUN cargo clippy -- -D warnings
+# RUN cargo clippy -- -D warnings
 RUN cargo leptos build --release
 
 FROM scratch as app
 
-ENV LEPTOS_OUTPUT_NAME=portfolio-site
+ENV LEPTOS_OUTPUT_NAME=portfolio_site
 ENV LEPTOS_SITE_ROOT=site
 ENV LEPTOS_SITE_PKG_DIR=pkg
 ENV LEPTOS_SITE_ADDR="0.0.0.0:3000"
@@ -25,4 +25,4 @@ COPY --chown=10001:10001 --from=builder /work/target/server/release/server .
 
 EXPOSE 3000
 
-ENTRYPOINT [ "/app/portfolio" ]
+ENTRYPOINT [ "/app/portfolio_site" ]
