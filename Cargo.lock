@@ -1816,26 +1816,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9b2a4787296e9989611394c33f193f676704af1686e70b8f8033ab5ba9a35a94"
 
 [[package]]
-name = "personal_site"
-version = "0.1.0"
-dependencies = [
- "actix-files",
- "actix-web",
- "cfg-if",
- "console_error_panic_hook",
- "getrandom",
- "http",
- "leptos",
- "leptos-use",
- "leptos_actix",
- "leptos_meta",
- "leptos_router",
- "rand",
- "wasm-bindgen",
- "web-sys",
-]
-
-[[package]]
 name = "pest"
 version = "2.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1916,6 +1896,26 @@ name = "pkg-config"
 version = "0.3.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "26072860ba924cbfa98ea39c8c19b4dd6a4a25423dbdf219c1eca91aa0cf6964"
+
+[[package]]
+name = "portfolio_site"
+version = "0.1.0"
+dependencies = [
+ "actix-files",
+ "actix-web",
+ "cfg-if",
+ "console_error_panic_hook",
+ "getrandom",
+ "http",
+ "leptos",
+ "leptos-use",
+ "leptos_actix",
+ "leptos_meta",
+ "leptos_router",
+ "rand",
+ "wasm-bindgen",
+ "web-sys",
+]
 
 [[package]]
 name = "ppv-lite86"

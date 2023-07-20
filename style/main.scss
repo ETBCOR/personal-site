@@ -65,7 +65,7 @@ ul {
 	cursor: move;
 	user-select: none;
 	border-bottom: #AA4465 solid 5px;
-	background-image: linear-gradient(to right, #93E1D8, #DDFFF7)
+	background-image: linear-gradient(to top, #93E1D8, #DDFFF7)
 }
 
 .win-titlebar p {
@@ -92,11 +92,12 @@ ul {
 	border-right: #AA4465 solid 5px;
 	padding: 5px;
 	cursor: pointer;
-	background-image: linear-gradient(to left, #93E1D8, #DDFFF7)
+	background-image: linear-gradient(to bottom, #93E1D8, #DDFFF7)
 }
 
 .tab-titlebar>.title:hover {
 	color: white;
+	text-shadow: #462255 2px 2px;
 	background-image: none;
 	background-color: #AA4465;
 }
@@ -106,7 +107,8 @@ ul {
 }
 
 .tab-titlebar>.active {
-	background-image: linear-gradient(#34ddc9, #1fefbf);
+	text-shadow: #462255 1px 1px;
+	background-image: linear-gradient(to bottom, #55baae, #4beec8);
 }
 
 .win-minimized {
@@ -135,8 +137,12 @@ ul {
 	background-repeat: no-repeat;
 	background-image: url("/assets/close-window.png");
 	image-rendering: pixelated;
-	background-color: #aa4465;
+	background-color: #AA4465;
 	box-shadow: 2px 2px #462255;
+}
+
+.win-close:hover {
+	background-image: url("/assets/close-window-hover.png");
 }
 
 .external-link {
@@ -162,7 +168,7 @@ div.win-content :last-child {
 	padding: 0px;
 	background: linear-gradient(124deg, #ef9e91, #f9a4a4, #d8bf6b, #dedf91, #74e186, #7edce1, #a29cef, #d593db, #ebc0ef);
 	background-size: 1800% 1800%;
-
+	cursor: help;
 	animation: rainbow 60s ease infinite;
 }
 

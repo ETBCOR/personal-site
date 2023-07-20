@@ -7,7 +7,7 @@ use rand::seq::SliceRandom;
 use web_sys::AddEventListenerOptions;
 
 #[rustfmt::skip]
-const ABSTRACT_NOUNS: [&str; 95] = [
+const ABSTRACT_NOUNS: [&str; 94] = [
     "Joy", "Hope", "Love", "Peace", "Serenity", "Happiness", "Bliss", "Gratitude", "Contentment", "Harmony",
     "Beauty", "Abundance", "Faith", "Trust", "Wonder", "Inspiration", "Courage", "Freedom", "Unity",
     "Compassion", "Generosity", "Empathy", "Kindness", "Forgiveness", "Patience", "Respect", "Gentleness",
@@ -15,11 +15,11 @@ const ABSTRACT_NOUNS: [&str; 95] = [
     "Zeal", "Determination", "Confidence", "Belief", "Optimism", "Sincerity", "Hopefulness", "Foresight",
     "Integrity", "Authenticity", "Nobility", "Honesty", "Loyalty", "Resilience", "Appreciation", "Vitality",
     "Curiosity", "Imagination", "Wonderment", "Exploration", "Ingenuity", "Creativity", "Innovation",
-    "Empowerment", "Success", "Satisfaction", "Fulfillment", "Excitement", "Thrill",
-    "Delight", "Exhilaration", "Peacefulness", "Tranquility", "Stillness", "Clarity", "Serendipity",
-    "Enlightenment", "Progress", "Growth", "Transformation", "Expansion", "Meaning", "Grace", "Blessing",
-    "Brilliance", "Wonderfulness", "Affection", "Warmth", "Caring", "Tenderness", "Nurturing", "Support",
-    "Balance", "Moderation", "Simplicity", "Adaptability", "Flexibility", "Openness", "Belonging", "Ingenuity"
+    "Empowerment", "Success", "Satisfaction", "Fulfillment", "Excitement", "Thrill", "Delight",
+    "Exhilaration", "Peacefulness", "Tranquility", "Stillness", "Clarity", "Serendipity", "Enlightenment",
+    "Progress", "Growth", "Change", "Expansion", "Meaning", "Grace", "Blessing", "Brilliance", "Affection",
+    "Warmth", "Caring", "Tenderness", "Nurturing", "Support", "Balance", "Moderation", "Simplicity",
+    "Adaptability", "Flexibility", "Openness", "Belonging", "Ingenuity"
 ];
 
 #[component]
@@ -29,7 +29,7 @@ pub fn App(cx: Scope) -> impl IntoView {
 
     view! { cx,
         // id=leptos means cargo-leptos will hot-reload this stylesheet
-        <Stylesheet id="leptos" href="/pkg/personal_site.css"/>
+        <Stylesheet id="leptos" href="/pkg/portfolio_site.css"/>
 
         <Title text="Ethan Corgatelli"/>
 
@@ -128,9 +128,10 @@ fn Window(
     window_id: &'static str,
     window_title: String,
     window_content: HtmlElement<html::Div>,
-    #[prop(default = None)] window_tabs: Option<
-        Vec<(HtmlElement<html::Div>, HtmlElement<html::Div>)>,
-    >,
+    #[prop(default = None)] window_tabs: Option<(
+        RwSignal<&'static str>,
+        Vec<(&'static str, HtmlElement<html::Div>)>,
+    )>,
     window_width: i32,
     start_pos: (i32, i32),
     hidden: RwSignal<bool>,
@@ -176,13 +177,33 @@ fn Window(
     };
 
     let get_content = match window_tabs {
-        Some(tabs) => {
-            let (titles, tabs): (Vec<_>, Vec<_>) = tabs.into_iter().unzip();
+        Some((active_tab, combined_vec)) => {
+            let (titles, tabs): (Vec<_>, Vec<_>) = combined_vec
+                .into_iter()
+                .map(|(title, content)| {
+                    (
+                        view! { cx,
+                            <div class="title"
+                                class:active=move || active_tab().eq(title)
+                                on:click=move |_| active_tab.set(title)>
+                                { title }
+                            </div>
+                        },
+                        view! { cx,
+                            <div class="win-content"
+                                class:hidden=move || !active_tab().eq(title)
+                                style:width=move || format!("{}px", window_width)>
+                                { content }
+                            </div>
+                        },
+                    )
+                })
+                .unzip();
 
             view! { cx,
                 <div>
                     <div class="tab-titlebar"> { titles } </div>
-                    <div class="win-content" style:width=move || format!("{}px", window_width)> { tabs } </div>
+                    { tabs }
                 </div>
             }
         }
@@ -219,12 +240,12 @@ fn AboutWindow(cx: Scope, hidden: RwSignal<bool>, more_hidden: RwSignal<bool>) -
     let content = view! { cx,
         <div>
             <p>
-                "Hi! My name is Ethan Corgatelli. I make programs and music and stuff. You can contact me on discord: "
+                "Hi! My name is Ethan Corgatelli, and I make software and music and stuff."<br/>
+                "I was born in April of 2001. You can contact me on discord: "
                 <ExternalLink href="http://www.discordapp.com/users/207897365141520384" display="etbcor"/>
                 ", or via email: "<ExternalLink href="mailto:etbcor@gmail.com" display="etbcor@gmail.com"/>
                 ". My GitHub profile is here: "<ExternalLink href="https://www.github.com/ETBCOR" display="ETBCOR"/>". "
                 <i>"I'm "<u>"etbcor"</u>" on most platforms!"</i>
-                <br/>
                 // " Click "<a href="" on:click=move |_| more_hidden.set(false)>"here"</a>" to read more about me."
                 " Thanks for checking out my site!"
 
@@ -250,11 +271,6 @@ fn MoreAboutWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
     let content = view! { cx, <div>
         <p>"Hello! ¡Hola! toki!"</p>
         <p>"I'm Friday / Ethan / jan Itan / ijo tan anpa nanpa."</p>
-        <p>"I speak English (native), Spanish (advanced), and toki pona ("</p>
-        <p>"I write code!"</p>
-        <p>"I make music!"</p>
-        <p>"I'm planning on extending this window in the future!"</p>
-
     </div> };
 
     view! { cx,
@@ -440,12 +456,8 @@ fn SkillsWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
 
     let tabs = vec![
         (
-            view! { cx, <div on:click=move |_| active_tab.set("Technical") class="title" class:active=move || active_tab().eq("Technical")>"Technical"</div> },
-            view! { cx, <div class:hidden=move || !active_tab().eq("Technical")><ul>
-                <li class="spaced"><b>"Data structures and algorithms"</b>
-                ": my B.S.C.S. has given me a strong foundation in the fundamentals of Computer Science. "
-                "I am experienced in designing and analyzing various data structures and algorithms."</li>
-
+            "Technical",
+            view! { cx, <div><ul>
                 <li class="spaced">"I'm proficient in multiple "<b>"programming languages"</b>":"<ul>
                     <li><span class="title">"C / C++"</span>" were the primary languages taught at my univirsity, so I'm very comfortable with them."</li>
                     <li><span class="title">"Rust"</span>" is currently my favorite language. I learned about it at some point in 2022, "
@@ -455,6 +467,10 @@ fn SkillsWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
                     <li><span class="title">""</span>"...and more, including "<span class="title">"JavaScript"</span>", "
                     <span class="title">"Java"</span>", and even some "<span class="title">"Prolog"</span>"!"</li>
                 </ul></li>
+
+                <li class="spaced"><b>"Data structures and algorithms"</b>
+                ": my B.S.C.S. has given me a strong foundation in the fundamentals of Computer Science. "
+                "I am experienced in designing and analyzing various data structures and algorithms."</li>
 
                 <li class="spaced">
                     "I'm farmiliar with "<b>"software development concepts"</b>", including testing and version control techniques, "
@@ -475,14 +491,35 @@ fn SkillsWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
             </ul></div> },
         ),
         (
-            view! { cx, <div on:click=move |_| active_tab.set("Audio / Visual") class="title" class:active=move || active_tab().eq("Audio / Visual")>"Audio / Visual"</div> },
-            view! { cx, <div>
+            "Audio / Visual",
+            view! { cx, <div><ul>
+                <li><b>"Audio"</b><ul>
+                    <li class="spaced">
+                        "I purchased "<ExternalLink href="https://www.ableton.com/en/live/" display="Ableton Live" title_style=true/>
+                        " in 2018, and I've been using it to make music in my free time ever since. "
+                        "I've honed my production skills quite a bit, but I'm still yet to start releasing music."
+                    </li>
+                    <li class="spaced">
+                        "I volunteered at my church for several years in highschool operating the sound booth for the live band, "
+                        "so I'm comfortable running a large sound board (analog or digital) and with the basics of audio engineering."
+                    </li>
+                </ul></li>
 
-            </div> },
+                <li><b>"Visual"</b><ul>
+                    <li class="spaced">
+                        "I'm quite experienced with "<span class="title">"After Effects"</span>". You can see some of what I've created with after effects on "
+                        <ExternalLink href="https://www.instagram.com/ecridisedits/" display="my IG page"/>"."
+                    </li>
+                    <li class="spaced">
+                        "I've also volunteered at my church to run slides/lights for sermons, so I'm familiar with "<span class="title">"ProPresenter"</span>
+                        " as well as "<br/><span class="title">"DMX lighting systems"</span>"."
+                    </li>
+                </ul></li>
+            </ul></div> },
         ),
         (
-            view! { cx, <div on:click=move |_| active_tab.set("Other") class="title" class:active=move || active_tab().eq("Other")>"Other"</div> },
-            view! { cx, <div class:hidden=move || !active_tab().eq("Other")><ul>
+            "Other",
+            view! { cx, <div><ul>
                 <li class="spaced">"I'm fluent in three "<b>"spoekn languages"</b>":"<ul>
                     <li><span class="title">"English"</span>" (native)"</li>
                     <li><span class="title">"Spanish"</span>" (fluent)"</li>
@@ -500,7 +537,7 @@ fn SkillsWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
             window_id="skills-win"
             window_title="Skills".to_string()
             window_content=content
-            window_tabs=Some(tabs)
+            window_tabs=Some((active_tab, tabs))
             window_width=550
             start_pos=(775, 425)
             hidden=hidden
@@ -528,7 +565,7 @@ fn FileWindow(
             window_title="File Viewer".to_string()
             window_content=content
             window_width=800
-            start_pos=(30, 30)
+            start_pos=(35, 30)
             hidden=hidden
         />
     }
