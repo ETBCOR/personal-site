@@ -21,7 +21,7 @@ USER 10001
 WORKDIR /app
 
 COPY --chown=10001:10001 --from=builder /work/target/site/ ./site/
-COPY --chown=10001:10001 --from=builder /work/target/server/release/server .
+COPY --chown=10001:10001 --from=builder /work/target/server/release/portfolio_site .
 
 EXPOSE 3000
 
