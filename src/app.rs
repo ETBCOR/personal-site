@@ -7,7 +7,7 @@ use rand::seq::SliceRandom;
 use web_sys::AddEventListenerOptions;
 
 #[rustfmt::skip]
-const ABSTRACT_NOUNS: [&str; 94] = [
+const ABSTRACT_NOUNS: [&str; 95] = [
     "Joy", "Hope", "Love", "Peace", "Serenity", "Happiness", "Bliss", "Gratitude", "Contentment", "Harmony",
     "Beauty", "Abundance", "Faith", "Trust", "Wonder", "Inspiration", "Courage", "Freedom", "Unity",
     "Compassion", "Generosity", "Empathy", "Kindness", "Forgiveness", "Patience", "Respect", "Gentleness",
@@ -19,7 +19,7 @@ const ABSTRACT_NOUNS: [&str; 94] = [
     "Exhilaration", "Peacefulness", "Tranquility", "Stillness", "Clarity", "Serendipity", "Enlightenment",
     "Progress", "Growth", "Change", "Expansion", "Meaning", "Grace", "Blessing", "Brilliance", "Affection",
     "Warmth", "Caring", "Tenderness", "Nurturing", "Support", "Balance", "Moderation", "Simplicity",
-    "Adaptability", "Flexibility", "Openness", "Belonging", "Ingenuity"
+    "Adaptability", "Flexibility", "Openness", "Belonging", "Ingenuity", "Mediation"
 ];
 
 #[component]
@@ -440,7 +440,7 @@ fn EducationWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
             window_title="Education".to_string()
             window_content=content
             window_width=400
-            start_pos=(25, 240)
+            start_pos=(25, 210)
             hidden=hidden
         />
     }
@@ -473,15 +473,21 @@ fn SkillsWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
                 "I am experienced in designing and analyzing various data structures and algorithms."</li>
 
                 <li class="spaced">
-                    "I'm farmiliar with "<b>"software development concepts"</b>", including testing and version control techniques, "
-                    <span class="title">"agile"</span>", "<span class="title">"continuous integration"
+                    "I'm farmiliar with "<b>"software development concepts"</b>", including "
+                    <span clas="title">"code modularity"</span>", "<i>"testing / documentation / version control techniques"</i>", "
+                    <span class="title">"agile"</span>", "<span class="title">"continuous integration and delivery"
                     </span>" and "<span class="title">"the software development life cycle"</span>"."
                 </li>
 
                 <li class="spaced">
                     "I have a solid understanding of "<b>"networking"</b>" and "<b>"web development"</b>", including how to work with protocols like "
                     <span class="title">"IP"</span>", "<span class="title">"HTTP"</span>", "<span class="title">"TCP"</span>" and "<span class="title">"UDP"</span>
-                    ", as well as technologies like "<span class="title">"HTML"</span>", "<span class="title">"CSS"</span>" and "<span class="title">"JavaScript"</span>"."
+                    ", as well as technologies like "<span class="title">"databases"</span>", "<span class="title">"HTML"</span>", "<span class="title">"CSS"</span>" and "<span class="title">"JavaScript"</span>"."
+                </li>
+
+                <li class="spaced">
+                    "I also have a solid understanding of "<span class="title">"computer architecture"</span>" and "
+                    <span class="title">"operating systems concepts"</span>" in general."
                 </li>
 
                 <li class="spaced">
@@ -507,7 +513,7 @@ fn SkillsWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
 
                 <li><b>"Visual"</b><ul>
                     <li class="spaced">
-                        "I'm quite experienced with "<span class="title">"After Effects"</span>". You can see some of what I've created with after effects on "
+                        "I'm quite experienced with "<span class="title">"After Effects"</span>". You can see some of what I've created with it on "
                         <ExternalLink href="https://www.instagram.com/ecridisedits/" display="my IG page"/>"."
                     </li>
                     <li class="spaced">
@@ -555,7 +561,7 @@ fn FileWindow(
         <iframe
             src=move || { if src().is_some() { hidden.set(false); } src().unwrap_or("") }
             allow="autoplay"
-            style="width: 100%; height: 800px"
+            style="width: 100%; height: 655px"
         ></iframe>
     </div> };
 
@@ -565,7 +571,7 @@ fn FileWindow(
             window_title="File Viewer".to_string()
             window_content=content
             window_width=800
-            start_pos=(35, 30)
+            start_pos=(60, 90)
             hidden=hidden
         />
     }
