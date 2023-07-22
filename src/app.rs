@@ -106,6 +106,7 @@ fn Footer(cx: Scope, hidden_sigs: Vec<RwSignal<bool>>) -> impl IntoView {
     let projects = hidden_sigs[1];
     let education = hidden_sigs[2];
     let skills = hidden_sigs[3];
+    let footer = move || !(about() || education() || projects() || skills());
 
     let min_about = move |_| about.update(|h| *h = !*h);
     let min_projects = move |_| projects.update(|h| *h = !*h);
@@ -113,7 +114,7 @@ fn Footer(cx: Scope, hidden_sigs: Vec<RwSignal<bool>>) -> impl IntoView {
     let min_skills = move |_| skills.update(|h| *h = !*h);
 
     view! { cx,
-        <footer>
+        <footer class:hidden={footer}>
             <div class="title win-minimized" on:mousedown=min_about class:hidden={move || !about()}>"About Me"</div>
             <div class="title win-minimized" on:mousedown=min_education class:hidden={move || !education()}>"Education"</div>
             <div class="title win-minimized" on:mousedown=min_projects class:hidden={move || !projects()}>"Projects"</div>
@@ -121,6 +122,10 @@ fn Footer(cx: Scope, hidden_sigs: Vec<RwSignal<bool>>) -> impl IntoView {
         </footer>
     }
 }
+type Tabs = Option<(
+    RwSignal<&'static str>,
+    Vec<(&'static str, HtmlElement<html::Div>)>,
+)>;
 
 #[component]
 fn Window(
@@ -128,10 +133,7 @@ fn Window(
     window_id: &'static str,
     window_title: String,
     window_content: HtmlElement<html::Div>,
-    #[prop(default = None)] window_tabs: Option<(
-        RwSignal<&'static str>,
-        Vec<(&'static str, HtmlElement<html::Div>)>,
-    )>,
+    #[prop(default = None)] window_tabs: Tabs,
     window_width: i32,
     start_pos: (i32, i32),
     hidden: RwSignal<bool>,
@@ -237,22 +239,15 @@ fn Window(
 #[component]
 #[allow(unused_variables)]
 fn AboutWindow(cx: Scope, hidden: RwSignal<bool>, more_hidden: RwSignal<bool>) -> impl IntoView {
-    let content = view! { cx,
-        <div>
-            <p>
-                "Hi! My name is Ethan Corgatelli, and I make software and music and stuff."<br/>
-                "I was born in April of 2001. You can contact me on discord: "
-                <ExternalLink href="http://www.discordapp.com/users/207897365141520384" display="etbcor"/>
-                ", or via email: "<ExternalLink href="mailto:etbcor@gmail.com" display="etbcor@gmail.com"/>
-                ". My GitHub profile is here: "<ExternalLink href="https://www.github.com/ETBCOR" display="ETBCOR"/>". "
-                <i>"I'm "<u>"etbcor"</u>" on most platforms!"</i>
-                // " Click "<a href="" on:click=move |_| more_hidden.set(false)>"here"</a>" to read more about me."
-                " Thanks for checking out my site!"
-
-            </p>
-
-        </div>
-    };
+    let content = view! { cx, <div> <p>
+        "Hello! I'm Ethan Corgatelli, and was born in April 2001. "
+        "I'm passionate about making software, writing music, and learning languages. You can contact me "
+        <ExternalLink href="http://www.discordapp.com/users/207897365141520384" display="on discord"/>
+        ", or "<ExternalLink href="mailto:etbcor@gmail.com" display="via email."/>
+        ". Here's my "<ExternalLink href="https://www.github.com/ETBCOR" display="GitHub profile"/>". "
+        <i>"I'm "<u>"etbcor"</u>" on most platforms!"</i>" Thanks for coming to my site!"
+        // " Click "<a href="" on:click=move |_| more_hidden.set(false)>"here"</a>" to read more about me."
+    </p> </div> };
 
     view! { cx,
         <Window
@@ -292,95 +287,113 @@ fn ProjectsWindow(
     file_win_src: WriteSignal<Option<&'static str>>,
 ) -> impl IntoView {
     let fws = file_win_src;
-    let content = view! { cx, <div><ul>
-        <li><b>"Projects From CS Classes"</b><ul>
-            <li class="spaced">
-                <b>"CS415 | Computational Biology: Sequence Alignment"</b>
-                <br/>
-                <FileLink src="https://drive.google.com/file/d/17M8KI3B6rCj2_WLL-YlbxBoK0WzTyexO/preview" display="GA Simulation Runner" file_win_src=fws/>
-                " | "<ExternalLink href="https://github.com/ETBCOR/cs415/tree/main/project01" display="Github Repository"/>
-                <br/>
-                <FileLink src="https://drive.google.com/file/d/1v9XjTqRlf4iGjHskT7yp_KUyVBUU7WgE/preview" display="Parameter Set Estimation" file_win_src=fws/>
-                " | "<ExternalLink href="https://colab.research.google.com/drive/1zQtt-kDBhycueP_qyhzc9VnFeZe0wPmu?usp=sharing" display="Colab Notebook"/>
-                <br/>
-                <FileLink src="https://drive.google.com/file/d/1n-nyTQzjcGy9lpTvs-WYdBcTaDUbZfap/preview" display="Pairwise Alignment Matrix Calculation" file_win_src=fws/>
-                " | "<ExternalLink href="https://colab.research.google.com/drive/1mMGnMO63KR-wHriGNYxBxF5YNwk_r7AP?usp=sharing" display="Colab Notebook"/>
-            </li>
+    let active_tab = create_rw_signal(cx, "From CS Classes");
 
-            <li class="spaced">
-                <b>"CS445 | Compiler Design"</b>
-                <br/>
-                "I fully implemented a compiler for the \"C minus\" langauge (spec "
-                <FileLink src="https://drive.google.com/file/d/12o5aSATedS28eJwsHIOHR7uf3DdZY20V/preview" display="here" file_win_src=fws/>
-                ") in "<ExternalLink href="http://www2.cs.uidaho.edu/~mdwilder/cs445/" display="this class"/>
-                ". I feel that this is the single largest project I've ever completed. Repository "
-                <ExternalLink href="https://github.com/ETBCOR/cs445" display="here"/>"."
-            </li>
+    let content = view! { cx,
+        <div>"Failed to load tabs for this window"</div>
+    };
 
-            <li class="spaced">
-                <b>"CS452 | Real-Time Operating Systems"</b>
-                <br/>
-                "I created multiple programs run on embedded systems (Feather RP2040 & ESP32) in this class. Repository "
-                <ExternalLink href="https://github.com/ETBCOR/cs452/" display="here"/>"."
-            </li>
+    let tabs = vec![
+        (
+            "From CS Classes",
+            view! { cx, <div><ul>
+                <li class="spaced">
+                    <b>"CS415 | Computational Biology: Sequence Alignment"</b>
+                    <br/>
+                    <FileLink src="https://drive.google.com/file/d/17M8KI3B6rCj2_WLL-YlbxBoK0WzTyexO/preview" display="GA Simulation Runner" file_win_src=fws/>
+                    " | "<ExternalLink href="https://github.com/ETBCOR/cs415/tree/main/project01" display="Github Repository"/>
+                    <br/>
+                    <FileLink src="https://drive.google.com/file/d/1v9XjTqRlf4iGjHskT7yp_KUyVBUU7WgE/preview" display="Parameter Set Estimation" file_win_src=fws/>
+                    " | "<ExternalLink href="https://colab.research.google.com/drive/1zQtt-kDBhycueP_qyhzc9VnFeZe0wPmu?usp=sharing" display="Colab Notebook"/>
+                    <br/>
+                    <FileLink src="https://drive.google.com/file/d/1n-nyTQzjcGy9lpTvs-WYdBcTaDUbZfap/preview" display="Pairwise Alignment Matrix Calculation" file_win_src=fws/>
+                    " | "<ExternalLink href="https://colab.research.google.com/drive/1mMGnMO63KR-wHriGNYxBxF5YNwk_r7AP?usp=sharing" display="Colab Notebook"/>
+                </li>
 
-            <li class="spaced">
-                <b>"CS470 | Artificial Intelligence"</b>
-                <br/>
-                <FileLink src="https://drive.google.com/file/d/1ICaQOsGKwJ7RfE21xBHvozQkfQGkw43G/preview" display="Pathfinding Algorithms" file_win_src=fws/>
-                " | "<ExternalLink href="https://github.com/ETBCOR/cs470/tree/master/proj1" display="Github Repository"/>
-                <br/>
-                <FileLink src="https://drive.google.com/file/d/1fK-F2X7uwnOk8CrDosopO1pRl6xlBc1u/preview" display="Connect-4 Bot Using Minmax" file_win_src=fws/>
-                " | "<ExternalLink href="https://github.com/ETBCOR/cs470/tree/master/proj2" display="Github Repository"/>
-                <br/>
-                <FileLink src="https://drive.google.com/file/d/1Qr5B0yZ8s3aY3Ywdd4KCYq_7y5bXfCTg/preview" display="Map Coloring Algorithms" file_win_src=fws/>
-                " | "<ExternalLink href="https://github.com/ETBCOR/cs470/tree/master/proj3" display="Github Repository"/>
-            </li>
+                <li class="spaced">
+                    <b>"CS445 | Compiler Design"</b>
+                    <br/>
+                    "I fully implemented a compiler for the \"C minus\" langauge (grammar specification "
+                    <FileLink src="https://drive.google.com/file/d/12o5aSATedS28eJwsHIOHR7uf3DdZY20V/preview" display="here" file_win_src=fws/>
+                    ") in "<ExternalLink href="http://www2.cs.uidaho.edu/~mdwilder/cs445/" display="this class"/>
+                    ". This could be the single largest project I've completed so far. Repository "
+                    <ExternalLink href="https://github.com/ETBCOR/cs445" display="here"/>"."
+                </li>
 
-            <li class="spaced">
-                <b>"CS475 | Machine Learning"</b>
-                <br/>
-                "In "<ExternalLink href="http://marvin.cs.uidaho.edu/Teaching/CS475/index.html" display="this class"/>
-                " I completed 8 assignments machine learning topics of varying difficulty. Although the repo is a bit messy, the link is "
-                <ExternalLink href="https://github.com/ETBCOR/cs475" display="here"/>"."
-            </li>
+                <li class="spaced">
+                    <b>"CS452 | Real-Time Operating Systems"</b>
+                    <br/>
+                    "I created multiple programs run on embedded systems (Feather RP2040 & ESP32) in this class. Repository "
+                    <ExternalLink href="https://github.com/ETBCOR/cs452/" display="here"/>"."
+                </li>
 
-            <li class="spaced">
-                <b>"CS480 & CS481 | Senior Capstone Design"</b>
-                <br/>
-                "My capstone project was to design calibration software for a laser communication device for "
-                <ExternalLink href="https://www.hansenphotonics.com/" display="Hansen Photonics Inc"/>
-                ". I was on a team with three other CS majors. The resulting software was simple, yet effective. "
-                "And the creation process is well documented (contact me for details). Repository "
-                <ExternalLink href="https://github.com/Hunter-SE/FibAir-Repository" display="here"/>"."
-            </li>
-        </ul></li>
+                <li class="spaced">
+                    <b>"CS470 | Artificial Intelligence"</b>
+                    <br/>
+                    <FileLink src="https://drive.google.com/file/d/1ICaQOsGKwJ7RfE21xBHvozQkfQGkw43G/preview" display="Pathfinding Algorithms" file_win_src=fws/>
+                    " | "<ExternalLink href="https://github.com/ETBCOR/cs470/tree/master/proj1" display="Github Repository"/>
+                    <br/>
+                    <FileLink src="https://drive.google.com/file/d/1fK-F2X7uwnOk8CrDosopO1pRl6xlBc1u/preview" display="Connect-4 Bot Using Minmax" file_win_src=fws/>
+                    " | "<ExternalLink href="https://github.com/ETBCOR/cs470/tree/master/proj2" display="Github Repository"/>
+                    <br/>
+                    <FileLink src="https://drive.google.com/file/d/1Qr5B0yZ8s3aY3Ywdd4KCYq_7y5bXfCTg/preview" display="Map Coloring Algorithms" file_win_src=fws/>
+                    " | "<ExternalLink href="https://github.com/ETBCOR/cs470/tree/master/proj3" display="Github Repository"/>
+                </li>
 
-        <li><b>"Other Projects"</b><ul>
-            <li class="spaced">
-                "This portfolio website, which I built from scratch using "
-                <ExternalLink href="https://leptos.dev/" display="leptos"/>" (a full-stack web framework built with "
-                <ExternalLink href="https://www.rust-lang.org/" display="Rust"/>" (my favorite programming language!))."
-            </li>
+                <li class="spaced">
+                    <b>"CS475 | Machine Learning"</b>
+                    <br/>
+                    "In "<ExternalLink href="http://marvin.cs.uidaho.edu/Teaching/CS475/index.html" display="this class"/>
+                    " I completed 8 assignments machine learning topics of varying difficulty. Although the repo is a bit messy, the link is "
+                    <ExternalLink href="https://github.com/ETBCOR/cs475" display="here"/>"."
+                </li>
 
-            <li class="spaced">
-                "I designed a font for sitelen pona (the writing system of a constructed language). Repository "
-                <ExternalLink href="https://github.com/ETBCOR/nasin-nanpa" display="here"/>"."
-            </li>
+                <li>
+                    <b>"CS480 & CS481 | Senior Capstone Design"</b>
+                    <br/>
+                    "My capstone project was to design calibration software for a laser communication device for "
+                    <ExternalLink href="https://www.hansenphotonics.com/" display="Hansen Photonics Inc"/>
+                    ". I was on a team with three other CS majors. The resulting software was simple, yet effective. "
+                    "And the creation process is well documented (contact me for details). Repository "
+                    <ExternalLink href="https://github.com/Hunter-SE/FibAir-Repository" display="here"/>"."
+                </li>
+            </ul></div> },
+        ),
+        (
+            "Other Projects",
+            view! { cx, <div><ul>
+                <li class="spaced">
+                    "I made "<b>"this very portfolio website"</b>" with "
+                    <ExternalLink href="https://leptos.dev/" display="leptos"/>" (a full-stack web framework built in "
+                    <ExternalLink href="https://www.rust-lang.org/" display="Rust"/>")."
+                </li>
 
-            <li class="spaced">
-                "I have "<ExternalLink href="https://www.instagram.com/ecridisedits/" display="an Instagram page"/>" full of cool audio/visaully synced edits I made with After Effects."
-            </li>
+                <li class="spaced">
+                    "I designed "<b>"a font"</b>" for sitelen pona (the writing system of a constructed language). Repository "
+                    <ExternalLink href="https://github.com/ETBCOR/nasin-nanpa" display="here"/>"."
+                </li>
 
-            <li>"I have worked on quite a few other projects, both personal projects and projects for school (this list is nonexhaustive)."</li>
-        </ul></li>
-    </ul></div> };
+                <li class="spaced">
+                    "I've made hundereds of "<b>"songs"</b>" (varying in completeness) "
+                    "with Ableton in my free time, but I haven't released anything yet."
+                </li>
+
+                <li class="spaced">
+                    "I have "<ExternalLink href="https://www.instagram.com/ecridisedits/" display="an Instagram page"/>
+                    " full of cool audio/visaully synced "<b>"edits"</b>" I made with After Effects."
+                </li>
+
+                <li>"I have worked on quite a few other projects, both personal projects and projects for school (this list is nonexhaustive)."</li>
+            </ul></div> },
+        ),
+    ];
 
     view! { cx,
         <Window
             window_id="projects-win"
             window_title="Projects".to_string()
             window_content=content
+            window_tabs=Some((active_tab, tabs))
             window_width=550
             start_pos=(775, 20)
             hidden=hidden
@@ -391,16 +404,16 @@ fn ProjectsWindow(
 #[component]
 fn EducationWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
     let content = view! { cx, <div>
-        <h3>"Bachelor's Degree in Computer Science"</h3>
-        <p>
+        <h4>"Bachelor's Degree in Computer Science"</h4>
+        <div class="spaced">
             "I spent 2019-2023 at the "<ExternalLink href="https://www.uidaho.edu/" display="University of Idaho"/>
             ", getting my "<ExternalLink href="https://catalog.uidaho.edu/courses/cs/" display="B.S.C.S."/>
             ", as well as my "<ExternalLink href="https://catalog.uidaho.edu/courses/span/" display="Spanish minor"/>"."
-        </p>
+        </div>
 
-        <p><details style="max-height: 125px; overflow-y: auto">
-            <summary><u>"CS classes I took at UI"</u></summary>
-            <ul style="font-family: consolas; font-size: 10pt; font-style: bold; line-height: 110%">
+        <div>"CS Classes I took at UI:"</div>
+        <div style="border: 1px black solid; max-height: 110px; overflow-y: scroll">
+            <ul  style="font-family: consolas; font-size: 10pt; font-style: bold; line-height: 110%">
                 <li>"CS120 | Computer Science I"</li>
                 <li>"CS121 | Computer Science II"</li>
                 <li>"CS150 | Computer Organization and Architecture"</li>
@@ -420,9 +433,10 @@ fn EducationWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
                 <li>"CS480 | CS Senior Capstone Design I"</li>
                 <li>"CS481 | CS Senior Capstone Design II"</li>
             </ul>
-        </details></p>
+        </div>
+        <div class="spaced"></div>
 
-        <h3>"K thru 12"</h3>
+        <h4>"K thru 12"</h4>
         "I was homeschooled from kindergarten through higschool, with two exceptions:"
         <ol>
             <li>"I did a year of Montessori in like 5th grade"</li>
@@ -473,8 +487,8 @@ fn SkillsWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
                 "I am experienced in designing and analyzing various data structures and algorithms."</li>
 
                 <li class="spaced">
-                    "I'm farmiliar with "<b>"software development concepts"</b>", including "
-                    <span clas="title">"code modularity"</span>", "<i>"testing / documentation / version control techniques"</i>", "
+                    "I'm farmiliar with "<b>"software development concepts"</b>
+                    ", including code modularity / testing / documentation / version control techniques, "
                     <span class="title">"agile"</span>", "<span class="title">"continuous integration and delivery"
                     </span>" and "<span class="title">"the software development life cycle"</span>"."
                 </li>
@@ -486,11 +500,11 @@ fn SkillsWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
                 </li>
 
                 <li class="spaced">
-                    "I also have a solid understanding of "<span class="title">"computer architecture"</span>" and "
-                    <span class="title">"operating systems concepts"</span>" in general."
+                    "I also have a solid understanding of "<b>"computer architecture"</b>
+                    " and "<b>"operating systems"</b>" concepts in general."
                 </li>
 
-                <li class="spaced">
+                <li>
                     "I know how to write code for "<b>"embedded systems"</b>" using the principles of "
                     <span class="title">"real-time operating systems"</span>"."
                 </li>
@@ -516,7 +530,7 @@ fn SkillsWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
                         "I'm quite experienced with "<span class="title">"After Effects"</span>". You can see some of what I've created with it on "
                         <ExternalLink href="https://www.instagram.com/ecridisedits/" display="my IG page"/>"."
                     </li>
-                    <li class="spaced">
+                    <li>
                         "I've also volunteered at my church to run slides/lights for sermons, so I'm familiar with "<span class="title">"ProPresenter"</span>
                         " as well as "<br/><span class="title">"DMX lighting systems"</span>"."
                     </li>
@@ -526,14 +540,17 @@ fn SkillsWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
         (
             "Other",
             view! { cx, <div><ul>
-                <li class="spaced">"I'm fluent in three "<b>"spoekn languages"</b>":"<ul>
+                <li class="spaced">"I speak "<b>"three languages"</b>":"<ul>
                     <li><span class="title">"English"</span>" (native)"</li>
                     <li><span class="title">"Spanish"</span>" (fluent)"</li>
                     <li><ExternalLink href="https://tokipona.org/" display="toki pona" title_style=true/>" (fluent)"</li>
+                    <li><span class="title">"Japanese"</span>" (beginner)"</li>
                 </ul></li>
 
-                <li>"I have great "<b>"interpersonal"</b>" and "<b>"conflict-resolution"</b>
-                " skills; I'm able to meaningfully communicate with people, even when we have conflicting views."</li>
+                <li class="spaced">"I have great "<b>"interpersonal"</b>" and "<b>"conflict-resolution"</b>
+                    " skills; I'm able to meaningfully communicate with people, even when we have conflicting views."</li>
+
+                <li>"I care deeply about my "<b>"work ethic"</b>"; I enjoy locking into my work and getting in the zone."</li>
             </ul></div> },
         ),
     ];
@@ -634,7 +651,9 @@ fn ExternalLink(
     #[prop(default = false)] title_style: bool,
 ) -> impl IntoView {
     view! { cx,
-        <a target="_blank" href=href class:title=title_style>{display}</a>
-        <a class="external-link"></a>
+        <a target="_blank" href=href class:title=title_style>
+            {display}
+            <span class="external-link"></span>
+        </a>
     }
 }

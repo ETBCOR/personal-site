@@ -37,7 +37,8 @@ h4,
 h5,
 ul,
 ol {
-	margin-top: 0px;
+	margin-top: 5px;
+	margin-bottom: 5px;
 }
 
 ul {
@@ -69,6 +70,7 @@ ul {
 }
 
 .win-titlebar p {
+	text-shadow: #462255 1px 1px;
 	margin: 0px;
 	padding-top: 5px;
 }
@@ -87,6 +89,7 @@ ul {
 	width: 0;
 	flex: 1 1 0px;
 	text-align: center;
+	text-shadow: #462255 1px 1px;
 	display: inline;
 	border-bottom: #AA4465 solid 5px;
 	border-right: #AA4465 solid 5px;
@@ -107,8 +110,9 @@ ul {
 }
 
 .tab-titlebar>.active {
-	text-shadow: #462255 1px 1px;
-	background-image: linear-gradient(to bottom, #55baae, #4beec8);
+	color: #462255;
+	text-shadow: white 1px 1px;
+	background-image: linear-gradient(to top, #42e3ad, #0aff9d);
 }
 
 .win-minimized {
@@ -156,6 +160,10 @@ ul {
 	image-rendering: pixelated;
 }
 
+a:hover>.external-link {
+	background-image: url("/assets/external-link-hover.png");
+}
+
 .win-content {
 	padding: 10px;
 }
@@ -186,13 +194,13 @@ div.win-content :last-child {
 	}
 }
 
-#projects-win>div.win-content {
-	height: 300px;
+#projects-win>div>div.win-content {
+	height: 265px;
 	overflow-y: auto;
 }
 
 #skills-win>div>div.win-content {
-	height: 275px;
+	height: 265px;
 	overflow-y: auto;
 }
 
@@ -211,10 +219,9 @@ footer {
 	bottom: 0;
 	width: 100%;
 	text-align: left;
-	padding-top: 5px;
-	padding-bottom: 5px;
+	padding-bottom: 3px;
 	border-top: 5px solid #AA4465;
-	background-image: linear-gradient(to top, #222, #ddfff7);
+	background-image: linear-gradient(to top, #42e3ad, #0aff9d);
 }
 
 .hidden {
