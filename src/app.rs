@@ -437,7 +437,7 @@ fn EducationWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
         <div class="spaced"></div>
 
         <h4>"K thru 12"</h4>
-        "I was homeschooled from kindergarten through higschool, with two exceptions:"
+        "I was homeschooled from kindergarten through high school, with two exceptions:"
         <ol>
             <li>"I did a year of Montessori in like 5th grade"</li>
             <li>"in high school, I was half-time homeschooled and half-time public school (at Idaho Falls High School)"</li>
@@ -520,7 +520,7 @@ fn SkillsWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
                         "I've honed my production skills quite a bit, but I'm still yet to start releasing music."
                     </li>
                     <li class="spaced">
-                        "I volunteered at my church for several years in highschool operating the sound booth for the live band, "
+                        "I volunteered at my church for several years in high school operating the sound booth for the live band, "
                         "so I'm comfortable running a large sound board (analog or digital) and with the basics of audio engineering."
                     </li>
                 </ul></li>
