@@ -274,8 +274,8 @@ fn EducationWindow(cx: Scope, hidden: RwSignal<bool>, z_idx: RwSignal<usize>) ->
         <h4>"Bachelor's Degree in Computer Science"</h4>
         <div class="spaced">
             "I spent 2019-2023 at the "<ExternalLink href="https://www.uidaho.edu/" display="University of Idaho"/>
-            ", getting my "<ExternalLink href="https://catalog.uidaho.edu/courses/cs/" display="B.S.C.S."/>
-            ", as well as my "<ExternalLink href="https://catalog.uidaho.edu/courses/span/" display="Spanish minor"/>"."
+            " getting my "<ExternalLink href="https://catalog.uidaho.edu/courses/cs/" display="B.S.C.S."/>
+            " as well as my "<ExternalLink href="https://catalog.uidaho.edu/courses/span/" display="Spanish minor"/>"."
         </div>
 
         <div>"CS Classes I took at UI:"</div>
