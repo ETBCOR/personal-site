@@ -306,7 +306,7 @@ fn EducationWindow(cx: Scope, hidden: RwSignal<bool>, z_idx: RwSignal<usize>) ->
         <h4>"K thru 12"</h4>
         "I was homeschooled from kindergarten through high school, with two exceptions:"
         <ol>
-            <li>"I did a year of Montessori in like 5th grade"</li>
+            <li>"I did a year of Montessori in 5th grade"</li>
             <li>"in high school, I was half-time homeschooled and half-time public school (at Idaho Falls High School)"</li>
         </ol>
 
