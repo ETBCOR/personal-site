@@ -6,8 +6,10 @@ body {
 	font-size: large;
 	background-image: linear-gradient(to top, #93E1D8, #DDFFF7);
 	background-attachment: fixed;
+}
+
+main {
 	overflow: auto;
-	position: sticky;
 }
 
 summary u {
@@ -166,6 +168,53 @@ a:hover>.external-link {
 
 .win-content {
 	padding: 10px;
+}
+
+@media (min-width: 901px) {
+	#about-win {
+		width: 640px;
+	}
+
+	#education-win {
+		width: 400px;
+	}
+
+	#projects-win,
+	#skills-win {
+		width: 550px;
+	}
+
+	#file-win {
+		width: 800px;
+	}
+
+	#loading-win {
+		width: 225px;
+	}
+
+	#ad-win {
+		width: 200px;
+	}
+}
+
+@media (max-width: 900px) {
+	.win-outer {
+		position: inherit;
+		margin: 10px;
+	}
+
+	.win-outer:not(.hidden)last-child {
+		color: yellow;
+		margin-bottom: 100px;
+	}
+
+	.win-content {
+		width: auto;
+	}
+
+	#ad-win {
+		display: none;
+	}
 }
 
 div.win-content :last-child {

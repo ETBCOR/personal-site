@@ -62,25 +62,26 @@ fn HomePage(cx: Scope) -> impl IntoView {
     let file_hidden = create_rw_signal(cx, true);
     let loading_hidden = create_rw_signal(cx, false);
     let ad_hidden = create_rw_signal(cx, false);
-    let more_about_hidden = create_rw_signal(cx, true);
 
     let hidden_sigs = vec![
         about_hidden,
         projects_hidden,
         education_hidden,
         skills_hidden,
+        loading_hidden,
     ];
     let (file_src, set_file_src) = create_signal(cx, None);
+    let z_idx = create_rw_signal(cx, 1);
 
     view! { cx,
-        <AdWindow hidden=ad_hidden/>
-        <LoadingWindow hidden=loading_hidden/>
-        <AboutWindow hidden=about_hidden more_hidden=more_about_hidden/>
-        <EducationWindow hidden=education_hidden/>
-        <ProjectsWindow hidden=projects_hidden file_win_src=set_file_src/>
-        <SkillsWindow hidden=skills_hidden/>
-        <MoreAboutWindow hidden=more_about_hidden/>
-        <FileWindow hidden=file_hidden src=file_src/>
+        <AboutWindow hidden=about_hidden z_idx=z_idx/>
+        <EducationWindow hidden=education_hidden z_idx=z_idx/>
+        <SkillsWindow hidden=skills_hidden z_idx=z_idx/>
+        <ProjectsWindow hidden=projects_hidden z_idx=z_idx file_win_src=set_file_src/>
+        <LoadingWindow hidden=loading_hidden z_idx=z_idx/>
+        <AdWindow hidden=ad_hidden z_idx=z_idx/>
+        <FileWindow hidden=file_hidden z_idx=z_idx src=file_src/>
+        <div style="height: 65px"></div> // spacer
         <Footer hidden_sigs=hidden_sigs/>
     }
 }
@@ -106,12 +107,14 @@ fn Footer(cx: Scope, hidden_sigs: Vec<RwSignal<bool>>) -> impl IntoView {
     let projects = hidden_sigs[1];
     let education = hidden_sigs[2];
     let skills = hidden_sigs[3];
-    let footer = move || !(about() || education() || projects() || skills());
+    let loading = hidden_sigs[4];
+    let footer = move || !(about() || education() || projects() || skills() || loading());
 
     let min_about = move |_| about.update(|h| *h = !*h);
     let min_projects = move |_| projects.update(|h| *h = !*h);
     let min_education = move |_| education.update(|h| *h = !*h);
     let min_skills = move |_| skills.update(|h| *h = !*h);
+    let min_loading = move |_| loading.update(|h| *h = !*h);
 
     view! { cx,
         <footer class:hidden={footer}>
@@ -119,6 +122,7 @@ fn Footer(cx: Scope, hidden_sigs: Vec<RwSignal<bool>>) -> impl IntoView {
             <div class="title win-minimized" on:mousedown=min_education class:hidden={move || !education()}>"Education"</div>
             <div class="title win-minimized" on:mousedown=min_projects class:hidden={move || !projects()}>"Projects"</div>
             <div class="title win-minimized" on:mousedown=min_skills class:hidden={move || !skills()}>"Skills"</div>
+            <div class="title win-minimized" on:mousedown=min_loading class:hidden={move || !loading()}>"\"Inspiration\""</div>
         </footer>
     }
 }
@@ -130,25 +134,30 @@ type Tabs = Option<(
 #[component]
 fn Window(
     cx: Scope,
-    window_id: &'static str,
-    window_title: String,
-    window_content: HtmlElement<html::Div>,
-    #[prop(default = None)] window_tabs: Tabs,
-    window_width: i32,
+    id: &'static str,
+    title: String,
+    content: HtmlElement<html::Div>,
+    #[prop(default = None)] tabs: Tabs,
     start_pos: (i32, i32),
     hidden: RwSignal<bool>,
+    z_idx: RwSignal<usize>,
 ) -> impl IntoView {
-    let (x, set_x) = create_signal(cx, start_pos.0);
-    let (y, set_y) = create_signal(cx, start_pos.1);
-    let (dx, set_dx) = create_signal(cx, 0);
-    let (dy, set_dy) = create_signal(cx, 0);
+    let x = create_rw_signal(cx, start_pos.0);
+    let y = create_rw_signal(cx, start_pos.1);
+    let dx = create_rw_signal(cx, 0);
+    let dy = create_rw_signal(cx, 0);
+
+    let this_z_idx = create_rw_signal(cx, if id.eq("ad-win") { 0 } else { z_idx() });
 
     let drag = move |e: MouseEvent| {
-        set_dx.set(x.get_untracked() - e.client_x());
-        set_dy.set(y.get_untracked() - e.client_y());
+        z_idx.update(|z| *z = *z + 1);
+        this_z_idx.set(z_idx());
+
+        dx.set(x.get_untracked() - e.client_x());
+        dy.set(y.get_untracked() - e.client_y());
         let drag_cleanup = use_event_listener(cx, document(), ev::mousemove, move |e| {
-            set_x.set(e.client_x() + dx.get_untracked());
-            set_y.set(e.client_y() + dy.get_untracked());
+            x.set(e.client_x() + dx.get_untracked());
+            y.set(e.client_y() + dy.get_untracked());
         });
 
         let mut once_opt = AddEventListenerOptions::new();
@@ -165,8 +174,8 @@ fn Window(
     };
 
     let get_title = move || {
-        if window_title.starts_with("Loading") {
-            let split: Vec<_> = window_title.split_whitespace().collect();
+        if title.starts_with("Loading") {
+            let split: Vec<_> = title.split_whitespace().collect();
             view! { cx, <p class="title">
                 "Loading "
                 <span style="font-family: 'Cedarville Cursive', cursive; font-size: 12pt; font-style: oblique">{
@@ -174,11 +183,11 @@ fn Window(
                 }</span>
             </p> }
         } else {
-            view! { cx, <p class="title">{ &window_title }</p> }
+            view! { cx, <p class="title">{&title}</p> }
         }
     };
 
-    let get_content = match window_tabs {
+    let get_content = match tabs {
         Some((active_tab, combined_vec)) => {
             let (titles, tabs): (Vec<_>, Vec<_>) = combined_vec
                 .into_iter()
@@ -193,8 +202,7 @@ fn Window(
                         },
                         view! { cx,
                             <div class="win-content"
-                                class:hidden=move || !active_tab().eq(title)
-                                style:width=move || format!("{}px", window_width)>
+                                class:hidden=move || !active_tab().eq(title)>
                                 { content }
                             </div>
                         },
@@ -210,19 +218,18 @@ fn Window(
             }
         }
         None => view! { cx,
-            <div class="win-content" style:width=move || format!("{}px", window_width)>
-                { window_content }
+            <div class="win-content">
+                { content }
             </div>
         },
     };
 
     view! { cx,
         <div
-            id=window_id
+            id=id
             class="win-outer"
             class:hidden={move || hidden()}
-            style:left=move || format!("{}px", x())
-            style:top=move || format!("{}px", y())>
+            style=move || format!("left: {}px; top: {}px; z-index: {}", x(), y(), this_z_idx())>
             <div
                 class="win-titlebar"
                 on:mousedown=drag>
@@ -238,7 +245,7 @@ fn Window(
 
 #[component]
 #[allow(unused_variables)]
-fn AboutWindow(cx: Scope, hidden: RwSignal<bool>, more_hidden: RwSignal<bool>) -> impl IntoView {
+fn AboutWindow(cx: Scope, hidden: RwSignal<bool>, z_idx: RwSignal<usize>) -> impl IntoView {
     let content = view! { cx, <div> <p>
         "Hello! I'm Ethan Corgatelli, and was born in April 2001. "
         "I'm passionate about making software, writing music, and learning languages. You can contact me "
@@ -251,31 +258,179 @@ fn AboutWindow(cx: Scope, hidden: RwSignal<bool>, more_hidden: RwSignal<bool>) -
 
     view! { cx,
         <Window
-            window_id="about-win"
-            window_title="About Me".to_string()
-            window_content=content
-            window_width=640
+            id="about-win"
+            title="About Me".to_string()
+            content=content
             start_pos=(25, 20)
             hidden=hidden
+            z_idx=z_idx
         />
     }
 }
 
 #[component]
-fn MoreAboutWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
+fn EducationWindow(cx: Scope, hidden: RwSignal<bool>, z_idx: RwSignal<usize>) -> impl IntoView {
     let content = view! { cx, <div>
-        <p>"Hello! ¡Hola! toki!"</p>
-        <p>"I'm Friday / Ethan / jan Itan / ijo tan anpa nanpa."</p>
+        <h4>"Bachelor's Degree in Computer Science"</h4>
+        <div class="spaced">
+            "I spent 2019-2023 at the "<ExternalLink href="https://www.uidaho.edu/" display="University of Idaho"/>
+            ", getting my "<ExternalLink href="https://catalog.uidaho.edu/courses/cs/" display="B.S.C.S."/>
+            ", as well as my "<ExternalLink href="https://catalog.uidaho.edu/courses/span/" display="Spanish minor"/>"."
+        </div>
+
+        <div>"CS Classes I took at UI:"</div>
+        <div style="border: 1px black solid; max-height: 110px; overflow-y: scroll">
+            <ul  style="font-family: consolas; font-size: 10pt; font-style: bold; line-height: 110%">
+                <li>"CS120 | Computer Science I"</li>
+                <li>"CS121 | Computer Science II"</li>
+                <li>"CS150 | Computer Organization and Architecture"</li>
+                <li>"CS210 | Programming Languages"</li>
+                <li>"CS240 | Computer Operating Systems"</li>
+                <li>"CS270 | System Software"</li>
+                <li>"CS360 | Database Systems"</li>
+                <li>"CS383 | Software Engineering"</li>
+                <li>"CS385 | Theory of Computation"</li>
+                <li>"CS395 | Analysis of Algorithms"</li>
+                <li>"CS400 | Contemporary Issues in CS"</li>
+                <li>"CS415 | Computational Biology: Sequence Alignment"</li>
+                <li>"CS445 | Compiler Design"</li>
+                <li>"CS452 | Real-Time Operating Systems"</li>
+                <li>"CS470 | Artificial Intelligence"</li>
+                <li>"CS475 | Machine Learning"</li>
+                <li>"CS480 | CS Senior Capstone Design I"</li>
+                <li>"CS481 | CS Senior Capstone Design II"</li>
+            </ul>
+        </div>
+        <div class="spaced"></div>
+
+        <h4>"K thru 12"</h4>
+        "I was homeschooled from kindergarten through high school, with two exceptions:"
+        <ol>
+            <li>"I did a year of Montessori in like 5th grade"</li>
+            <li>"in high school, I was half-time homeschooled and half-time public school (at Idaho Falls High School)"</li>
+        </ol>
+
+        <p>"I gained an interest for coding around the age of 10. A friend of mine showed me "
+        <ExternalLink href="https://www.codecademy.com/" display="codecademy.com"/>
+        " (back when it was still completely free!), which was very influential for me starting out."</p>
     </div> };
 
     view! { cx,
         <Window
-            window_id="more-about-win"
-            window_title="More About Me".to_string()
-            window_content=content
-            window_width=500
-            start_pos=(120, 200)
+            id="education-win"
+            title="Education".to_string()
+            content=content
+            start_pos=(25, 210)
             hidden=hidden
+            z_idx=z_idx
+        />
+    }
+}
+
+#[component]
+fn SkillsWindow(cx: Scope, hidden: RwSignal<bool>, z_idx: RwSignal<usize>) -> impl IntoView {
+    let active_tab = create_rw_signal(cx, "Technical");
+
+    let content = view! { cx,
+        <div>"Failed to load tabs for this window"</div>
+    };
+
+    let tabs = vec![
+        (
+            "Technical",
+            view! { cx, <div><ul>
+                <li class="spaced">"I'm proficient in multiple "<b>"programming languages"</b>":"<ul>
+                    <li><span class="title">"C / C++"</span>" were the primary languages taught at my univirsity, so I'm very comfortable with them."</li>
+                    <li><span class="title">"Rust"</span>" is currently my favorite language. I learned about it at some point in 2022, "
+                        "and recently started using it for all my school projects, so I'm at an intermediate/advanced level."</li>
+                    <li><span class="title">"Python"</span>" isn't usually what I reach to first "
+                        "for my projects, but I'm still proficient with it, and have used it for a few."</li>
+                    <li><span class="title">""</span>"...and more, including "<span class="title">"JavaScript"</span>", "
+                    <span class="title">"Java"</span>", and even some "<span class="title">"Prolog"</span>"!"</li>
+                </ul></li>
+
+                <li class="spaced"><b>"Data structures and algorithms"</b>
+                ": my B.S.C.S. has given me a strong foundation in the fundamentals of Computer Science. "
+                "I am experienced in designing and analyzing various data structures and algorithms."</li>
+
+                <li class="spaced">
+                    "I'm farmiliar with "<b>"software development concepts"</b>
+                    ", including code modularity / testing / documentation / version control techniques, "
+                    <span class="title">"agile"</span>", "<span class="title">"continuous integration and delivery"
+                    </span>" and "<span class="title">"the software development life cycle"</span>"."
+                </li>
+
+                <li class="spaced">
+                    "I have a solid understanding of "<b>"networking"</b>" and "<b>"web development"</b>", including how to work with protocols like "
+                    <span class="title">"IP"</span>", "<span class="title">"HTTP"</span>", "<span class="title">"TCP"</span>" and "<span class="title">"UDP"</span>
+                    ", as well as technologies like "<span class="title">"databases"</span>", "<span class="title">"HTML"</span>", "<span class="title">"CSS"</span>" and "<span class="title">"JavaScript"</span>"."
+                </li>
+
+                <li class="spaced">
+                    "I also have a solid understanding of "<b>"computer architecture"</b>
+                    " and "<b>"operating systems"</b>" concepts in general."
+                </li>
+
+                <li>
+                    "I know how to write code for "<b>"embedded systems"</b>" using the principles of "
+                    <span class="title">"real-time operating systems"</span>"."
+                </li>
+            </ul></div> },
+        ),
+        (
+            "Audio / Visual",
+            view! { cx, <div><ul>
+                <li><b>"Audio"</b><ul>
+                    <li class="spaced">
+                        "I purchased "<ExternalLink href="https://www.ableton.com/en/live/" display="Ableton Live" title_style=true/>
+                        " in 2018, and I've been using it to make music in my free time ever since. "
+                        "I've honed my production skills quite a bit, but I'm still yet to start releasing music."
+                    </li>
+                    <li class="spaced">
+                        "I volunteered at my church for several years in high school operating the sound booth for the live band, "
+                        "so I'm comfortable running a large sound board (analog or digital) and with the basics of audio engineering."
+                    </li>
+                </ul></li>
+
+                <li><b>"Visual"</b><ul>
+                    <li class="spaced">
+                        "I'm quite experienced with "<span class="title">"After Effects"</span>". You can see some of what I've created with it on "
+                        <ExternalLink href="https://www.instagram.com/ecridisedits/" display="my IG page"/>"."
+                    </li>
+                    <li>
+                        "I've also volunteered at my church to run slides/lights for sermons, so I'm familiar with "<span class="title">"ProPresenter"</span>
+                        " as well as "<br/><span class="title">"DMX lighting systems"</span>"."
+                    </li>
+                </ul></li>
+            </ul></div> },
+        ),
+        (
+            "Other",
+            view! { cx, <div><ul>
+                <li class="spaced">"I speak "<b>"three languages"</b>":"<ul>
+                    <li><span class="title">"English"</span>" (native)"</li>
+                    <li><span class="title">"Spanish"</span>" (fluent)"</li>
+                    <li><ExternalLink href="https://tokipona.org/" display="toki pona" title_style=true/>" (fluent)"</li>
+                    <li><span class="title">"Japanese"</span>" (beginner)"</li>
+                </ul></li>
+
+                <li class="spaced">"I have great "<b>"interpersonal"</b>" and "<b>"conflict-resolution"</b>
+                    " skills; I'm able to meaningfully communicate with people, even when we have conflicting views."</li>
+
+                <li>"I care deeply about my "<b>"work ethic"</b>"; I enjoy locking into my work and getting in the zone."</li>
+            </ul></div> },
+        ),
+    ];
+
+    view! { cx,
+        <Window
+            id="skills-win"
+            title="Skills".to_string()
+            content=content
+            tabs=Some((active_tab, tabs))
+            start_pos=(735, 20)
+            hidden=hidden
+            z_idx=z_idx
         />
     }
 }
@@ -284,6 +439,7 @@ fn MoreAboutWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
 fn ProjectsWindow(
     cx: Scope,
     hidden: RwSignal<bool>,
+    z_idx: RwSignal<usize>,
     file_win_src: WriteSignal<Option<&'static str>>,
 ) -> impl IntoView {
     let fws = file_win_src;
@@ -390,180 +546,13 @@ fn ProjectsWindow(
 
     view! { cx,
         <Window
-            window_id="projects-win"
-            window_title="Projects".to_string()
-            window_content=content
-            window_tabs=Some((active_tab, tabs))
-            window_width=550
-            start_pos=(775, 20)
+            id="projects-win"
+            title="Projects".to_string()
+            content=content
+            tabs=Some((active_tab, tabs))
+            start_pos=(735, 425)
             hidden=hidden
-        />
-    }
-}
-
-#[component]
-fn EducationWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
-    let content = view! { cx, <div>
-        <h4>"Bachelor's Degree in Computer Science"</h4>
-        <div class="spaced">
-            "I spent 2019-2023 at the "<ExternalLink href="https://www.uidaho.edu/" display="University of Idaho"/>
-            ", getting my "<ExternalLink href="https://catalog.uidaho.edu/courses/cs/" display="B.S.C.S."/>
-            ", as well as my "<ExternalLink href="https://catalog.uidaho.edu/courses/span/" display="Spanish minor"/>"."
-        </div>
-
-        <div>"CS Classes I took at UI:"</div>
-        <div style="border: 1px black solid; max-height: 110px; overflow-y: scroll">
-            <ul  style="font-family: consolas; font-size: 10pt; font-style: bold; line-height: 110%">
-                <li>"CS120 | Computer Science I"</li>
-                <li>"CS121 | Computer Science II"</li>
-                <li>"CS150 | Computer Organization and Architecture"</li>
-                <li>"CS210 | Programming Languages"</li>
-                <li>"CS240 | Computer Operating Systems"</li>
-                <li>"CS270 | System Software"</li>
-                <li>"CS360 | Database Systems"</li>
-                <li>"CS383 | Software Engineering"</li>
-                <li>"CS385 | Theory of Computation"</li>
-                <li>"CS395 | Analysis of Algorithms"</li>
-                <li>"CS400 | Contemporary Issues in CS"</li>
-                <li>"CS415 | Computational Biology: Sequence Alignment"</li>
-                <li>"CS445 | Compiler Design"</li>
-                <li>"CS452 | Real-Time Operating Systems"</li>
-                <li>"CS470 | Artificial Intelligence"</li>
-                <li>"CS475 | Machine Learning"</li>
-                <li>"CS480 | CS Senior Capstone Design I"</li>
-                <li>"CS481 | CS Senior Capstone Design II"</li>
-            </ul>
-        </div>
-        <div class="spaced"></div>
-
-        <h4>"K thru 12"</h4>
-        "I was homeschooled from kindergarten through high school, with two exceptions:"
-        <ol>
-            <li>"I did a year of Montessori in like 5th grade"</li>
-            <li>"in high school, I was half-time homeschooled and half-time public school (at Idaho Falls High School)"</li>
-        </ol>
-
-        <p>"I gained an interest for coding around the age of 10. A friend of mine showed me "
-        <ExternalLink href="https://www.codecademy.com/" display="codecademy.com"/>
-        " (back when it was still completely free!), which was very influential for me starting out."</p>
-    </div> };
-
-    view! { cx,
-        <Window
-            window_id="education-win"
-            window_title="Education".to_string()
-            window_content=content
-            window_width=400
-            start_pos=(25, 210)
-            hidden=hidden
-        />
-    }
-}
-
-#[component]
-fn SkillsWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
-    let active_tab = create_rw_signal(cx, "Technical");
-
-    let content = view! { cx,
-        <div>"Failed to load tabs for this window"</div>
-    };
-
-    let tabs = vec![
-        (
-            "Technical",
-            view! { cx, <div><ul>
-                <li class="spaced">"I'm proficient in multiple "<b>"programming languages"</b>":"<ul>
-                    <li><span class="title">"C / C++"</span>" were the primary languages taught at my univirsity, so I'm very comfortable with them."</li>
-                    <li><span class="title">"Rust"</span>" is currently my favorite language. I learned about it at some point in 2022, "
-                        "and recently started using it for all my school projects, so I'm at an intermediate/advanced level."</li>
-                    <li><span class="title">"Python"</span>" isn't usually what I reach to first "
-                        "for my projects, but I'm still proficient with it, and have used it for a few."</li>
-                    <li><span class="title">""</span>"...and more, including "<span class="title">"JavaScript"</span>", "
-                    <span class="title">"Java"</span>", and even some "<span class="title">"Prolog"</span>"!"</li>
-                </ul></li>
-
-                <li class="spaced"><b>"Data structures and algorithms"</b>
-                ": my B.S.C.S. has given me a strong foundation in the fundamentals of Computer Science. "
-                "I am experienced in designing and analyzing various data structures and algorithms."</li>
-
-                <li class="spaced">
-                    "I'm farmiliar with "<b>"software development concepts"</b>
-                    ", including code modularity / testing / documentation / version control techniques, "
-                    <span class="title">"agile"</span>", "<span class="title">"continuous integration and delivery"
-                    </span>" and "<span class="title">"the software development life cycle"</span>"."
-                </li>
-
-                <li class="spaced">
-                    "I have a solid understanding of "<b>"networking"</b>" and "<b>"web development"</b>", including how to work with protocols like "
-                    <span class="title">"IP"</span>", "<span class="title">"HTTP"</span>", "<span class="title">"TCP"</span>" and "<span class="title">"UDP"</span>
-                    ", as well as technologies like "<span class="title">"databases"</span>", "<span class="title">"HTML"</span>", "<span class="title">"CSS"</span>" and "<span class="title">"JavaScript"</span>"."
-                </li>
-
-                <li class="spaced">
-                    "I also have a solid understanding of "<b>"computer architecture"</b>
-                    " and "<b>"operating systems"</b>" concepts in general."
-                </li>
-
-                <li>
-                    "I know how to write code for "<b>"embedded systems"</b>" using the principles of "
-                    <span class="title">"real-time operating systems"</span>"."
-                </li>
-            </ul></div> },
-        ),
-        (
-            "Audio / Visual",
-            view! { cx, <div><ul>
-                <li><b>"Audio"</b><ul>
-                    <li class="spaced">
-                        "I purchased "<ExternalLink href="https://www.ableton.com/en/live/" display="Ableton Live" title_style=true/>
-                        " in 2018, and I've been using it to make music in my free time ever since. "
-                        "I've honed my production skills quite a bit, but I'm still yet to start releasing music."
-                    </li>
-                    <li class="spaced">
-                        "I volunteered at my church for several years in high school operating the sound booth for the live band, "
-                        "so I'm comfortable running a large sound board (analog or digital) and with the basics of audio engineering."
-                    </li>
-                </ul></li>
-
-                <li><b>"Visual"</b><ul>
-                    <li class="spaced">
-                        "I'm quite experienced with "<span class="title">"After Effects"</span>". You can see some of what I've created with it on "
-                        <ExternalLink href="https://www.instagram.com/ecridisedits/" display="my IG page"/>"."
-                    </li>
-                    <li>
-                        "I've also volunteered at my church to run slides/lights for sermons, so I'm familiar with "<span class="title">"ProPresenter"</span>
-                        " as well as "<br/><span class="title">"DMX lighting systems"</span>"."
-                    </li>
-                </ul></li>
-            </ul></div> },
-        ),
-        (
-            "Other",
-            view! { cx, <div><ul>
-                <li class="spaced">"I speak "<b>"three languages"</b>":"<ul>
-                    <li><span class="title">"English"</span>" (native)"</li>
-                    <li><span class="title">"Spanish"</span>" (fluent)"</li>
-                    <li><ExternalLink href="https://tokipona.org/" display="toki pona" title_style=true/>" (fluent)"</li>
-                    <li><span class="title">"Japanese"</span>" (beginner)"</li>
-                </ul></li>
-
-                <li class="spaced">"I have great "<b>"interpersonal"</b>" and "<b>"conflict-resolution"</b>
-                    " skills; I'm able to meaningfully communicate with people, even when we have conflicting views."</li>
-
-                <li>"I care deeply about my "<b>"work ethic"</b>"; I enjoy locking into my work and getting in the zone."</li>
-            </ul></div> },
-        ),
-    ];
-
-    view! { cx,
-        <Window
-            window_id="skills-win"
-            window_title="Skills".to_string()
-            window_content=content
-            window_tabs=Some((active_tab, tabs))
-            window_width=550
-            start_pos=(775, 425)
-            hidden=hidden
+            z_idx=z_idx
         />
     }
 }
@@ -572,6 +561,7 @@ fn SkillsWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
 fn FileWindow(
     cx: Scope,
     hidden: RwSignal<bool>,
+    z_idx: RwSignal<usize>,
     src: ReadSignal<Option<&'static str>>,
 ) -> impl IntoView {
     let content = view! { cx, <div>
@@ -584,18 +574,18 @@ fn FileWindow(
 
     view! { cx,
         <Window
-            window_id="file-win"
-            window_title="File Viewer".to_string()
-            window_content=content
-            window_width=800
+            id="file-win"
+            title="File Viewer".to_string()
+            content=content
             start_pos=(60, 90)
             hidden=hidden
+            z_idx=z_idx
         />
     }
 }
 
 #[component]
-fn LoadingWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
+fn LoadingWindow(cx: Scope, hidden: RwSignal<bool>, z_idx: RwSignal<usize>) -> impl IntoView {
     let mut rng = rand::thread_rng();
     let noun: &'static str = ABSTRACT_NOUNS.choose(&mut rng).unwrap();
     let title = format!("Loading {}", noun);
@@ -605,30 +595,34 @@ fn LoadingWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
 
     view! { cx,
         <Window
-            window_id="loading-win"
-            window_title=title
-            window_content=content
-            window_width=225
-            start_pos=(495, 325)
+            id="loading-win"
+            title=title
+            content=content
+            start_pos=(465, 325)
             hidden=hidden
+            z_idx=z_idx
         />
     }
 }
 
 #[component]
-fn AdWindow(cx: Scope, hidden: RwSignal<bool>) -> impl IntoView {
+fn AdWindow(cx: Scope, hidden: RwSignal<bool>, z_idx: RwSignal<usize>) -> impl IntoView {
     let content = view! { cx, <div style="height: 100px">
-        <img src="/assets/ur-ad-here.png" style="height: 100px; width: 200px; image-rendering: pixelated" draggable="false"/>
+        <img
+            src="/assets/ur-ad-here.png"
+            style="height: 100px; width: 200px; image-rendering: pixelated"
+            draggable="false"
+        />
     </div> };
 
     view! { cx,
         <Window
-            window_id="ad-win"
-            window_title="Advertisement".to_string()
-            window_content=content
-            window_width=200
+            id="ad-win"
+            title="Advertisement".to_string()
+            content=content
             start_pos=(255, 22)
             hidden=hidden
+            z_idx=z_idx
         />
     }
 }
