@@ -65,10 +65,14 @@ ul {
 	font-size: x-large;
 	display: flex;
 	padding-left: 10px;
-	cursor: move;
+	cursor: grab;
 	user-select: none;
 	border-bottom: #AA4465 solid 5px;
 	background-image: linear-gradient(to top, #93E1D8, #DDFFF7)
+}
+
+.win-titlebar:active {
+	cursor: grabbing;
 }
 
 .win-titlebar p {
@@ -136,7 +140,7 @@ ul {
 	margin-left: auto;
 	float: right;
 	display: block;
-	cursor: pointer;
+	cursor: not-allowed;
 	width: 20px;
 	height: 20px;
 	background-position: center;
@@ -152,6 +156,10 @@ ul {
 }
 
 .external-link {
+	cursor: alias;
+}
+
+.external-link>span {
 	display: inline-block;
 	offset: bottom 100px;
 	width: 14px;
@@ -162,7 +170,7 @@ ul {
 	image-rendering: pixelated;
 }
 
-a:hover>.external-link {
+.external-link:hover>span {
 	background-image: url("/assets/external-link-hover.png");
 }
 
@@ -220,7 +228,7 @@ div.win-content :last-child {
 	padding: 0px;
 	background: linear-gradient(124deg, #ef9e91, #f9a4a4, #d8bf6b, #dedf91, #74e186, #7edce1, #a29cef, #d593db, #ebc0ef);
 	background-size: 1800% 1800%;
-	cursor: help;
+	cursor: wait;
 	animation: rainbow 60s ease infinite;
 }
 

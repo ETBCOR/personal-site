@@ -2,7 +2,6 @@ use leptos::{ev::MouseEvent, *};
 use leptos_meta::*;
 use leptos_router::*;
 use leptos_use::{use_event_listener, use_event_listener_with_options};
-// use rand::{distributions::Slice, Rng};
 use rand::seq::SliceRandom;
 use web_sys::AddEventListenerOptions;
 
@@ -244,16 +243,14 @@ fn Window(
 }
 
 #[component]
-#[allow(unused_variables)]
 fn AboutWindow(cx: Scope, hidden: RwSignal<bool>, z_idx: RwSignal<usize>) -> impl IntoView {
     let content = view! { cx, <div> <p>
         "Hello! I'm Ethan Corgatelli, and was born in April 2001. "
         "I'm passionate about making software, writing music, and learning languages. You can contact me "
         <ExternalLink href="http://www.discordapp.com/users/207897365141520384" display="on discord"/>
-        ", or "<ExternalLink href="mailto:etbcor@gmail.com" display="via email."/>
+        ", or "<ExternalLink href="mailto:etbcor@gmail.com" display="via email"/>
         ". Here's my "<ExternalLink href="https://www.github.com/ETBCOR" display="GitHub profile"/>". "
         <i>"I'm "<u>"etbcor"</u>" on most platforms!"</i>" Thanks for coming to my site!"
-        // " Click "<a href="" on:click=move |_| more_hidden.set(false)>"here"</a>" to read more about me."
     </p> </div> };
 
     view! { cx,
@@ -645,9 +642,9 @@ fn ExternalLink(
     #[prop(default = false)] title_style: bool,
 ) -> impl IntoView {
     view! { cx,
-        <a target="_blank" href=href class:title=title_style>
+        <a class="external-link" target="_blank" href=href class:title=title_style>
             {display}
-            <span class="external-link"></span>
+            <span></span>
         </a>
     }
 }

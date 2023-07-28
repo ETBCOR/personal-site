@@ -1,3 +1,4 @@
+#[allow(non_snake_case)]
 pub mod app;
 use cfg_if::cfg_if;
 
