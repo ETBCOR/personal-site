@@ -57,10 +57,8 @@ fn HomePage(cx: Scope) -> impl IntoView {
     let loading = create_rw_signal(cx, false);
     let min_loading = move |_| loading.update(|h| *h = !*h);
 
-    let z_idx = create_rw_signal(cx, 1);
-
     view! { cx,
-        <a href="/portfolio"><LoadingWindow hidden=loading z_idx=z_idx/></a>
+        <LoadingWindow hidden=loading portfolio_link=true/>
         <footer>
             <div class="title win-minimized favicon" on:click=move |_| loading.set(false)></div>
             <div class="title win-minimized" on:mousedown=min_loading class:hidden={move || !loading()}>"\"Inspiration\""</div>
@@ -89,13 +87,13 @@ fn PortfolioPage(cx: Scope) -> impl IntoView {
     let z_idx = create_rw_signal(cx, 1);
 
     view! { cx,
-        <LoadingWindow hidden=loading_hidden z_idx=z_idx/>
-        <AboutWindow hidden=about_hidden z_idx=z_idx/>
-        <EducationWindow hidden=education_hidden z_idx=z_idx/>
-        <SkillsWindow hidden=skills_hidden z_idx=z_idx/>
-        <ProjectsWindow hidden=projects_hidden z_idx=z_idx file_win_src=set_file_src/>
-        <FileWindow hidden=file_hidden z_idx=z_idx src=file_src/>
-        <AdWindow hidden=ad_hidden z_idx=z_idx/>
+        <LoadingWindow hidden=loading_hidden z_idx=Some(z_idx)/>
+        <AboutWindow hidden=about_hidden z_idx=Some(z_idx)/>
+        <EducationWindow hidden=education_hidden z_idx=Some(z_idx)/>
+        <SkillsWindow hidden=skills_hidden z_idx=Some(z_idx)/>
+        <ProjectsWindow hidden=projects_hidden z_idx=Some(z_idx) file_win_src=set_file_src/>
+        <FileWindow hidden=file_hidden z_idx=Some(z_idx) src=file_src/>
+        <AdWindow hidden=ad_hidden z_idx=Some(z_idx)/>
         <div style="height: 65px"></div> // spacer
         <Footer hidden_sigs=hidden_sigs/>
     }
@@ -157,18 +155,27 @@ fn Window(
     #[prop(default = None)] tabs: Tabs,
     start_pos: (i32, i32),
     hidden: RwSignal<bool>,
-    z_idx: RwSignal<usize>,
+    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
     let x = create_rw_signal(cx, start_pos.0);
     let y = create_rw_signal(cx, start_pos.1);
     let dx = create_rw_signal(cx, 0);
     let dy = create_rw_signal(cx, 0);
 
-    let this_z_idx = create_rw_signal(cx, if id.eq("ad-win") { 0 } else { z_idx() });
+    let this_z_idx = create_rw_signal(
+        cx,
+        if id.eq("ad-win") || !z_idx.is_some() {
+            0
+        } else {
+            z_idx.unwrap().get_untracked()
+        },
+    );
 
     let drag = move |e: MouseEvent| {
-        z_idx.update(|z| *z = *z + 1);
-        this_z_idx.set(z_idx());
+        if let Some(z_idx) = z_idx {
+            z_idx.update(|z| *z = *z + 1);
+            this_z_idx.set(z_idx());
+        }
 
         dx.set(x.get_untracked() - e.client_x());
         dy.set(y.get_untracked() - e.client_y());
@@ -261,7 +268,11 @@ fn Window(
 }
 
 #[component]
-fn AboutWindow(cx: Scope, hidden: RwSignal<bool>, z_idx: RwSignal<usize>) -> impl IntoView {
+fn AboutWindow(
+    cx: Scope,
+    hidden: RwSignal<bool>,
+    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
+) -> impl IntoView {
     let content = view! { cx, <div> <p>
         "Hello! I'm Ethan Corgatelli, and was born in April 2001. "
         "I'm passionate about making software, writing music, and learning languages. You can contact me "
@@ -284,7 +295,11 @@ fn AboutWindow(cx: Scope, hidden: RwSignal<bool>, z_idx: RwSignal<usize>) -> imp
 }
 
 #[component]
-fn EducationWindow(cx: Scope, hidden: RwSignal<bool>, z_idx: RwSignal<usize>) -> impl IntoView {
+fn EducationWindow(
+    cx: Scope,
+    hidden: RwSignal<bool>,
+    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
+) -> impl IntoView {
     let content = view! { cx, <div>
         <h4>"Bachelor's Degree in Computer Science"</h4>
         <div class="spaced">
@@ -343,7 +358,11 @@ fn EducationWindow(cx: Scope, hidden: RwSignal<bool>, z_idx: RwSignal<usize>) ->
 }
 
 #[component]
-fn SkillsWindow(cx: Scope, hidden: RwSignal<bool>, z_idx: RwSignal<usize>) -> impl IntoView {
+fn SkillsWindow(
+    cx: Scope,
+    hidden: RwSignal<bool>,
+    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
+) -> impl IntoView {
     let active_tab = create_rw_signal(cx, "Technical");
 
     let content = view! { cx,
@@ -457,7 +476,7 @@ fn SkillsWindow(cx: Scope, hidden: RwSignal<bool>, z_idx: RwSignal<usize>) -> im
 fn ProjectsWindow(
     cx: Scope,
     hidden: RwSignal<bool>,
-    z_idx: RwSignal<usize>,
+    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
     file_win_src: WriteSignal<Option<&'static str>>,
 ) -> impl IntoView {
     let fws = file_win_src;
@@ -581,7 +600,7 @@ fn ProjectsWindow(
 fn FileWindow(
     cx: Scope,
     hidden: RwSignal<bool>,
-    z_idx: RwSignal<usize>,
+    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
     src: ReadSignal<Option<&'static str>>,
 ) -> impl IntoView {
     let content = view! { cx, <div>
@@ -605,13 +624,26 @@ fn FileWindow(
 }
 
 #[component]
-fn LoadingWindow(cx: Scope, hidden: RwSignal<bool>, z_idx: RwSignal<usize>) -> impl IntoView {
+fn LoadingWindow(
+    cx: Scope,
+    hidden: RwSignal<bool>,
+    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
+    #[prop(default = false)] portfolio_link: bool,
+) -> impl IntoView {
     let mut rng = rand::thread_rng();
     let noun: &'static str = ABSTRACT_NOUNS.choose(&mut rng).unwrap();
     let title = format!("Loading {}", noun);
-    let content = view! { cx, <div>
-        <img src="/assets/infinity.svg" style="width: 100%; height: 100px" draggable="false"/>
-    </div> };
+    let nav = leptos_router::use_navigate(cx);
+
+    let content = if portfolio_link {
+        view! { cx, <div on:click=move |_| nav("/portfolio", Default::default()).unwrap() style="cursor: pointer">
+            <img src="/assets/infinity.svg" style="width: 100%; height: 100px" draggable="false"/>
+        </div> }
+    } else {
+        view! { cx, <div>
+            <img src="/assets/infinity.svg" style="width: 100%; height: 100px" draggable="false"/>
+        </div> }
+    };
 
     view! { cx,
         <Window
@@ -626,7 +658,11 @@ fn LoadingWindow(cx: Scope, hidden: RwSignal<bool>, z_idx: RwSignal<usize>) -> i
 }
 
 #[component]
-fn AdWindow(cx: Scope, hidden: RwSignal<bool>, z_idx: RwSignal<usize>) -> impl IntoView {
+fn AdWindow(
+    cx: Scope,
+    hidden: RwSignal<bool>,
+    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
+) -> impl IntoView {
     let content = view! { cx, <div style="height: 100px">
         <img
             src="/assets/ur-ad-here.png"
