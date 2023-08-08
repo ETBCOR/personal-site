@@ -44,6 +44,7 @@ pub fn App(cx: Scope) -> impl IntoView {
             <main>
                 <Routes>
                     <Route path="" view=HomePage/>
+                    <Route path="/portfolio" view=PortfolioPage/>
                     <Route path="/*any" view=NotFound/>
                 </Routes>
             </main>
@@ -51,9 +52,24 @@ pub fn App(cx: Scope) -> impl IntoView {
     }
 }
 
-/// Renders home page
 #[component]
 fn HomePage(cx: Scope) -> impl IntoView {
+    let loading = create_rw_signal(cx, false);
+    let min_loading = move |_| loading.update(|h| *h = !*h);
+
+    let z_idx = create_rw_signal(cx, 1);
+
+    view! { cx,
+        <a href="/portfolio"><LoadingWindow hidden=loading z_idx=z_idx/></a>
+        <footer>
+            <div class="title win-minimized favicon" on:click=move |_| loading.set(false)></div>
+            <div class="title win-minimized" on:mousedown=min_loading class:hidden={move || !loading()}>"\"Inspiration\""</div>
+        </footer>
+    }
+}
+
+#[component]
+fn PortfolioPage(cx: Scope) -> impl IntoView {
     let about_hidden = create_rw_signal(cx, false);
     let projects_hidden = create_rw_signal(cx, false);
     let education_hidden = create_rw_signal(cx, false);
@@ -73,13 +89,13 @@ fn HomePage(cx: Scope) -> impl IntoView {
     let z_idx = create_rw_signal(cx, 1);
 
     view! { cx,
+        <LoadingWindow hidden=loading_hidden z_idx=z_idx/>
         <AboutWindow hidden=about_hidden z_idx=z_idx/>
         <EducationWindow hidden=education_hidden z_idx=z_idx/>
         <SkillsWindow hidden=skills_hidden z_idx=z_idx/>
         <ProjectsWindow hidden=projects_hidden z_idx=z_idx file_win_src=set_file_src/>
-        <LoadingWindow hidden=loading_hidden z_idx=z_idx/>
-        <AdWindow hidden=ad_hidden z_idx=z_idx/>
         <FileWindow hidden=file_hidden z_idx=z_idx src=file_src/>
+        <AdWindow hidden=ad_hidden z_idx=z_idx/>
         <div style="height: 65px"></div> // spacer
         <Footer hidden_sigs=hidden_sigs/>
     }
@@ -107,7 +123,7 @@ fn Footer(cx: Scope, hidden_sigs: Vec<RwSignal<bool>>) -> impl IntoView {
     let education = hidden_sigs[2];
     let skills = hidden_sigs[3];
     let loading = hidden_sigs[4];
-    let footer = move || !(about() || education() || projects() || skills() || loading());
+    // let footer = move || !(about() || education() || projects() || skills() || loading());
 
     let min_about = move |_| about.update(|h| *h = !*h);
     let min_projects = move |_| projects.update(|h| *h = !*h);
@@ -116,7 +132,9 @@ fn Footer(cx: Scope, hidden_sigs: Vec<RwSignal<bool>>) -> impl IntoView {
     let min_loading = move |_| loading.update(|h| *h = !*h);
 
     view! { cx,
-        <footer class:hidden={footer}>
+        // <footer class:hidden={footer}>
+        <footer>
+            <a class="title win-minimized favicon" href="/"></a>
             <div class="title win-minimized" on:mousedown=min_about class:hidden={move || !about()}>"About Me"</div>
             <div class="title win-minimized" on:mousedown=min_education class:hidden={move || !education()}>"Education"</div>
             <div class="title win-minimized" on:mousedown=min_projects class:hidden={move || !projects()}>"Projects"</div>
@@ -339,7 +357,7 @@ fn SkillsWindow(cx: Scope, hidden: RwSignal<bool>, z_idx: RwSignal<usize>) -> im
                 <li class="spaced">"I'm proficient in multiple "<b>"programming languages"</b>":"<ul>
                     <li><span class="title">"C / C++"</span>" were the primary languages taught at my univirsity, so I'm very comfortable with them."</li>
                     <li><span class="title">"Rust"</span>" is currently my favorite language. I learned about it at some point in 2022, "
-                        "and recently started using it for all my school projects, so I'm at an intermediate/advanced level."</li>
+                        "and recently started using it for all my school projects, so I'm at an intermediate / advanced level."</li>
                     <li><span class="title">"Python"</span>" isn't usually what I reach to first "
                         "for my projects, but I'm still proficient with it, and have used it for a few."</li>
                     <li><span class="title">""</span>"...and more, including "<span class="title">"JavaScript"</span>", "
@@ -391,11 +409,14 @@ fn SkillsWindow(cx: Scope, hidden: RwSignal<bool>, z_idx: RwSignal<usize>) -> im
 
                 <li><b>"Visual"</b><ul>
                     <li class="spaced">
-                        "I'm quite experienced with "<span class="title">"After Effects"</span>". You can see some of what I've created with it on "
+                        "I'm quite experienced with "
+                        <ExternalLink href="https://www.adobe.com/products/aftereffects.html" display="After Effects" title_style=true/>
+                        ". You can see some of what I've created with it on "
                         <ExternalLink href="https://www.instagram.com/ecridisedits/" display="my IG page"/>"."
                     </li>
                     <li>
-                        "I've also volunteered at my church to run slides/lights for sermons, so I'm familiar with "<span class="title">"ProPresenter"</span>
+                        "I've also volunteered at my church to run slides/lights for sermons, so I'm familiar with "
+                        <ExternalLink href="https://renewedvision.com/propresenter/" display="ProPresenter" title_style=true/>
                         " as well as "<br/><span class="title">"DMX lighting systems"</span>"."
                     </li>
                 </ul></li>
@@ -476,7 +497,7 @@ fn ProjectsWindow(
                 <li class="spaced">
                     <b>"CS452 | Real-Time Operating Systems"</b>
                     <br/>
-                    "I created multiple programs run on embedded systems (Feather RP2040 & ESP32) in this class. Repository "
+                    "I created multiple programs for embedded systems (Feather RP2040 & ESP32) in this class. Repository "
                     <ExternalLink href="https://github.com/ETBCOR/cs452/" display="here"/>"."
                 </li>
 
@@ -491,6 +512,8 @@ fn ProjectsWindow(
                     <br/>
                     <FileLink src="https://drive.google.com/file/d/1Qr5B0yZ8s3aY3Ywdd4KCYq_7y5bXfCTg/preview" display="Map Coloring Algorithms" file_win_src=fws/>
                     " | "<ExternalLink href="https://github.com/ETBCOR/cs470/tree/master/proj3" display="Github Repository"/>
+                    <br/>
+                    <FileLink src="https://drive.google.com/file/d/1ysXZTxxRYNOqZDYkrTWZj6VWc2TndJZR/preview" display="Modeling Genealogy in Prolog" file_win_src=fws/>
                 </li>
 
                 <li class="spaced">
@@ -528,7 +551,7 @@ fn ProjectsWindow(
 
                 <li class="spaced">
                     "I've made hundereds of "<b>"songs"</b>" (varying in completeness) "
-                    "with Ableton in my free time, but I haven't released anything yet."
+                    "with Ableton Live in my free time, but I haven't released anything yet."
                 </li>
 
                 <li class="spaced">

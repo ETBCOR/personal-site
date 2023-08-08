@@ -124,15 +124,25 @@ ul {
 .win-minimized {
 	font-family: 'VT323';
 	font-size: x-large;
-	display: flex;
+	display: inline;
 	padding: 5px;
 	border: #AA4465 solid 5px;
 	display: inline-table;
+	vertical-align: middle;
 	cursor: pointer;
 	margin: 5px;
 	width: 200px;
 	box-shadow: 5px 3px #462255;
 	background-image: linear-gradient(to right, #93E1D8, #DDFFF7)
+}
+
+.favicon {
+	padding: 0;
+	width: 32px;
+	height: 32px;
+	background-position: center;
+	background-size: 90%;
+	background-image: url("/assets/favicon.ico");
 }
 
 .win-close {
@@ -226,7 +236,7 @@ div.win-content :last-child {
 
 #loading-win>.win-content {
 	padding: 0px;
-	background: linear-gradient(124deg, #ef9e91, #f9a4a4, #d8bf6b, #dedf91, #74e186, #7edce1, #a29cef, #d593db, #ebc0ef);
+	background: linear-gradient(124deg, #d593db, #ebc0ef, #ef9e91, #f9a4a4, #d8bf6b, #dedf91, #74e186, #7edce1, #a29cef);
 	background-size: 1800% 1800%;
 	cursor: wait;
 	animation: rainbow 60s ease infinite;
