@@ -45,8 +45,8 @@ pub fn App(cx: Scope) -> impl IntoView {
                 <Routes>
                     <Route path="" view=HomePage/>
                     <Route path="/portfolio" view=PortfolioPage/>
-                    <Route path="/tp" view=TokiPonaPage/>
-                    <Route path="/music" view=MusicPage/>
+                    // <Route path="/tp" view=TokiPonaPage/>
+                    // <Route path="/music" view=MusicPage/>
                     <Route path="/*any" view=NotFound/>
                 </Routes>
             </main>
@@ -58,15 +58,21 @@ pub fn App(cx: Scope) -> impl IntoView {
 fn HomePage(cx: Scope) -> impl IntoView {
     let loading_hidden = create_rw_signal(cx, false);
     let portfolio_hidden = create_rw_signal(cx, false);
+    let music_hidden = create_rw_signal(cx, false);
+    let tp_hidden = create_rw_signal(cx, false);
 
     let footer_items = vec![
         ("\"Inspiration\"", loading_hidden),
         ("Portfolio", portfolio_hidden),
+        ("Music", music_hidden),
+        ("toki pona", tp_hidden),
     ];
 
     view! { cx,
         <LoadingWindow pos=(20, 20) hidden=loading_hidden variant=LoadingWindowVariant::Default/>
-        <LinkWindow pos=(285, 20) hidden=portfolio_hidden id="link-win" title="Portfolio".to_string() bg_img="/assets/file-icon.svg" src="/portfolio"/>
+        <LinkWindow pos=(285, 20) hidden=portfolio_hidden id="portfolio-link-win" title="Portfolio".to_string() bg_img="/assets/file-icon.svg" src="/portfolio"/>
+        <LinkWindow pos=(25, 200) hidden=music_hidden id="music-link-win" title="Music".to_string() bg_img="/assets/wireless-nature.png" src="/music"/>
+        <LinkWindow pos=(285, 320) hidden=tp_hidden id="tp-link-win" title="toki pona".to_string() bg_img="/assets/itan.svg" src="/tp"/>
         <div style="height: 65px"></div> // spacer in narrow view
         <Footer items=footer_items/>
     }
@@ -93,7 +99,7 @@ fn PortfolioPage(cx: Scope) -> impl IntoView {
     let z_idx = create_rw_signal(cx, 1);
 
     view! { cx,
-        <LoadingWindow   pos=(465, 325) hidden=loading_hidden   z_idx=Some(z_idx) variant=LoadingWindowVariant::Default/>
+        <LoadingWindow   pos=(465, 325) hidden=loading_hidden   z_idx=Some(z_idx) variant=LoadingWindowVariant::HomePageLink/>
         <AboutWindow     pos=(25, 20)   hidden=about_hidden     z_idx=Some(z_idx)/>
         <EducationWindow pos=(25, 210)  hidden=education_hidden z_idx=Some(z_idx)/>
         <SkillsWindow    pos=(735, 20)  hidden=skills_hidden    z_idx=Some(z_idx)/>
@@ -106,10 +112,18 @@ fn PortfolioPage(cx: Scope) -> impl IntoView {
 }
 
 #[component]
-fn TokiPonaPage(cx: Scope) -> impl IntoView {}
+fn TokiPonaPage(cx: Scope) -> impl IntoView {
+    view! { cx,
+        "Page under construction"
+    }
+}
 
 #[component]
-fn MusicPage(cx: Scope) -> impl IntoView {}
+fn MusicPage(cx: Scope) -> impl IntoView {
+    view! { cx,
+        "Page under construction"
+    }
+}
 
 #[component]
 fn NotFound(cx: Scope) -> impl IntoView {
@@ -121,7 +135,7 @@ fn NotFound(cx: Scope) -> impl IntoView {
     let loading = create_rw_signal(cx, false);
 
     view! { cx,
-        <LoadingWindow pos=(100, 100) hidden=loading variant=LoadingWindowVariant::NotFound/>
+        <LoadingWindow pos=(100, 100) hidden=loading variant=LoadingWindowVariant::HomePageLink/>
     }
 }
 
@@ -280,7 +294,7 @@ fn LinkWindow(
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
     let nav = leptos_router::use_navigate(cx);
-    let content = view! { cx, <div style="cursor: pointer" on:click=move |_| nav(src, Default::default()).unwrap()>
+    let content = view! { cx, <div style="cursor: pointer; text-align: center" on:click=move |_| nav(src, Default::default()).unwrap()>
         <img src=bg_img style="padding: 10px" draggable=false/>
     </div> };
 
@@ -615,7 +629,7 @@ fn FileWindow(
 
 enum LoadingWindowVariant {
     Default,
-    NotFound,
+    HomePageLink,
 }
 
 #[component]
@@ -637,7 +651,7 @@ fn LoadingWindow(
                 <img src="/assets/infinity.svg" style="width: 100%; height: 100px" draggable="false" title="ale li pona"/>
             </div> }
         }
-        LoadingWindowVariant::NotFound => {
+        LoadingWindowVariant::HomePageLink => {
             title = "Page Not Found".to_string();
             view! { cx, <div style="cursor: pointer" on:click=move |_| nav("/", Default::default()).unwrap()>
                 <img src="/assets/infinity.svg" style="width: 100%; height: 100px" draggable="false"/>

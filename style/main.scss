@@ -235,11 +235,13 @@ div.win-content :last-child {
 }
 
 #loading-win>.win-content,
-#link-win>.win-content {
+#portfolio-link-win>.win-content,
+#music-link-win>.win-content,
+#tp-link-win>.win-content {
 	padding: 0px;
-	background: linear-gradient(124deg, #d593db, #ebc0ef, #ef9e91, #f9a4a4, #d8bf6b, #dedf91, #74e186, #7edce1, #a29cef);
-	background-size: 1800% 1800%;
-	animation: rainbow 60s ease infinite;
+	background: linear-gradient(24deg, #d593db, #ebc0ef, #ef9e91, #f9a4a4, #d8bf6b, #dedf91, #74e186, #7edce1, #a29cef);
+	background-size: 800% 800%;
+	animation: rainbow 30s ease infinite;
 }
 
 @keyframes rainbow {
