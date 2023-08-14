@@ -30,7 +30,7 @@ pub fn App(cx: Scope) -> impl IntoView {
         // id=leptos means cargo-leptos will hot-reload this stylesheet
         <Stylesheet id="leptos" href="/pkg/portfolio_site.css"/>
 
-        <Title text="Ethan Corgatelli"/>
+        <Title text="etbcor's website"/>
 
         // Google fonts
         <Link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -45,6 +45,8 @@ pub fn App(cx: Scope) -> impl IntoView {
                 <Routes>
                     <Route path="" view=HomePage/>
                     <Route path="/portfolio" view=PortfolioPage/>
+                    <Route path="/tp" view=TokiPonaPage/>
+                    <Route path="/music" view=MusicPage/>
                     <Route path="/*any" view=NotFound/>
                 </Routes>
             </main>
@@ -54,34 +56,38 @@ pub fn App(cx: Scope) -> impl IntoView {
 
 #[component]
 fn HomePage(cx: Scope) -> impl IntoView {
-    let loading = create_rw_signal(cx, false);
-    let min_loading = move |_| loading.update(|h| *h = !*h);
+    let loading_hidden = create_rw_signal(cx, false);
+    let portfolio_hidden = create_rw_signal(cx, false);
+
+    let footer_items = vec![
+        ("\"Inspiration\"", loading_hidden),
+        ("Portfolio", portfolio_hidden),
+    ];
 
     view! { cx,
-        <LoadingWindow pos=(20, 20) hidden=loading variant=LoadingWindowVariant::PortfolioLink/>
-        <footer>
-            <div class="title win-minimized favicon" on:click=move |_| loading.set(false)></div>
-            <div class="title win-minimized" on:mousedown=min_loading class:hidden={move || !loading()}>"\"Inspiration\""</div>
-        </footer>
+        <LoadingWindow pos=(20, 20) hidden=loading_hidden variant=LoadingWindowVariant::Default/>
+        <LinkWindow pos=(285, 20) hidden=portfolio_hidden id="link-win" title="Portfolio".to_string() bg_img="/assets/file-icon.svg" src="/portfolio"/>
+        <div style="height: 65px"></div> // spacer in narrow view
+        <Footer items=footer_items/>
     }
 }
 
 #[component]
 fn PortfolioPage(cx: Scope) -> impl IntoView {
     let about_hidden = create_rw_signal(cx, false);
-    let projects_hidden = create_rw_signal(cx, false);
     let education_hidden = create_rw_signal(cx, false);
     let skills_hidden = create_rw_signal(cx, false);
+    let projects_hidden = create_rw_signal(cx, false);
     let file_hidden = create_rw_signal(cx, true);
     let loading_hidden = create_rw_signal(cx, false);
     let ad_hidden = create_rw_signal(cx, false);
 
-    let hidden_sigs = vec![
-        about_hidden,
-        projects_hidden,
-        education_hidden,
-        skills_hidden,
-        loading_hidden,
+    let footer_items = vec![
+        ("About Me", about_hidden),
+        ("Education", education_hidden),
+        ("Projects", projects_hidden),
+        ("Skills", skills_hidden),
+        ("\"Inspiration\"", loading_hidden),
     ];
     let (file_src, set_file_src) = create_signal(cx, None);
     let z_idx = create_rw_signal(cx, 1);
@@ -94,12 +100,17 @@ fn PortfolioPage(cx: Scope) -> impl IntoView {
         <ProjectsWindow  pos=(735, 425) hidden=projects_hidden  z_idx=Some(z_idx) file_win_src=set_file_src/>
         <FileWindow      pos=(60, 90)   hidden=file_hidden      z_idx=Some(z_idx) src=file_src/>
         <AdWindow        pos=(255, 22)  hidden=ad_hidden        z_idx=Some(z_idx)/>
-        <div style="height: 65px"></div> // spacer
-        <Footer hidden_sigs=hidden_sigs/>
+        <div style="height: 65px"></div> // spacer in narrow view
+        <Footer items=footer_items/>
     }
 }
 
-/// 404 - Not Found
+#[component]
+fn TokiPonaPage(cx: Scope) -> impl IntoView {}
+
+#[component]
+fn MusicPage(cx: Scope) -> impl IntoView {}
+
 #[component]
 fn NotFound(cx: Scope) -> impl IntoView {
     #[cfg(feature = "ssr")]
@@ -115,29 +126,21 @@ fn NotFound(cx: Scope) -> impl IntoView {
 }
 
 #[component]
-fn Footer(cx: Scope, hidden_sigs: Vec<RwSignal<bool>>) -> impl IntoView {
-    let about = hidden_sigs[0];
-    let projects = hidden_sigs[1];
-    let education = hidden_sigs[2];
-    let skills = hidden_sigs[3];
-    let loading = hidden_sigs[4];
-
-    let min_about = move |_| about.update(|h| *h = !*h);
-    let min_projects = move |_| projects.update(|h| *h = !*h);
-    let min_education = move |_| education.update(|h| *h = !*h);
-    let min_skills = move |_| skills.update(|h| *h = !*h);
-    let min_loading = move |_| loading.update(|h| *h = !*h);
-
-    view! { cx,
-        <footer>
-            <a class="title win-minimized favicon" href="/"></a>
-            <div class="title win-minimized" on:mousedown=min_about class:hidden={move || !about()}>"About Me"</div>
-            <div class="title win-minimized" on:mousedown=min_education class:hidden={move || !education()}>"Education"</div>
-            <div class="title win-minimized" on:mousedown=min_projects class:hidden={move || !projects()}>"Projects"</div>
-            <div class="title win-minimized" on:mousedown=min_skills class:hidden={move || !skills()}>"Skills"</div>
-            <div class="title win-minimized" on:mousedown=min_loading class:hidden={move || !loading()}>"\"Inspiration\""</div>
-        </footer>
-    }
+fn Footer(cx: Scope, items: Vec<(&'static str, RwSignal<bool>)>) -> impl IntoView {
+    view! { cx, <footer>
+        <a class="title win-minimized favicon" href="/"></a> {
+            items
+                .into_iter()
+                .map(|(title, hidden)| view! { cx,
+                    <div
+                        class="title win-minimized"
+                        on:mousedown={move |_| hidden.update(|h| *h = !*h)}
+                        class:hidden={move || !hidden()}
+                    >{title}</div>
+                })
+                .collect::<Vec<_>>()
+        }
+    </footer> }
 }
 type Tabs = Option<(
     RwSignal<&'static str>,
@@ -266,6 +269,27 @@ fn Window(
 }
 
 #[component]
+fn LinkWindow(
+    cx: Scope,
+    pos: (i32, i32),
+    hidden: RwSignal<bool>,
+    id: &'static str,
+    title: String,
+    bg_img: &'static str,
+    src: &'static str,
+    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
+) -> impl IntoView {
+    let nav = leptos_router::use_navigate(cx);
+    let content = view! { cx, <div style="cursor: pointer" on:click=move |_| nav(src, Default::default()).unwrap()>
+        <img src=bg_img style="padding: 10px" draggable=false/>
+    </div> };
+
+    view! { cx,
+        <Window id=id title=title content=content pos=pos hidden=hidden z_idx=z_idx/>
+    }
+}
+
+#[component]
 fn AboutWindow(
     cx: Scope,
     pos: (i32, i32),
@@ -273,7 +297,7 @@ fn AboutWindow(
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
     let content = view! { cx, <div> <p>
-        "Hello! I'm Ethan Corgatelli, and was born in April 2001. "
+        "Hello! I'm Ethan, and was born in April 2001. "
         "I'm passionate about making software, writing music, and learning languages. You can contact me "
         <ExternalLink href="http://www.discordapp.com/users/207897365141520384" display="on discord"/>
         ", or "<ExternalLink href="mailto:etbcor@gmail.com" display="via email"/>
@@ -282,14 +306,7 @@ fn AboutWindow(
     </p> </div> };
 
     view! { cx,
-        <Window
-            id="about-win"
-            title="About Me".to_string()
-            content=content
-            pos=pos
-            hidden=hidden
-            z_idx=z_idx
-        />
+        <Window id="about-win" title="About Me".to_string() content=content pos=pos hidden=hidden z_idx=z_idx/>
     }
 }
 
@@ -346,14 +363,7 @@ fn EducationWindow(
     </div> };
 
     view! { cx,
-        <Window
-            id="education-win"
-            title="Education".to_string()
-            content=content
-            pos=pos
-            hidden=hidden
-            z_idx=z_idx
-        />
+        <Window id="education-win" title="Education".to_string() content=content pos=pos hidden=hidden z_idx=z_idx/>
     }
 }
 
@@ -465,15 +475,7 @@ fn SkillsWindow(
     ];
 
     view! { cx,
-        <Window
-            id="skills-win"
-            title="Skills".to_string()
-            content=content
-            tabs=Some((active_tab, tabs))
-            pos=pos
-            hidden=hidden
-            z_idx=z_idx
-        />
+        <Window id="skills-win" title="Skills".to_string() content=content tabs=Some((active_tab, tabs)) pos=pos hidden=hidden z_idx=z_idx/>
     }
 }
 
@@ -586,15 +588,7 @@ fn ProjectsWindow(
     ];
 
     view! { cx,
-        <Window
-            id="projects-win"
-            title="Projects".to_string()
-            content=content
-            tabs=Some((active_tab, tabs))
-            pos=pos
-            hidden=hidden
-            z_idx=z_idx
-        />
+        <Window id="projects-win" title="Projects".to_string() content=content tabs=Some((active_tab, tabs)) pos=pos hidden=hidden z_idx=z_idx/>
     }
 }
 
@@ -615,20 +609,12 @@ fn FileWindow(
     </div> };
 
     view! { cx,
-        <Window
-            id="file-win"
-            title="File Viewer".to_string()
-            content=content
-            pos=pos
-            hidden=hidden
-            z_idx=z_idx
-        />
+        <Window id="file-win" title="File Viewer".to_string() content=content pos=pos hidden=hidden z_idx=z_idx/>
     }
 }
 
 enum LoadingWindowVariant {
     Default,
-    PortfolioLink,
     NotFound,
 }
 
@@ -651,11 +637,6 @@ fn LoadingWindow(
                 <img src="/assets/infinity.svg" style="width: 100%; height: 100px" draggable="false" title="ale li pona"/>
             </div> }
         }
-        LoadingWindowVariant::PortfolioLink => {
-            view! { cx, <div style="cursor: pointer" on:click=move |_| nav("/portfolio", Default::default()).unwrap()>
-                <img src="/assets/infinity.svg" style="width: 100%; height: 100px" draggable="false" title="Portfolio Page"/>
-            </div> }
-        }
         LoadingWindowVariant::NotFound => {
             title = "Page Not Found".to_string();
             view! { cx, <div style="cursor: pointer" on:click=move |_| nav("/", Default::default()).unwrap()>
@@ -665,14 +646,7 @@ fn LoadingWindow(
     };
 
     view! { cx,
-        <Window
-            id="loading-win"
-            title=title
-            content=content
-            pos=pos
-            hidden=hidden
-            z_idx=z_idx
-        />
+        <Window id="loading-win" title=title content=content pos=pos hidden=hidden z_idx=z_idx/>
     }
 }
 
@@ -692,14 +666,7 @@ fn AdWindow(
     </div> };
 
     view! { cx,
-        <Window
-            id="ad-win"
-            title="Advertisement".to_string()
-            content=content
-            pos=pos
-            hidden=hidden
-            z_idx=z_idx
-        />
+        <Window id="ad-win" title="Advertisement".to_string() content=content pos=pos hidden=hidden z_idx=z_idx/>
     }
 }
 
