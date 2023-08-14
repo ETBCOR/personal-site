@@ -153,8 +153,8 @@ fn Footer(cx: Scope, items: Vec<(&'static str, RwSignal<bool>)>) -> impl IntoVie
                 .map(|(title, hidden)| view! { cx,
                     <div
                         class="title win-minimized"
-                        on:mousedown={move |_| hidden.update(|h| *h = !*h)}
-                        class:hidden={move || !hidden()}
+                        on:mousedown=move |_| hidden.update(|h| *h = !*h)
+                        class:hidden=move || !hidden()
                     >{title}</div>
                 })
                 .collect::<Vec<_>>()
@@ -317,11 +317,12 @@ fn AboutWindow(
 ) -> impl IntoView {
     let content = view! { cx, <div> <p>
         "Hello! I'm Ethan, and was born in April 2001. "
-        "I'm passionate about making software, writing music, and learning languages. You can contact me "
-        <ExternalLink href="http://www.discordapp.com/users/207897365141520384" display="on discord"/>
-        ", or "<ExternalLink href="mailto:etbcor@gmail.com" display="via email"/>
-        ". Here's my "<ExternalLink href="https://www.github.com/ETBCOR" display="GitHub profile"/>". "
-        <i>"I'm "<b>"etbcor"</b>" on most platforms!"</i>" Thanks for coming to my site!"
+        "I'm passionate about making software, writing music, and learning languages. Links: "
+        <ExternalLink href="http://www.discordapp.com/users/207897365141520384" display="discord"/>", "
+        <ExternalLink href="mailto:etbcor@gmail.com" display="email"/>", "
+        <ExternalLink href="https://www.github.com/ETBCOR" display="GitHub"/>". "
+        "Some names I use: "<span class="title">"etbcor"</span><i>" (username)"</i>", "<span class="title">"Friday"</span><i>" (in-person friends)"</i>", "
+        <span class="title">"jan Itan"</span><i>" (toki pona community)"</i>". "<b>"Thanks for coming to my site!"</b>
     </p> </div> };
 
     view! { cx,
@@ -518,7 +519,7 @@ fn ProjectsWindow(
             "From CS Classes",
             view! { cx, <div><ul>
                 <li class="spaced">
-                    <b>"CS415 | Computational Biology: Sequence Alignment"</b><br/>
+                    <ExternalLink href="https://catalog.uidaho.edu/courses/cs/#:~:text=CS%20415" display="CS415 | Computational Biology: Sequence Alignment" bold=true/><br/>
                     "Description: \"Design and analyze algorithms that address the computational problems posed by biological sequence data, "
                     "such as DNA or protein sequences.\" Projects:"<br/>
                     <FileLink src="https://drive.google.com/file/d/17M8KI3B6rCj2_WLL-YlbxBoK0WzTyexO/preview" display="GA Simulation Runner" file_win_src=fws/>
@@ -532,22 +533,21 @@ fn ProjectsWindow(
                 </li>
 
                 <li class="spaced">
-                    <b>"CS445 | Compiler Design"</b><br/>
-                    "In "<ExternalLink href="http://www2.cs.uidaho.edu/~mdwilder/cs445/" display="this class"/>
-                    " I fully implemented a compiler for the "<span style="white-space: nowrap">"\"C minus\""</span>" langauge (grammar specification "
+                    <ExternalLink href="https://catalog.uidaho.edu/courses/cs/#:~:text=CS%20445" display="CS445 | Compiler Design" bold=true/><br/>
+                    "In "<ExternalLink href="http://www2.cs.uidaho.edu/~mdwilder/cs445/" display="this class"/>" I fully implemented a compiler for the "<span style="white-space: nowrap">"\"C minus\""</span>" langauge (grammar specification "
                     <FileLink src="https://drive.google.com/file/d/12o5aSATedS28eJwsHIOHR7uf3DdZY20V/preview" display="here" file_win_src=fws/>
                     "). This is probably the largest solo project I've completed so far. Repository "
                     <ExternalLink href="https://github.com/ETBCOR/cs445" display="here"/>"."
                 </li>
 
                 <li class="spaced">
-                    <b>"CS452 | Real-Time Operating Systems"</b><br/>
-                    "I created multiple programs for embedded systems (Feather RP2040 & ESP32) in this class, including a basic IOT device with its own webserver. Repository "
+                    <ExternalLink href="https://catalog.uidaho.edu/courses/cs/#:~:text=CS%20452" display="CS452 | Real-Time Operating Systems" bold=true/><br/>
+                    "In this class I created multiple programs for embedded systems (Feather RP2040 & ESP32), including a basic IOT device with its own webserver. Repository "
                     <ExternalLink href="https://github.com/ETBCOR/cs452/" display="here"/>"."
                 </li>
 
                 <li class="spaced">
-                    <b>"CS470 | Artificial Intelligence"</b><br/>
+                    <ExternalLink href="https://catalog.uidaho.edu/courses/cs/#:~:text=CS%20470" display="CS470 | Artificial Intelligence" bold=true/><br/>
                     "This class taugh common concepts and techniques involved in artificial intelligence. Projects:"<br/>
                     <FileLink src="https://drive.google.com/file/d/1ICaQOsGKwJ7RfE21xBHvozQkfQGkw43G/preview" display="Pathfinding Algorithms" file_win_src=fws/>
                     " | "<ExternalLink href="https://github.com/ETBCOR/cs470/tree/master/proj1" display="Github Repository"/>
@@ -562,14 +562,13 @@ fn ProjectsWindow(
                 </li>
 
                 <li class="spaced">
-                    <b>"CS475 | Machine Learning"</b><br/>
-                    "In "<ExternalLink href="http://marvin.cs.uidaho.edu/Teaching/CS475/index.html" display="this class"/>
-                    " I completed 8 assignments machine learning topics of varying difficulty. Although the repository is a bit messy, the link is "
+                    <ExternalLink href="https://catalog.uidaho.edu/courses/cs/#:~:text=CS%20475" display="CS475 | Machine Learning" bold=true/><br/>
+                    "In this class I completed 8 assignments machine learning topics of varying difficulty. Although the repository is a bit messy, the link is "
                     <ExternalLink href="https://github.com/ETBCOR/cs475" display="here"/>"."
                 </li>
 
                 <li>
-                    <b>"CS480 & CS481 | Senior Capstone Design"</b><br/>
+                    <ExternalLink href="https://catalog.uidaho.edu/courses/cs/#:~:text=CS%20480&text=CS%20481" display="CS480 & CS481 | Senior Capstone Design" bold=true/><br/>
                     "For my capstone project I designed calibration software for a laser communication device made by "
                     <ExternalLink href="https://www.hansenphotonics.com/" display="Hansen Photonics Inc"/>
                     " on a team with three other CS majors. The resulting software is simple yet effective. "
@@ -719,11 +718,21 @@ fn ExternalLink(
     href: &'static str,
     display: &'static str,
     #[prop(default = false)] title_style: bool,
+    #[prop(default = false)] bold: bool,
 ) -> impl IntoView {
-    view! { cx,
-        <a class="external-link" target="_blank" href=href class:title=title_style>
-            {display}
-            <span></span>
-        </a>
+    if bold {
+        view! { cx,
+            <a class="external-link" target="_blank" href=href class:title=title_style>
+                <b style="color: black">{display}</b>
+                <span></span>
+            </a>
+        }
+    } else {
+        view! { cx,
+            <a class="external-link" target="_blank" href=href class:title=title_style>
+                {display}
+                <span></span>
+            </a>
+        }
     }
 }
