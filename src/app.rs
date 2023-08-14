@@ -32,25 +32,39 @@ pub fn App(cx: Scope) -> impl IntoView {
 
         <Title text="etbcor's website"/>
 
-        // Google fonts
+        // google fonts
         <Link rel="preconnect" href="https://fonts.googleapis.com"/>
         <Link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
         <Link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet"/>
         <Link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,600;0,700;1,600;1,700&display=swap" rel="stylesheet"/>
         <Link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet"/>
 
-        // content for this welcome page
+        // main router
         <Router>
             <main>
                 <Routes>
                     <Route path="" view=HomePage/>
                     <Route path="/portfolio" view=PortfolioPage/>
-                    // <Route path="/tp" view=TokiPonaPage/>
-                    // <Route path="/music" view=MusicPage/>
+                    <Route path="/tp" view=TokiPonaPage/>
+                    <Route path="/music" view=MusicPage/>
                     <Route path="/*any" view=NotFound/>
                 </Routes>
             </main>
         </Router>
+    }
+}
+
+#[component]
+fn NotFound(cx: Scope) -> impl IntoView {
+    #[cfg(feature = "ssr")]
+    {
+        let resp = expect_context::<leptos_actix::ResponseOptions>(cx);
+        resp.set_status(actix_web::http::StatusCode::NOT_FOUND);
+    }
+    let loading = create_rw_signal(cx, false);
+
+    view! { cx,
+        <LoadingWindow pos=(100, 100) hidden=loading variant=LoadingWindowVariant::PageNotFound/>
     }
 }
 
@@ -69,10 +83,10 @@ fn HomePage(cx: Scope) -> impl IntoView {
     ];
 
     view! { cx,
-        <LoadingWindow pos=(20, 20) hidden=loading_hidden variant=LoadingWindowVariant::Default/>
-        <LinkWindow pos=(285, 20) hidden=portfolio_hidden id="portfolio-link-win" title="Portfolio".to_string() bg_img="/assets/file-icon.svg" src="/portfolio"/>
-        <LinkWindow pos=(25, 200) hidden=music_hidden id="music-link-win" title="Music".to_string() bg_img="/assets/wireless-nature.png" src="/music"/>
-        <LinkWindow pos=(285, 320) hidden=tp_hidden id="tp-link-win" title="toki pona".to_string() bg_img="/assets/itan.svg" src="/tp"/>
+        <LoadingWindow pos=(20, 22) hidden=loading_hidden variant=LoadingWindowVariant::Default/>
+        <LinkWindow pos=(287, 69) hidden=portfolio_hidden id="portfolio-link-win" title="Portfolio".to_string() bg_img="/assets/file-icon.svg" src="/portfolio"/>
+        <LinkWindow pos=(502, 191) hidden=music_hidden id="music-link-win" title="Music".to_string() bg_img="/assets/wireless-nature.png" src="/music"/>
+        <LinkWindow pos=(769, 332) hidden=tp_hidden id="tp-link-win" title="toki pona".to_string() bg_img="/assets/itan.svg" src="/tp"/>
         <div style="height: 65px"></div> // spacer in narrow view
         <Footer items=footer_items/>
     }
@@ -113,29 +127,19 @@ fn PortfolioPage(cx: Scope) -> impl IntoView {
 
 #[component]
 fn TokiPonaPage(cx: Scope) -> impl IntoView {
+    let loading = create_rw_signal(cx, false);
+
     view! { cx,
-        "Page under construction"
+        <LoadingWindow pos=(100, 100) hidden=loading variant=LoadingWindowVariant::PageComingSoon/>
     }
 }
 
 #[component]
 fn MusicPage(cx: Scope) -> impl IntoView {
-    view! { cx,
-        "Page under construction"
-    }
-}
-
-#[component]
-fn NotFound(cx: Scope) -> impl IntoView {
-    #[cfg(feature = "ssr")]
-    {
-        let resp = expect_context::<leptos_actix::ResponseOptions>(cx);
-        resp.set_status(actix_web::http::StatusCode::NOT_FOUND);
-    }
     let loading = create_rw_signal(cx, false);
 
     view! { cx,
-        <LoadingWindow pos=(100, 100) hidden=loading variant=LoadingWindowVariant::HomePageLink/>
+        <LoadingWindow pos=(100, 100) hidden=loading variant=LoadingWindowVariant::PageComingSoon/>
     }
 }
 
@@ -630,6 +634,8 @@ fn FileWindow(
 enum LoadingWindowVariant {
     Default,
     HomePageLink,
+    PageComingSoon,
+    PageNotFound,
 }
 
 #[component]
@@ -652,6 +658,18 @@ fn LoadingWindow(
             </div> }
         }
         LoadingWindowVariant::HomePageLink => {
+            title = format!("Home w/{}", noun);
+            view! { cx, <div style="cursor: pointer" on:click=move |_| nav("/", Default::default()).unwrap()>
+                <img src="/assets/infinity.svg" style="width: 100%; height: 100px" draggable="false"/>
+            </div> }
+        }
+        LoadingWindowVariant::PageComingSoon => {
+            title = "Page Coming Soon".to_string();
+            view! { cx, <div style="cursor: pointer" on:click=move |_| nav("/", Default::default()).unwrap()>
+                <img src="/assets/infinity.svg" style="width: 100%; height: 100px" draggable="false"/>
+            </div> }
+        }
+        LoadingWindowVariant::PageNotFound => {
             title = "Page Not Found".to_string();
             view! { cx, <div style="cursor: pointer" on:click=move |_| nav("/", Default::default()).unwrap()>
                 <img src="/assets/infinity.svg" style="width: 100%; height: 100px" draggable="false"/>
