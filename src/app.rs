@@ -81,12 +81,13 @@ fn HomePage(cx: Scope) -> impl IntoView {
         ("Music", music_hidden),
         ("toki pona", tp_hidden),
     ];
+    let z_idx = create_rw_signal(cx, 1);
 
     view! { cx,
-        <LoadingWindow pos=(20, 22) hidden=loading_hidden variant=LoadingWindowVariant::Default/>
-        <LinkWindow pos=(287, 69) hidden=portfolio_hidden id="portfolio-link-win" title="Portfolio".to_string() bg_img="/assets/file-icon.svg" src="/portfolio"/>
-        <LinkWindow pos=(502, 191) hidden=music_hidden id="music-link-win" title="Music".to_string() bg_img="/assets/wireless-nature.png" src="/music"/>
-        <LinkWindow pos=(769, 332) hidden=tp_hidden id="tp-link-win" title="toki pona".to_string() bg_img="/assets/itan.svg" src="/tp"/>
+        <LoadingWindow pos=(20, 22)   hidden=loading_hidden   z_idx=Some(z_idx) variant=LoadingWindowVariant::Default/>
+        <LinkWindow    pos=(287, 69)  hidden=portfolio_hidden z_idx=Some(z_idx) id="portfolio-link-win" title="Portfolio".to_string() bg_img="/assets/file-icon.svg"       src="/portfolio"/>
+        <LinkWindow    pos=(502, 191) hidden=music_hidden     z_idx=Some(z_idx) id="music-link-win"     title="Music".to_string()     bg_img="/assets/wireless-nature.png" src="/music"/>
+        <LinkWindow    pos=(769, 332) hidden=tp_hidden        z_idx=Some(z_idx) id="tp-link-win"        title="toki pona".to_string() bg_img="/assets/itan.svg"            src="/tp"/>
         <div style="height: 65px"></div> // spacer in narrow view
         <Footer items=footer_items/>
     }
