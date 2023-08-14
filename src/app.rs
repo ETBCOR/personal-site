@@ -36,7 +36,7 @@ pub fn App(cx: Scope) -> impl IntoView {
         <Link rel="preconnect" href="https://fonts.googleapis.com"/>
         <Link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
         <Link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet"/>
-        <Link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,600;0,700;1,700&display=swap" rel="stylesheet"/>
+        <Link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,600;0,700;1,600;1,700&display=swap" rel="stylesheet"/>
         <Link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet"/>
 
         // content for this welcome page
@@ -58,7 +58,7 @@ fn HomePage(cx: Scope) -> impl IntoView {
     let min_loading = move |_| loading.update(|h| *h = !*h);
 
     view! { cx,
-        <LoadingWindow hidden=loading portfolio_link=true/>
+        <LoadingWindow pos=(20, 20) hidden=loading variant=LoadingWindowVariant::PortfolioLink/>
         <footer>
             <div class="title win-minimized favicon" on:click=move |_| loading.set(false)></div>
             <div class="title win-minimized" on:mousedown=min_loading class:hidden={move || !loading()}>"\"Inspiration\""</div>
@@ -87,13 +87,13 @@ fn PortfolioPage(cx: Scope) -> impl IntoView {
     let z_idx = create_rw_signal(cx, 1);
 
     view! { cx,
-        <LoadingWindow hidden=loading_hidden z_idx=Some(z_idx)/>
-        <AboutWindow hidden=about_hidden z_idx=Some(z_idx)/>
-        <EducationWindow hidden=education_hidden z_idx=Some(z_idx)/>
-        <SkillsWindow hidden=skills_hidden z_idx=Some(z_idx)/>
-        <ProjectsWindow hidden=projects_hidden z_idx=Some(z_idx) file_win_src=set_file_src/>
-        <FileWindow hidden=file_hidden z_idx=Some(z_idx) src=file_src/>
-        <AdWindow hidden=ad_hidden z_idx=Some(z_idx)/>
+        <LoadingWindow   pos=(465, 325) hidden=loading_hidden   z_idx=Some(z_idx) variant=LoadingWindowVariant::Default/>
+        <AboutWindow     pos=(25, 20)   hidden=about_hidden     z_idx=Some(z_idx)/>
+        <EducationWindow pos=(25, 210)  hidden=education_hidden z_idx=Some(z_idx)/>
+        <SkillsWindow    pos=(735, 20)  hidden=skills_hidden    z_idx=Some(z_idx)/>
+        <ProjectsWindow  pos=(735, 425) hidden=projects_hidden  z_idx=Some(z_idx) file_win_src=set_file_src/>
+        <FileWindow      pos=(60, 90)   hidden=file_hidden      z_idx=Some(z_idx) src=file_src/>
+        <AdWindow        pos=(255, 22)  hidden=ad_hidden        z_idx=Some(z_idx)/>
         <div style="height: 65px"></div> // spacer
         <Footer hidden_sigs=hidden_sigs/>
     }
@@ -107,10 +107,10 @@ fn NotFound(cx: Scope) -> impl IntoView {
         let resp = expect_context::<leptos_actix::ResponseOptions>(cx);
         resp.set_status(actix_web::http::StatusCode::NOT_FOUND);
     }
+    let loading = create_rw_signal(cx, false);
 
     view! { cx,
-        <h1>"- 404 -"</h1>
-        <h2>"Page Not Found"</h2>
+        <LoadingWindow pos=(100, 100) hidden=loading variant=LoadingWindowVariant::NotFound/>
     }
 }
 
@@ -121,7 +121,6 @@ fn Footer(cx: Scope, hidden_sigs: Vec<RwSignal<bool>>) -> impl IntoView {
     let education = hidden_sigs[2];
     let skills = hidden_sigs[3];
     let loading = hidden_sigs[4];
-    // let footer = move || !(about() || education() || projects() || skills() || loading());
 
     let min_about = move |_| about.update(|h| *h = !*h);
     let min_projects = move |_| projects.update(|h| *h = !*h);
@@ -130,7 +129,6 @@ fn Footer(cx: Scope, hidden_sigs: Vec<RwSignal<bool>>) -> impl IntoView {
     let min_loading = move |_| loading.update(|h| *h = !*h);
 
     view! { cx,
-        // <footer class:hidden={footer}>
         <footer>
             <a class="title win-minimized favicon" href="/"></a>
             <div class="title win-minimized" on:mousedown=min_about class:hidden={move || !about()}>"About Me"</div>
@@ -153,12 +151,12 @@ fn Window(
     title: String,
     content: HtmlElement<html::Div>,
     #[prop(default = None)] tabs: Tabs,
-    start_pos: (i32, i32),
+    pos: (i32, i32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
-    let x = create_rw_signal(cx, start_pos.0);
-    let y = create_rw_signal(cx, start_pos.1);
+    let x = create_rw_signal(cx, pos.0);
+    let y = create_rw_signal(cx, pos.1);
     let dx = create_rw_signal(cx, 0);
     let dy = create_rw_signal(cx, 0);
 
@@ -270,6 +268,7 @@ fn Window(
 #[component]
 fn AboutWindow(
     cx: Scope,
+    pos: (i32, i32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
@@ -279,7 +278,7 @@ fn AboutWindow(
         <ExternalLink href="http://www.discordapp.com/users/207897365141520384" display="on discord"/>
         ", or "<ExternalLink href="mailto:etbcor@gmail.com" display="via email"/>
         ". Here's my "<ExternalLink href="https://www.github.com/ETBCOR" display="GitHub profile"/>". "
-        <i>"I'm "<u>"etbcor"</u>" on most platforms!"</i>" Thanks for coming to my site!"
+        <i>"I'm "<b>"etbcor"</b>" on most platforms!"</i>" Thanks for coming to my site!"
     </p> </div> };
 
     view! { cx,
@@ -287,7 +286,7 @@ fn AboutWindow(
             id="about-win"
             title="About Me".to_string()
             content=content
-            start_pos=(25, 20)
+            pos=pos
             hidden=hidden
             z_idx=z_idx
         />
@@ -297,6 +296,7 @@ fn AboutWindow(
 #[component]
 fn EducationWindow(
     cx: Scope,
+    pos: (i32, i32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
@@ -350,7 +350,7 @@ fn EducationWindow(
             id="education-win"
             title="Education".to_string()
             content=content
-            start_pos=(25, 210)
+            pos=pos
             hidden=hidden
             z_idx=z_idx
         />
@@ -360,6 +360,7 @@ fn EducationWindow(
 #[component]
 fn SkillsWindow(
     cx: Scope,
+    pos: (i32, i32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
@@ -375,21 +376,24 @@ fn SkillsWindow(
             view! { cx, <div><ul>
                 <li class="spaced">"I'm proficient in multiple "<b>"programming languages"</b>":"<ul>
                     <li><span class="title">"C / C++"</span>" were the primary languages taught at my univirsity, so I'm very comfortable with them."</li>
-                    <li><span class="title">"Rust"</span>" is currently my favorite language. I learned about it at some point in 2022, "
-                        "and recently started using it for all my school projects, so I'm at an intermediate / advanced level."</li>
+                    <li><span class="title">"Rust"</span>" is currently my favorite language. I learned about it in 2022 "
+                        "and quickly started using it wherever it makes sense, so I'm at an intermediate / advanced level."</li>
                     <li><span class="title">"Python"</span>" isn't usually what I reach to first "
                         "for my projects, but I'm still proficient with it, and have used it for a few."</li>
                     <li><span class="title">""</span>"...and more, including "<span class="title">"JavaScript"</span>", "
-                    <span class="title">"Java"</span>", and even some "<span class="title">"Prolog"</span>"!"</li>
+                    <span class="title">"Java"</span>", "<span class="title">"SQL"</span>", "<span class="title">"C#"</span>
+                    ", and even some "<span class="title">"ML"</span>" and "<span class="title">"Prolog"</span>"."</li>
                 </ul></li>
 
-                <li class="spaced"><b>"Data structures and algorithms"</b>
-                ": my B.S.C.S. has given me a strong foundation in the fundamentals of Computer Science. "
-                "I am experienced in designing and analyzing various data structures and algorithms."</li>
+                <li class="spaced">
+                    <b>"Data structures and algorithms"</b>
+                    ": my B.S.C.S. has given me a strong foundation in the fundamentals of Computer Science. "
+                    "I am experienced in designing and analyzing various data structures and algorithms."
+                </li>
 
                 <li class="spaced">
                     "I'm farmiliar with "<b>"software development concepts"</b>
-                    ", including code modularity / testing / documentation / version control techniques, "
+                    ", including code "<i>"modularity / testing / documentation / version control"</i>" techniques, "
                     <span class="title">"agile"</span>", "<span class="title">"continuous integration and delivery"
                     </span>" and "<span class="title">"the software development life cycle"</span>"."
                 </li>
@@ -401,13 +405,13 @@ fn SkillsWindow(
                 </li>
 
                 <li class="spaced">
-                    "I also have a solid understanding of "<b>"computer architecture"</b>
-                    " and "<b>"operating systems"</b>" concepts in general."
+                    "I know how to write code for "<b>"embedded systems"</b>" using the principles of "
+                    <span class="title">"real-time operating systems"</span>"."
                 </li>
 
                 <li>
-                    "I know how to write code for "<b>"embedded systems"</b>" using the principles of "
-                    <span class="title">"real-time operating systems"</span>"."
+                    "I also have a solid understanding of "<b>"computer architecture"</b>
+                    " and "<b>"operating systems"</b>" concepts in general."
                 </li>
             </ul></div> },
         ),
@@ -417,8 +421,9 @@ fn SkillsWindow(
                 <li><b>"Audio"</b><ul>
                     <li class="spaced">
                         "I purchased "<ExternalLink href="https://www.ableton.com/en/live/" display="Ableton Live" title_style=true/>
-                        " in 2018, and I've been using it to make music in my free time ever since. "
-                        "I've honed my production skills quite a bit, but I'm still yet to start releasing music."
+                        " in 2018, and I've been using it to make music in my free time ever since. I've honed my production skills "
+                        "quite a bit, including a few years of experimenting with other DAWs before settling on Live. "
+                        "I'm planning to release my first album soon!"
                     </li>
                     <li class="spaced">
                         "I volunteered at my church for several years in high school operating the sound booth for the live band, "
@@ -465,7 +470,7 @@ fn SkillsWindow(
             title="Skills".to_string()
             content=content
             tabs=Some((active_tab, tabs))
-            start_pos=(735, 20)
+            pos=pos
             hidden=hidden
             z_idx=z_idx
         />
@@ -475,6 +480,7 @@ fn SkillsWindow(
 #[component]
 fn ProjectsWindow(
     cx: Scope,
+    pos: (i32, i32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
     file_win_src: WriteSignal<Option<&'static str>>,
@@ -491,8 +497,9 @@ fn ProjectsWindow(
             "From CS Classes",
             view! { cx, <div><ul>
                 <li class="spaced">
-                    <b>"CS415 | Computational Biology: Sequence Alignment"</b>
-                    <br/>
+                    <b>"CS415 | Computational Biology: Sequence Alignment"</b><br/>
+                    "Description: \"Design and analyze algorithms that address the computational problems posed by biological sequence data, "
+                    "such as DNA or protein sequences.\" Projects:"<br/>
                     <FileLink src="https://drive.google.com/file/d/17M8KI3B6rCj2_WLL-YlbxBoK0WzTyexO/preview" display="GA Simulation Runner" file_win_src=fws/>
                     " | "<ExternalLink href="https://github.com/ETBCOR/cs415/tree/main/project01" display="Github Repository"/>
                     <br/>
@@ -504,25 +511,23 @@ fn ProjectsWindow(
                 </li>
 
                 <li class="spaced">
-                    <b>"CS445 | Compiler Design"</b>
-                    <br/>
-                    "I fully implemented a compiler for the \"C minus\" langauge (grammar specification "
+                    <b>"CS445 | Compiler Design"</b><br/>
+                    "In "<ExternalLink href="http://www2.cs.uidaho.edu/~mdwilder/cs445/" display="this class"/>
+                    " I fully implemented a compiler for the "<span style="white-space: nowrap">"\"C minus\""</span>" langauge (grammar specification "
                     <FileLink src="https://drive.google.com/file/d/12o5aSATedS28eJwsHIOHR7uf3DdZY20V/preview" display="here" file_win_src=fws/>
-                    ") in "<ExternalLink href="http://www2.cs.uidaho.edu/~mdwilder/cs445/" display="this class"/>
-                    ". This could be the single largest project I've completed so far. Repository "
+                    "). This is probably the largest solo project I've completed so far. Repository "
                     <ExternalLink href="https://github.com/ETBCOR/cs445" display="here"/>"."
                 </li>
 
                 <li class="spaced">
-                    <b>"CS452 | Real-Time Operating Systems"</b>
-                    <br/>
-                    "I created multiple programs for embedded systems (Feather RP2040 & ESP32) in this class. Repository "
+                    <b>"CS452 | Real-Time Operating Systems"</b><br/>
+                    "I created multiple programs for embedded systems (Feather RP2040 & ESP32) in this class, including a basic IOT device with its own webserver. Repository "
                     <ExternalLink href="https://github.com/ETBCOR/cs452/" display="here"/>"."
                 </li>
 
                 <li class="spaced">
-                    <b>"CS470 | Artificial Intelligence"</b>
-                    <br/>
+                    <b>"CS470 | Artificial Intelligence"</b><br/>
+                    "This class taugh common concepts and techniques involved in artificial intelligence. Projects:"<br/>
                     <FileLink src="https://drive.google.com/file/d/1ICaQOsGKwJ7RfE21xBHvozQkfQGkw43G/preview" display="Pathfinding Algorithms" file_win_src=fws/>
                     " | "<ExternalLink href="https://github.com/ETBCOR/cs470/tree/master/proj1" display="Github Repository"/>
                     <br/>
@@ -536,21 +541,18 @@ fn ProjectsWindow(
                 </li>
 
                 <li class="spaced">
-                    <b>"CS475 | Machine Learning"</b>
-                    <br/>
+                    <b>"CS475 | Machine Learning"</b><br/>
                     "In "<ExternalLink href="http://marvin.cs.uidaho.edu/Teaching/CS475/index.html" display="this class"/>
-                    " I completed 8 assignments machine learning topics of varying difficulty. Although the repo is a bit messy, the link is "
+                    " I completed 8 assignments machine learning topics of varying difficulty. Although the repository is a bit messy, the link is "
                     <ExternalLink href="https://github.com/ETBCOR/cs475" display="here"/>"."
                 </li>
 
                 <li>
-                    <b>"CS480 & CS481 | Senior Capstone Design"</b>
-                    <br/>
-                    "My capstone project was to design calibration software for a laser communication device for "
+                    <b>"CS480 & CS481 | Senior Capstone Design"</b><br/>
+                    "For my capstone project I designed calibration software for a laser communication device made by "
                     <ExternalLink href="https://www.hansenphotonics.com/" display="Hansen Photonics Inc"/>
-                    ". I was on a team with three other CS majors. The resulting software was simple, yet effective. "
-                    "And the creation process is well documented (contact me for details). Repository "
-                    <ExternalLink href="https://github.com/Hunter-SE/FibAir-Repository" display="here"/>"."
+                    " on a team with three other CS majors. The resulting software is simple yet effective. "
+                    "The creation process is well documented, but the repository is private; contact me if you're interested in seeing it."
                 </li>
             </ul></div> },
         ),
@@ -589,7 +591,7 @@ fn ProjectsWindow(
             title="Projects".to_string()
             content=content
             tabs=Some((active_tab, tabs))
-            start_pos=(735, 425)
+            pos=pos
             hidden=hidden
             z_idx=z_idx
         />
@@ -599,6 +601,7 @@ fn ProjectsWindow(
 #[component]
 fn FileWindow(
     cx: Scope,
+    pos: (i32, i32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
     src: ReadSignal<Option<&'static str>>,
@@ -616,33 +619,49 @@ fn FileWindow(
             id="file-win"
             title="File Viewer".to_string()
             content=content
-            start_pos=(60, 90)
+            pos=pos
             hidden=hidden
             z_idx=z_idx
         />
     }
 }
 
+enum LoadingWindowVariant {
+    Default,
+    PortfolioLink,
+    NotFound,
+}
+
 #[component]
 fn LoadingWindow(
     cx: Scope,
+    pos: (i32, i32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
-    #[prop(default = false)] portfolio_link: bool,
+    variant: LoadingWindowVariant,
 ) -> impl IntoView {
     let mut rng = rand::thread_rng();
     let noun: &'static str = ABSTRACT_NOUNS.choose(&mut rng).unwrap();
-    let title = format!("Loading {}", noun);
+    let mut title = format!("Loading {}", noun);
     let nav = leptos_router::use_navigate(cx);
 
-    let content = if portfolio_link {
-        view! { cx, <div on:click=move |_| nav("/portfolio", Default::default()).unwrap() style="cursor: pointer">
-            <img src="/assets/infinity.svg" style="width: 100%; height: 100px" draggable="false"/>
-        </div> }
-    } else {
-        view! { cx, <div>
-            <img src="/assets/infinity.svg" style="width: 100%; height: 100px" draggable="false"/>
-        </div> }
+    let content = match variant {
+        LoadingWindowVariant::Default => {
+            view! { cx, <div style="cursor: wait">
+                <img src="/assets/infinity.svg" style="width: 100%; height: 100px" draggable="false" title="ale li pona"/>
+            </div> }
+        }
+        LoadingWindowVariant::PortfolioLink => {
+            view! { cx, <div style="cursor: pointer" on:click=move |_| nav("/portfolio", Default::default()).unwrap()>
+                <img src="/assets/infinity.svg" style="width: 100%; height: 100px" draggable="false" title="Portfolio Page"/>
+            </div> }
+        }
+        LoadingWindowVariant::NotFound => {
+            title = "Page Not Found".to_string();
+            view! { cx, <div style="cursor: pointer" on:click=move |_| nav("/", Default::default()).unwrap()>
+                <img src="/assets/infinity.svg" style="width: 100%; height: 100px" draggable="false"/>
+            </div> }
+        }
     };
 
     view! { cx,
@@ -650,7 +669,7 @@ fn LoadingWindow(
             id="loading-win"
             title=title
             content=content
-            start_pos=(465, 325)
+            pos=pos
             hidden=hidden
             z_idx=z_idx
         />
@@ -660,6 +679,7 @@ fn LoadingWindow(
 #[component]
 fn AdWindow(
     cx: Scope,
+    pos: (i32, i32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
@@ -676,7 +696,7 @@ fn AdWindow(
             id="ad-win"
             title="Advertisement".to_string()
             content=content
-            start_pos=(255, 22)
+            pos=pos
             hidden=hidden
             z_idx=z_idx
         />
