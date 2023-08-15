@@ -5,7 +5,6 @@ WORKDIR /work
 COPY . .
 
 RUN mkdir -p target/site
-# RUN cargo clippy -- -D warnings
 RUN cargo leptos build --release
 
 FROM scratch as app
@@ -23,6 +22,6 @@ WORKDIR /app
 COPY --chown=10001:10001 --from=builder /work/target/site/ ./site/
 COPY --chown=10001:10001 --from=builder /work/target/server/release/portfolio_site .
 
-EXPOSE 3000
+EXPOSE 3000:3000
 
 ENTRYPOINT [ "/app/portfolio_site" ]
