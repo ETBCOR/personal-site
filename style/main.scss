@@ -267,6 +267,14 @@ div.win-content :last-child {
 	animation: rainbow 30s ease infinite;
 }
 
+#spotify-win>div>.tab-wrapper {
+	max-height: 509px;
+	overflow: auto;
+	background: linear-gradient(24deg, #d593db, #ebc0ef, #ef9e91, #f9a4a4, #d8bf6b, #dedf91, #74e186, #7edce1, #a29cef);
+	background-size: 800% 800%;
+	animation: rainbow 30s ease infinite;
+}
+
 @keyframes rainbow {
 	0% {
 		background-position: 0% 82%

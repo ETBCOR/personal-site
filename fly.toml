@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for etbcor on 2023-08-15T09:42:09-07:00
+# fly.toml app configuration file generated for etbcor on 2023-08-16T11:19:08-07:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -7,12 +7,12 @@ app = "etbcor"
 primary_region = "phx"
 
 [build]
-image = "etbcor/portfolio-site:latest"
+  image = "etbcor/portfolio-site:latest"
 
 [http_service]
-internal_port = 3000
-force_https = true
-auto_stop_machines = true
-auto_start_machines = true
-min_machines_running = 1
-processes = ["app"]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]

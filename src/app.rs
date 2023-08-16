@@ -102,14 +102,15 @@ fn HomePageRecursive(cx: Scope, recursions: usize) -> impl IntoView {
     let y_offset = if recursions == 0 { 0 } else { 35 };
 
     view! { cx,
-        <LoadingWindow pos=(20, 20+y_offset)   hidden=loading_hidden   z_idx=z_idx variant=LoadingWindowVariant::Default/>
-        <LinkWindow    pos=(280, 20+y_offset)  hidden=portfolio_hidden z_idx=z_idx id="portfolio-link-win" title="Portfolio".to_string() bg_img="/assets/file-icon.svg"       src="/portfolio"/>
-        <LinkWindow    pos=(20, 269+y_offset)  hidden=music_hidden     z_idx=z_idx id="music-link-win"     title="Music".to_string()     bg_img="/assets/wireless-nature.png" src="/music"/>
-        <LinkWindow    pos=(280, 319+y_offset) hidden=tp_hidden        z_idx=z_idx id="tp-link-win"        title="toki pona".to_string() bg_img="/assets/itan.svg"            src="/tp"/>
-        <WebringWindow pos=(20, 568+y_offset)  hidden=webring_hidden   z_idx=z_idx/>
-        <AdWindow      pos=(485, 20+y_offset)  hidden=ad_hidden        z_idx=z_idx/>
-        <JohnWindow    pos=(20, 710+y_offset)  hidden=john_hidden      z_idx=z_idx/>
-        <MetaWindow    pos=(485, 212+y_offset) hidden=meta_hidden      z_idx=z_idx recursions={recursions + 1}/>
+        <LoadingWindow pos=(20, 20+y_offset)    hidden=loading_hidden   z_idx=z_idx variant=LoadingWindowVariant::Default/>
+        <LinkWindow    pos=(280, 20+y_offset)   hidden=portfolio_hidden z_idx=z_idx id="portfolio-link-win" title="Portfolio".to_string() bg_img="/assets/file-icon.svg"       src="/portfolio"/>
+        // <LinkWindow    pos=(20, 269+y_offset)  hidden=music_hidden     z_idx=z_idx id="music-link-win"     title="Music".to_string()     bg_img="/assets/music.svg" src="/music"/>
+        <MusicLinkWindow pos=(20, 269+y_offset) hidden=music_hidden     z_idx=z_idx/>
+        <LinkWindow    pos=(280, 319+y_offset)  hidden=tp_hidden        z_idx=z_idx id="tp-link-win"        title="toki pona".to_string() bg_img="/assets/itan.svg"            src="/tp"/>
+        <WebringWindow pos=(20, 568+y_offset)   hidden=webring_hidden   z_idx=z_idx/>
+        <AdWindow      pos=(485, 20+y_offset)   hidden=ad_hidden        z_idx=z_idx/>
+        <JohnWindow    pos=(20, 710+y_offset)   hidden=john_hidden      z_idx=z_idx/>
+        <MetaWindow    pos=(485, 212+y_offset)  hidden=meta_hidden      z_idx=z_idx recursions={recursions + 1}/>
         <div style="height: 65px"></div> // spacer in narrow view
         <div class:hidden=move || {recursions > 0}><Footer items=footer_items/></div>
         <Cyberpunk/>
@@ -194,10 +195,87 @@ fn TokiPonaPage(cx: Scope) -> impl IntoView {
 
 #[component]
 fn MusicPage(cx: Scope) -> impl IntoView {
-    let loading = create_rw_signal(cx, false);
+    let loading_hidden = create_rw_signal(cx, false);
+    let spotify_hidden = create_rw_signal(cx, false);
 
     view! { cx,
-        <LoadingWindow pos=(100, 100) hidden=loading variant=LoadingWindowVariant::PageComingSoon/>
+        <LoadingWindow   pos=(500, 20) hidden=loading_hidden variant=LoadingWindowVariant::HomePageLink/>
+        <SpotifyPlaylistWindow pos=(20, 20) hidden=spotify_hidden/>
+    }
+}
+
+#[component]
+fn SpotifyPlaylistWindow(
+    cx: Scope,
+    pos: (i32, i32),
+    hidden: RwSignal<bool>,
+    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
+) -> impl IntoView {
+    let active_tab = create_rw_signal(cx, "Main");
+    let content = view! { cx, <div></div> };
+
+    let tabs = Some((
+        active_tab,
+        vec![
+            (
+                "Main",
+                view! { cx, <div class="tab-wrapper">
+                    <SpotifyPlaylist src="1QPAKgnxEMYOBJFVmRhwM1"/>
+                    <SpotifyPlaylist src="0DXYn6zngiQp5AQNOToO3i"/>
+                    <SpotifyPlaylist src="3K8Kg0C1GVI14q3KUBqfUd"/>
+                    <SpotifyPlaylist src="2q5WCLRthMkrtOOApVGeYW"/>
+                    <SpotifyPlaylist src="0S8eDcRFe43fJHlOUAdiBE"/>
+                    <SpotifyPlaylist src="6LwfptFt77pViRyjBR2a3u" spaced=false/>
+                </div> },
+            ),
+            (
+                "Genres",
+                view! { cx, <div class="tab-wrapper">
+                    <SpotifyPlaylist src="4RCXWsAR5yT7P8pfaYKQK9"/>
+                    <SpotifyPlaylist src="0ZarPheYW5A3Ut14uvvCYa"/>
+                    <SpotifyPlaylist src="1eYJLMDpgoKD0F4LUH2Ezs"/>
+                    <SpotifyPlaylist src="36UOLnWsxJlH7Ms5aF3exW"/>
+                    <SpotifyPlaylist src="2is9YFXsfFYtAYliO1Xox3"/>
+                    <SpotifyPlaylist src="3aLiFKFvxd4PyC3gfSIs4x"/>
+                    <SpotifyPlaylist src="2innGMsDBjt4m4BFWczx1P"/>
+                    <SpotifyPlaylist src="2LuztnBxzKkEfjvGAJx3vV"/>
+                    <SpotifyPlaylist src="0EujpL7Ux9PdGdVxfxXSSl"/>
+                    <SpotifyPlaylist src="2SxZEPs788pkeORbGs0NXj"/>
+                    <SpotifyPlaylist src="58cvN9oc4TnTuOKbHkgc85"/>
+                    <SpotifyPlaylist src="5yAQt15q8sppI3zbr1onsq"/>
+                    <SpotifyPlaylist src="7JLhfvA0evymAzY3TB1Opf"/>
+                    <SpotifyPlaylist src="1iZl1yGF0ra18Dh0jmNpjt"/>
+                    <SpotifyPlaylist src="7EZXrDDMBTjAtf3nWjWk5q"/>
+                    <SpotifyPlaylist src="5cnkxBVOu3Ompr3E7QlKa3"/>
+                    <SpotifyPlaylist src="37Zs98sWQAJ5SpS60hVvf1"/>
+                    <SpotifyPlaylist src="1fqYiy4hDIsByrWdTTYfYA"/>
+                    <SpotifyPlaylist src="77SM9ZJXNZtwZNlISBPz4P"/>
+                </div> },
+            ),
+        ],
+    ));
+
+    view! { cx,
+        <Window id="spotify-win" title="Some of my Spotify playlists".to_string() content=content tabs=tabs pos=pos hidden=hidden z_idx=z_idx/>
+    }
+}
+
+#[component]
+fn SpotifyPlaylist(
+    cx: Scope,
+    src: &'static str,
+    #[prop(default = true)] spaced: bool,
+) -> impl IntoView {
+    view! { cx,
+        <iframe
+            src=move || format!("https://open.spotify.com/embed/playlist/{src}?utm_source=generator")
+            style="width: 400px; height: 152px; border-radius:12px"
+            frameBorder="0"
+            allowfullscreen=""
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy"
+            class:spaced=spaced
+        ></iframe><br/>
     }
 }
 
@@ -313,8 +391,8 @@ fn Window(
 
             view! { cx,
                 <div>
-                    <div class="tab-titlebar"> { titles } </div>
-                    { tabs }
+                    <div class="tab-titlebar">{titles}</div>
+                    <div class="tab-wrapper">{tabs}</div>
                 </div>
             }
         }
@@ -362,6 +440,32 @@ fn LinkWindow(
 
     view! { cx,
         <Window id=id title=title content=content pos=pos hidden=hidden z_idx=z_idx/>
+    }
+}
+
+#[component]
+fn MusicLinkWindow(
+    cx: Scope,
+    pos: (i32, i32),
+    hidden: RwSignal<bool>,
+    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
+) -> impl IntoView {
+    let nav = leptos_router::use_navigate(cx);
+    let content = view! { cx, <div style="height: 227px; cursor: pointer">
+        <video
+            style="width: 100%"
+            muted
+            autoplay
+            loop="true"
+            poster="/assets/music-icon.png"
+            on:click=move |_| nav("/music", Default::default()).unwrap()
+            on:contextmenu=move |e| e.prevent_default()>
+            <source src="/assets/music-icon.webm" type="video/webm"/>
+        </video>
+    </div> };
+
+    view! { cx,
+        <Window id="music-link-win" title="Music".to_string() content=content pos=pos hidden=hidden z_idx=z_idx/>
     }
 }
 
@@ -457,102 +561,105 @@ fn SkillsWindow(
         <div>"Failed to load tabs for this window"</div>
     };
 
-    let tabs = vec![
-        (
-            "Technical",
-            view! { cx, <div><ul>
-                <li class="spaced">"I'm proficient in multiple "<b>"programming languages"</b>":"<ul>
-                    <li><span class="title">"C / C++"</span>" were the primary languages taught at my univirsity, so I'm very comfortable with them."</li>
-                    <li><span class="title">"Rust"</span>" is currently my favorite language. I learned about it in 2022 "
-                        "and quickly started using it wherever it makes sense, so I'm at an intermediate / advanced level."</li>
-                    <li><span class="title">"Python"</span>" isn't usually what I reach to first "
-                        "for my projects, but I'm still proficient with it, and have used it for a few."</li>
-                    <li><span class="title">""</span>"...and more, including "<span class="title">"JavaScript"</span>", "
-                    <span class="title">"Java"</span>", "<span class="title">"SQL"</span>", "<span class="title">"C#"</span>
-                    ", and even some "<span class="title">"ML"</span>" and "<span class="title">"Prolog"</span>"."</li>
-                </ul></li>
+    let tabs = Some((
+        active_tab,
+        vec![
+            (
+                "Technical",
+                view! { cx, <div><ul>
+                    <li class="spaced">"I'm proficient in multiple "<b>"programming languages"</b>":"<ul>
+                        <li><span class="title">"C / C++"</span>" were the primary languages taught at my univirsity, so I'm very comfortable with them."</li>
+                        <li><span class="title">"Rust"</span>" is currently my favorite language. I learned about it in 2022 "
+                            "and quickly started using it wherever it makes sense, so I'm at an intermediate / advanced level."</li>
+                        <li><span class="title">"Python"</span>" isn't usually what I reach to first "
+                            "for my projects, but I'm still proficient with it, and have used it for a few."</li>
+                        <li><span class="title">""</span>"...and more, including "<span class="title">"JavaScript"</span>", "
+                        <span class="title">"Java"</span>", "<span class="title">"SQL"</span>", "<span class="title">"C#"</span>
+                        ", and even some "<span class="title">"ML"</span>" and "<span class="title">"Prolog"</span>"."</li>
+                    </ul></li>
 
-                <li class="spaced">
-                    <b>"Data structures and algorithms"</b>
-                    ": my B.S.C.S. has given me a strong foundation in the fundamentals of Computer Science. "
-                    "I am experienced in designing and analyzing various data structures and algorithms."
-                </li>
-
-                <li class="spaced">
-                    "I'm farmiliar with "<b>"software development concepts"</b>
-                    ", including code "<i>"modularity / testing / documentation / version control"</i>" techniques, "
-                    <span class="title">"agile"</span>", "<span class="title">"continuous integration and delivery"
-                    </span>" and "<span class="title">"the software development life cycle"</span>"."
-                </li>
-
-                <li class="spaced">
-                    "I have a solid understanding of "<b>"networking"</b>" and "<b>"web development"</b>", including how to work with protocols like "
-                    <span class="title">"IP"</span>", "<span class="title">"HTTP"</span>", "<span class="title">"TCP"</span>" and "<span class="title">"UDP"</span>
-                    ", as well as technologies like "<span class="title">"databases"</span>", "<span class="title">"HTML"</span>", "<span class="title">"CSS"</span>" and "<span class="title">"JavaScript"</span>"."
-                </li>
-
-                <li class="spaced">
-                    "I know how to write code for "<b>"embedded systems"</b>" using the principles of "
-                    <span class="title">"real-time operating systems"</span>"."
-                </li>
-
-                <li>
-                    "I also have a solid understanding of "<b>"computer architecture"</b>
-                    " and "<b>"operating systems"</b>" concepts in general."
-                </li>
-            </ul></div> },
-        ),
-        (
-            "Audio / Visual",
-            view! { cx, <div><ul>
-                <li><b>"Audio"</b><ul>
                     <li class="spaced">
-                        "I purchased "<ExternalLink href="https://www.ableton.com/en/live/" display="Ableton Live" title_style=true/>
-                        " in 2018, and I've been using it to make music in my free time ever since. I've honed my production skills "
-                        "quite a bit, including a few years of experimenting with other DAWs before settling on Live. "
-                        "I'm planning to release my first album soon!"
+                        <b>"Data structures and algorithms"</b>
+                        ": my B.S.C.S. has given me a strong foundation in the fundamentals of Computer Science. "
+                        "I am experienced in designing and analyzing various data structures and algorithms."
                     </li>
-                    <li class="spaced">
-                        "I volunteered at my church for several years in high school operating the sound booth for the live band, "
-                        "so I'm comfortable running a large sound board (analog or digital) and with the basics of audio engineering."
-                    </li>
-                </ul></li>
 
-                <li><b>"Visual"</b><ul>
                     <li class="spaced">
-                        "I'm quite experienced with "
-                        <ExternalLink href="https://www.adobe.com/products/aftereffects.html" display="After Effects" title_style=true/>
-                        ". You can see some of what I've created with it on "
-                        <ExternalLink href="https://www.instagram.com/ecridisedits/" display="my IG page"/>"."
+                        "I'm farmiliar with "<b>"software development concepts"</b>
+                        ", including code "<i>"modularity / testing / documentation / version control"</i>" techniques, "
+                        <span class="title">"agile"</span>", "<span class="title">"continuous integration and delivery"
+                        </span>" and "<span class="title">"the software development life cycle"</span>"."
                     </li>
+
+                    <li class="spaced">
+                        "I have a solid understanding of "<b>"networking"</b>" and "<b>"web development"</b>", including how to work with protocols like "
+                        <span class="title">"IP"</span>", "<span class="title">"HTTP"</span>", "<span class="title">"TCP"</span>" and "<span class="title">"UDP"</span>
+                        ", as well as technologies like "<span class="title">"databases"</span>", "<span class="title">"HTML"</span>", "<span class="title">"CSS"</span>" and "<span class="title">"JavaScript"</span>"."
+                    </li>
+
+                    <li class="spaced">
+                        "I know how to write code for "<b>"embedded systems"</b>" using the principles of "
+                        <span class="title">"real-time operating systems"</span>"."
+                    </li>
+
                     <li>
-                        "I've also volunteered at my church to run slides/lights for sermons, so I'm familiar with "
-                        <ExternalLink href="https://renewedvision.com/propresenter/" display="ProPresenter" title_style=true/>
-                        " as well as "<br/><span class="title">"DMX lighting systems"</span>"."
+                        "I also have a solid understanding of "<b>"computer architecture"</b>
+                        " and "<b>"operating systems"</b>" concepts in general."
                     </li>
-                </ul></li>
-            </ul></div> },
-        ),
-        (
-            "Other",
-            view! { cx, <div><ul>
-                <li class="spaced">"I speak "<b>"three languages"</b>":"<ul>
-                    <li><span class="title">"English"</span>" (native)"</li>
-                    <li><span class="title">"Spanish"</span>" (fluent)"</li>
-                    <li><ExternalLink href="https://tokipona.org/" display="toki pona" title_style=true/>" (fluent)"</li>
-                    <li><span class="title">"Japanese"</span>" (beginner)"</li>
-                </ul></li>
+                </ul></div> },
+            ),
+            (
+                "Audio / Visual",
+                view! { cx, <div><ul>
+                    <li><b>"Audio"</b><ul>
+                        <li class="spaced">
+                            "I purchased "<ExternalLink href="https://www.ableton.com/en/live/" display="Ableton Live" title_style=true/>
+                            " in 2018, and I've been using it to make music in my free time ever since. I've honed my production skills "
+                            "quite a bit, including a few years of experimenting with other DAWs before settling on Live. "
+                            "I'm planning to release my first album soon!"
+                        </li>
+                        <li class="spaced">
+                            "I volunteered at my church for several years in high school operating the sound booth for the live band, "
+                            "so I'm comfortable running a large sound board (analog or digital) and with the basics of audio engineering."
+                        </li>
+                    </ul></li>
 
-                <li class="spaced">"I have great "<b>"interpersonal"</b>" and "<b>"conflict-resolution"</b>
-                    " skills; I'm able to meaningfully communicate with people, even when we have conflicting views."</li>
+                    <li><b>"Visual"</b><ul>
+                        <li class="spaced">
+                            "I'm quite experienced with "
+                            <ExternalLink href="https://www.adobe.com/products/aftereffects.html" display="After Effects" title_style=true/>
+                            ". You can see some of what I've created with it on "
+                            <ExternalLink href="https://www.instagram.com/ecridisedits/" display="my IG page"/>"."
+                        </li>
+                        <li>
+                            "I've also volunteered at my church to run slides/lights for sermons, so I'm familiar with "
+                            <ExternalLink href="https://renewedvision.com/propresenter/" display="ProPresenter" title_style=true/>
+                            " as well as "<br/><span class="title">"DMX lighting systems"</span>"."
+                        </li>
+                    </ul></li>
+                </ul></div> },
+            ),
+            (
+                "Other",
+                view! { cx, <div><ul>
+                    <li class="spaced">"I speak "<b>"three languages"</b>":"<ul>
+                        <li><span class="title">"English"</span>" (native)"</li>
+                        <li><span class="title">"Spanish"</span>" (fluent)"</li>
+                        <li><ExternalLink href="https://tokipona.org/" display="toki pona" title_style=true/>" (fluent)"</li>
+                        <li><span class="title">"Japanese"</span>" (beginner)"</li>
+                    </ul></li>
 
-                <li>"I care deeply about my "<b>"work ethic"</b>"; I enjoy locking into my work and getting in the zone."</li>
-            </ul></div> },
-        ),
-    ];
+                    <li class="spaced">"I have great "<b>"interpersonal"</b>" and "<b>"conflict-resolution"</b>
+                        " skills; I'm able to meaningfully communicate with people, even when we have conflicting views."</li>
+
+                    <li>"I care deeply about my "<b>"work ethic"</b>"; I enjoy locking into my work and getting in the zone."</li>
+                </ul></div> },
+            ),
+        ],
+    ));
 
     view! { cx,
-        <Window id="skills-win" title="Skills".to_string() content=content tabs=Some((active_tab, tabs)) pos=pos hidden=hidden z_idx=z_idx/>
+        <Window id="skills-win" title="Skills".to_string() content=content tabs=tabs pos=pos hidden=hidden z_idx=z_idx/>
     }
 }
 
@@ -571,99 +678,102 @@ fn ProjectsWindow(
         <div>"Failed to load tabs for this window"</div>
     };
 
-    let tabs = vec![
-        (
-            "From CS Classes",
-            view! { cx, <div><ul>
-                <li class="spaced">
-                    <ExternalLink href="https://catalog.uidaho.edu/courses/cs/#:~:text=CS%20415" display="CS415 | Computational Biology: Sequence Alignment" bold=true/><br/>
-                    "Description: \"Design and analyze algorithms that address the computational problems posed by biological sequence data, "
-                    "such as DNA or protein sequences.\" Projects:"<br/>
-                    <FileLink src="https://drive.google.com/file/d/17M8KI3B6rCj2_WLL-YlbxBoK0WzTyexO/preview" display="GA Simulation Runner" file_win_src=fws/>
-                    " | "<ExternalLink href="https://github.com/ETBCOR/cs415/tree/main/project01" display="Github Repository"/>
-                    <br/>
-                    <FileLink src="https://drive.google.com/file/d/1v9XjTqRlf4iGjHskT7yp_KUyVBUU7WgE/preview" display="Parameter Set Estimation" file_win_src=fws/>
-                    " | "<ExternalLink href="https://colab.research.google.com/drive/1zQtt-kDBhycueP_qyhzc9VnFeZe0wPmu?usp=sharing" display="Colab Notebook"/>
-                    <br/>
-                    <FileLink src="https://drive.google.com/file/d/1n-nyTQzjcGy9lpTvs-WYdBcTaDUbZfap/preview" display="Pairwise Alignment Matrix Calculation" file_win_src=fws/>
-                    " | "<ExternalLink href="https://colab.research.google.com/drive/1mMGnMO63KR-wHriGNYxBxF5YNwk_r7AP?usp=sharing" display="Colab Notebook"/>
-                </li>
+    let tabs = Some((
+        active_tab,
+        vec![
+            (
+                "From CS Classes",
+                view! { cx, <div><ul>
+                    <li class="spaced">
+                        <ExternalLink href="https://catalog.uidaho.edu/courses/cs/#:~:text=CS%20415" display="CS415 | Computational Biology: Sequence Alignment" bold=true/><br/>
+                        "Description: \"Design and analyze algorithms that address the computational problems posed by biological sequence data, "
+                        "such as DNA or protein sequences.\" Projects:"<br/>
+                        <FileLink src="https://drive.google.com/file/d/17M8KI3B6rCj2_WLL-YlbxBoK0WzTyexO/preview" display="GA Simulation Runner" file_win_src=fws/>
+                        " | "<ExternalLink href="https://github.com/ETBCOR/cs415/tree/main/project01" display="Github Repository"/>
+                        <br/>
+                        <FileLink src="https://drive.google.com/file/d/1v9XjTqRlf4iGjHskT7yp_KUyVBUU7WgE/preview" display="Parameter Set Estimation" file_win_src=fws/>
+                        " | "<ExternalLink href="https://colab.research.google.com/drive/1zQtt-kDBhycueP_qyhzc9VnFeZe0wPmu?usp=sharing" display="Colab Notebook"/>
+                        <br/>
+                        <FileLink src="https://drive.google.com/file/d/1n-nyTQzjcGy9lpTvs-WYdBcTaDUbZfap/preview" display="Pairwise Alignment Matrix Calculation" file_win_src=fws/>
+                        " | "<ExternalLink href="https://colab.research.google.com/drive/1mMGnMO63KR-wHriGNYxBxF5YNwk_r7AP?usp=sharing" display="Colab Notebook"/>
+                    </li>
 
-                <li class="spaced">
-                    <ExternalLink href="https://catalog.uidaho.edu/courses/cs/#:~:text=CS%20445" display="CS445 | Compiler Design" bold=true/><br/>
-                    "In "<ExternalLink href="http://www2.cs.uidaho.edu/~mdwilder/cs445/" display="this class"/>" I fully implemented a compiler for the "<span style="white-space: nowrap">"\"C minus\""</span>" langauge (grammar specification "
-                    <FileLink src="https://drive.google.com/file/d/12o5aSATedS28eJwsHIOHR7uf3DdZY20V/preview" display="here" file_win_src=fws/>
-                    "). This is probably the largest solo project I've completed so far. Repository "
-                    <ExternalLink href="https://github.com/ETBCOR/cs445" display="here"/>"."
-                </li>
+                    <li class="spaced">
+                        <ExternalLink href="https://catalog.uidaho.edu/courses/cs/#:~:text=CS%20445" display="CS445 | Compiler Design" bold=true/><br/>
+                        "In "<ExternalLink href="http://www2.cs.uidaho.edu/~mdwilder/cs445/" display="this class"/>" I fully implemented a compiler for the "<span style="white-space: nowrap">"\"C minus\""</span>" langauge (grammar specification "
+                        <FileLink src="https://drive.google.com/file/d/12o5aSATedS28eJwsHIOHR7uf3DdZY20V/preview" display="here" file_win_src=fws/>
+                        "). This is probably the largest solo project I've completed so far. Repository "
+                        <ExternalLink href="https://github.com/ETBCOR/cs445" display="here"/>"."
+                    </li>
 
-                <li class="spaced">
-                    <ExternalLink href="https://catalog.uidaho.edu/courses/cs/#:~:text=CS%20452" display="CS452 | Real-Time Operating Systems" bold=true/><br/>
-                    "In this class I created multiple programs for embedded systems (Feather RP2040 & ESP32), including a basic IOT device with its own webserver. Repository "
-                    <ExternalLink href="https://github.com/ETBCOR/cs452/" display="here"/>"."
-                </li>
+                    <li class="spaced">
+                        <ExternalLink href="https://catalog.uidaho.edu/courses/cs/#:~:text=CS%20452" display="CS452 | Real-Time Operating Systems" bold=true/><br/>
+                        "In this class I created multiple programs for embedded systems (Feather RP2040 & ESP32), including a basic IOT device with its own webserver. Repository "
+                        <ExternalLink href="https://github.com/ETBCOR/cs452/" display="here"/>"."
+                    </li>
 
-                <li class="spaced">
-                    <ExternalLink href="https://catalog.uidaho.edu/courses/cs/#:~:text=CS%20470" display="CS470 | Artificial Intelligence" bold=true/><br/>
-                    "This class taugh common concepts and techniques involved in artificial intelligence. Projects:"<br/>
-                    <FileLink src="https://drive.google.com/file/d/1ICaQOsGKwJ7RfE21xBHvozQkfQGkw43G/preview" display="Pathfinding Algorithms" file_win_src=fws/>
-                    " | "<ExternalLink href="https://github.com/ETBCOR/cs470/tree/master/proj1" display="Github Repository"/>
-                    <br/>
-                    <FileLink src="https://drive.google.com/file/d/1fK-F2X7uwnOk8CrDosopO1pRl6xlBc1u/preview" display="Connect-4 Bot Using Minmax" file_win_src=fws/>
-                    " | "<ExternalLink href="https://github.com/ETBCOR/cs470/tree/master/proj2" display="Github Repository"/>
-                    <br/>
-                    <FileLink src="https://drive.google.com/file/d/1Qr5B0yZ8s3aY3Ywdd4KCYq_7y5bXfCTg/preview" display="Map Coloring Algorithms" file_win_src=fws/>
-                    " | "<ExternalLink href="https://github.com/ETBCOR/cs470/tree/master/proj3" display="Github Repository"/>
-                    <br/>
-                    <FileLink src="https://drive.google.com/file/d/1ysXZTxxRYNOqZDYkrTWZj6VWc2TndJZR/preview" display="Modeling Genealogy in Prolog" file_win_src=fws/>
-                </li>
+                    <li class="spaced">
+                        <ExternalLink href="https://catalog.uidaho.edu/courses/cs/#:~:text=CS%20470" display="CS470 | Artificial Intelligence" bold=true/><br/>
+                        "This class taugh common concepts and techniques involved in artificial intelligence. Projects:"<br/>
+                        <FileLink src="https://drive.google.com/file/d/1ICaQOsGKwJ7RfE21xBHvozQkfQGkw43G/preview" display="Pathfinding Algorithms" file_win_src=fws/>
+                        " | "<ExternalLink href="https://github.com/ETBCOR/cs470/tree/master/proj1" display="Github Repository"/>
+                        <br/>
+                        <FileLink src="https://drive.google.com/file/d/1fK-F2X7uwnOk8CrDosopO1pRl6xlBc1u/preview" display="Connect-4 Bot Using Minmax" file_win_src=fws/>
+                        " | "<ExternalLink href="https://github.com/ETBCOR/cs470/tree/master/proj2" display="Github Repository"/>
+                        <br/>
+                        <FileLink src="https://drive.google.com/file/d/1Qr5B0yZ8s3aY3Ywdd4KCYq_7y5bXfCTg/preview" display="Map Coloring Algorithms" file_win_src=fws/>
+                        " | "<ExternalLink href="https://github.com/ETBCOR/cs470/tree/master/proj3" display="Github Repository"/>
+                        <br/>
+                        <FileLink src="https://drive.google.com/file/d/1ysXZTxxRYNOqZDYkrTWZj6VWc2TndJZR/preview" display="Modeling Genealogy in Prolog" file_win_src=fws/>
+                    </li>
 
-                <li class="spaced">
-                    <ExternalLink href="https://catalog.uidaho.edu/courses/cs/#:~:text=CS%20475" display="CS475 | Machine Learning" bold=true/><br/>
-                    "In this class I completed 8 assignments machine learning topics of varying difficulty. Although the repository is a bit messy, the link is "
-                    <ExternalLink href="https://github.com/ETBCOR/cs475" display="here"/>"."
-                </li>
+                    <li class="spaced">
+                        <ExternalLink href="https://catalog.uidaho.edu/courses/cs/#:~:text=CS%20475" display="CS475 | Machine Learning" bold=true/><br/>
+                        "In this class I completed 8 assignments machine learning topics of varying difficulty. Although the repository is a bit messy, the link is "
+                        <ExternalLink href="https://github.com/ETBCOR/cs475" display="here"/>"."
+                    </li>
 
-                <li>
-                    <ExternalLink href="https://catalog.uidaho.edu/courses/cs/#:~:text=CS%20480&text=CS%20481" display="CS480 & CS481 | Senior Capstone Design" bold=true/><br/>
-                    "For my capstone project I designed calibration software for a laser communication device made by "
-                    <ExternalLink href="https://www.hansenphotonics.com/" display="Hansen Photonics Inc"/>
-                    " on a team with three other CS majors. The resulting software is simple yet effective. "
-                    "The creation process is well documented, but the repository is private; contact me if you're interested in seeing it."
-                </li>
-            </ul></div> },
-        ),
-        (
-            "Other Projects",
-            view! { cx, <div><ul>
-                <li class="spaced">
-                    "I made "<b>"this very portfolio website"</b>" with "
-                    <ExternalLink href="https://leptos.dev/" display="leptos"/>" (a full-stack web framework built in "
-                    <ExternalLink href="https://www.rust-lang.org/" display="Rust"/>")."
-                </li>
+                    <li>
+                        <ExternalLink href="https://catalog.uidaho.edu/courses/cs/#:~:text=CS%20480&text=CS%20481" display="CS480 & CS481 | Senior Capstone Design" bold=true/><br/>
+                        "For my capstone project I designed calibration software for a laser communication device made by "
+                        <ExternalLink href="https://www.hansenphotonics.com/" display="Hansen Photonics Inc"/>
+                        " on a team with three other CS majors. The resulting software is simple yet effective. "
+                        "The creation process is well documented, but the repository is private; contact me if you're interested in seeing it."
+                    </li>
+                </ul></div> },
+            ),
+            (
+                "Other Projects",
+                view! { cx, <div><ul>
+                    <li class="spaced">
+                        "I made "<b>"this very portfolio website"</b>" with "
+                        <ExternalLink href="https://leptos.dev/" display="leptos"/>" (a full-stack web framework built in "
+                        <ExternalLink href="https://www.rust-lang.org/" display="Rust"/>")."
+                    </li>
 
-                <li class="spaced">
-                    "I designed "<b>"a font"</b>" for sitelen pona (the writing system of a constructed language). Repository "
-                    <ExternalLink href="https://github.com/ETBCOR/nasin-nanpa" display="here"/>"."
-                </li>
+                    <li class="spaced">
+                        "I designed "<b>"a font"</b>" for sitelen pona (the writing system of a constructed language). Repository "
+                        <ExternalLink href="https://github.com/ETBCOR/nasin-nanpa" display="here"/>"."
+                    </li>
 
-                <li class="spaced">
-                    "I've made hundereds of "<b>"songs"</b>" (varying in completeness) "
-                    "with Ableton Live in my free time, but I haven't released anything yet."
-                </li>
+                    <li class="spaced">
+                        "I've made hundereds of "<b>"songs"</b>" (varying in completeness) "
+                        "with Ableton Live in my free time, but I haven't released anything yet."
+                    </li>
 
-                <li class="spaced">
-                    "I have "<ExternalLink href="https://www.instagram.com/ecridisedits/" display="an Instagram page"/>
-                    " full of cool audio/visaully synced "<b>"edits"</b>" I made with After Effects."
-                </li>
+                    <li class="spaced">
+                        "I have "<ExternalLink href="https://www.instagram.com/ecridisedits/" display="an Instagram page"/>
+                        " full of cool audio/visaully synced "<b>"edits"</b>" I made with After Effects."
+                    </li>
 
-                <li>"I have worked on quite a few other projects, both personal projects and projects for school (this list is nonexhaustive)."</li>
-            </ul></div> },
-        ),
-    ];
+                    <li>"I have worked on quite a few other projects, both personal projects and projects for school (this list is nonexhaustive)."</li>
+                </ul></div> },
+            ),
+        ],
+    ));
 
     view! { cx,
-        <Window id="projects-win" title="Projects".to_string() content=content tabs=Some((active_tab, tabs)) pos=pos hidden=hidden z_idx=z_idx/>
+        <Window id="projects-win" title="Projects".to_string() content=content tabs=tabs pos=pos hidden=hidden z_idx=z_idx/>
     }
 }
 
@@ -774,7 +884,11 @@ fn WebringWindow(
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
     let content = view! { cx, <div style="margin-left: 16px; margin-right: 16px">
-       <iframe id="bucket-webring" style="width: 100%; height: 63px; border: none" src="https://webring.bucketfish.me/embed.html?name=etbcor"></iframe>
+       <iframe
+        src="https://webring.bucketfish.me/embed.html?name=etbcor"
+        id="bucket-webring"
+        style="width: 100%; height: 63px; border: none"
+    ></iframe>
     </div> };
 
     view! { cx,
@@ -790,7 +904,10 @@ fn JohnWindow(
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
     let content = view! { cx, <div>
-       <iframe style="width: 100%; height:94px; border:none" src="https://john.citrons.xyz/embed?ref=example.com"></iframe>
+       <iframe
+            src="https://john.citrons.xyz/embed?ref=example.com"
+            style="width: 100%; height:94px; border:none"
+        ></iframe>
     </div> };
 
     view! { cx,
@@ -836,7 +953,12 @@ fn ExternalLink(
 #[component]
 fn Cyberpunk(cx: Scope) -> impl IntoView {
     view! { cx, <div id="cyberpunk" style="width: 700px; height: 500px">
-        <video muted autoplay loop="true" poster="/assets/cyberpunk.png">
+        <video
+            muted
+            autoplay
+            loop="true"
+            poster="/assets/cyberpunk.png"
+            on:contextmenu=move |e| e.prevent_default()>
             <source src="/assets/cyberpunk.webm" type="video/webm"/>
         </video>
     </div> }
