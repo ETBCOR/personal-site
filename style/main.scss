@@ -211,7 +211,11 @@ ul {
 	}
 
 	#ad-win {
-		width: 200px;
+		width: 225px;
+	}
+
+	#webring-win {
+		width: 450px;
 	}
 }
 
@@ -237,6 +241,8 @@ div.win-content :last-child {
 #loading-win>.win-content,
 #portfolio-link-win>.win-content,
 #music-link-win>.win-content,
+#ad-win>.win-content,
+#meta-win>.win-content,
 #tp-link-win>.win-content {
 	padding: 0px;
 	background: linear-gradient(24deg, #d593db, #ebc0ef, #ef9e91, #f9a4a4, #d8bf6b, #dedf91, #74e186, #7edce1, #a29cef);
@@ -269,7 +275,30 @@ div.win-content :last-child {
 }
 
 #ad-win>.win-content {
+	padding: 10px;
+	text-align: center;
+}
+
+#webring-win>.win-content {
 	padding: 0px;
+	background-color: #454545;
+	cursor: alias;
+}
+
+#meta-win>.win-content {
+	width: fit-content;
+	height: fit-content;
+	padding: 0px;
+	background-color: #AA4465;
+}
+
+.o-tawa-insa {
+	width: 225px;
+	height: 426px;
+	background-image: url("/assets/o-tawa-insa.svg");
+	background-position: center;
+	background-repeat: no-repeat;
+	cursor: alias;
 }
 
 details:not([open]) {

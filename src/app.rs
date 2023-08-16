@@ -43,7 +43,7 @@ pub fn App(cx: Scope) -> impl IntoView {
         <Router>
             <main>
                 <Routes>
-                    <Route path="" view=HomePage/>
+                    <Route path="/" view=HomePage/>
                     <Route path="/portfolio" view=PortfolioPage/>
                     <Route path="/tp" view=TokiPonaPage/>
                     <Route path="/music" view=MusicPage/>
@@ -70,26 +70,80 @@ fn NotFound(cx: Scope) -> impl IntoView {
 
 #[component]
 fn HomePage(cx: Scope) -> impl IntoView {
+    view! { cx,
+        <HomePageRecursive recursions=0/>
+    }
+}
+
+#[component]
+fn HomePageRecursive(cx: Scope, recursions: usize) -> impl IntoView {
     let loading_hidden = create_rw_signal(cx, false);
     let portfolio_hidden = create_rw_signal(cx, false);
     let music_hidden = create_rw_signal(cx, false);
     let tp_hidden = create_rw_signal(cx, false);
+    let webring_hidden = create_rw_signal(cx, false);
+    let ad_hidden = create_rw_signal(cx, false);
+    let meta_hidden = create_rw_signal(cx, false);
 
     let footer_items = vec![
         ("\"Inspiration\"", loading_hidden),
         ("Portfolio", portfolio_hidden),
         ("Music", music_hidden),
         ("toki pona", tp_hidden),
+        ("Webring", webring_hidden),
+        ("Meta", meta_hidden),
     ];
-    let z_idx = create_rw_signal(cx, 1);
+    let z_idx = if recursions == 0 {
+        Some(create_rw_signal(cx, 1))
+    } else {
+        None
+    };
+    let y_offset = if recursions == 0 { 0 } else { 35 };
 
     view! { cx,
-        <LoadingWindow pos=(20, 20)   hidden=loading_hidden   z_idx=Some(z_idx) variant=LoadingWindowVariant::Default/>
-        <LinkWindow    pos=(300, 20)  hidden=portfolio_hidden z_idx=Some(z_idx) id="portfolio-link-win" title="Portfolio".to_string() bg_img="/assets/file-icon.svg"       src="/portfolio"/>
-        <LinkWindow    pos=(20, 280)  hidden=music_hidden     z_idx=Some(z_idx) id="music-link-win"     title="Music".to_string()     bg_img="/assets/wireless-nature.png" src="/music"/>
-        <LinkWindow    pos=(300, 330) hidden=tp_hidden        z_idx=Some(z_idx) id="tp-link-win"        title="toki pona".to_string() bg_img="/assets/itan.svg"            src="/tp"/>
+        <LoadingWindow pos=(20, 20+y_offset)   hidden=loading_hidden   z_idx=z_idx variant=LoadingWindowVariant::Default/>
+        <LinkWindow    pos=(300, 20+y_offset)  hidden=portfolio_hidden z_idx=z_idx id="portfolio-link-win" title="Portfolio".to_string() bg_img="/assets/file-icon.svg"       src="/portfolio"/>
+        <LinkWindow    pos=(20, 280+y_offset)  hidden=music_hidden     z_idx=z_idx id="music-link-win"     title="Music".to_string()     bg_img="/assets/wireless-nature.png" src="/music"/>
+        <LinkWindow    pos=(300, 330+y_offset) hidden=tp_hidden        z_idx=z_idx id="tp-link-win"        title="toki pona".to_string() bg_img="/assets/itan.svg"            src="/tp"/>
+        <WebringWindow pos=(20, 590+y_offset)  hidden=webring_hidden   z_idx=z_idx/>
+        <AdWindow      pos=(525, 20+y_offset)  hidden=ad_hidden        z_idx=z_idx/>
+        <MetaWindow    pos=(525, 222+y_offset) hidden=meta_hidden      z_idx=z_idx recursions={recursions + 1}/>
         <div style="height: 65px"></div> // spacer in narrow view
-        <Footer items=footer_items/>
+        <div class:hidden=move || {recursions > 0}><Footer items=footer_items/></div>
+    }
+}
+
+#[component]
+fn MetaWindow(
+    cx: Scope,
+    pos: (i32, i32),
+    hidden: RwSignal<bool>,
+    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
+    recursions: usize,
+) -> impl IntoView {
+    let content = if recursions < 16 {
+        let deeper = create_rw_signal(cx, false);
+        view! { cx, <div>
+            <div
+                class="o-tawa-insa"
+                class:hidden=move || deeper()
+                on:click=move |_| deeper.set(true)
+            ></div>
+            <div class:hidden=move || !deeper()>
+                <div style="width: 785px; min-height: 700px">
+                    <HomePageRecursive recursions=recursions/>
+                </div>
+            </div>
+        </div> }
+    } else {
+        view! { cx, <div>
+            <div style="width: 225px; height: 75px"></div>
+            <LoadingWindow pos=(0, 150) hidden=hidden variant=LoadingWindowVariant::StackOverflow/>
+        </div> }
+    };
+
+    view! { cx,
+        <Window id="meta-win" title="Meta, man...".to_string() content=content pos=pos hidden=hidden z_idx=z_idx/>
     }
 }
 
@@ -120,7 +174,7 @@ fn PortfolioPage(cx: Scope) -> impl IntoView {
         <SkillsWindow    pos=(735, 20)  hidden=skills_hidden    z_idx=Some(z_idx)/>
         <ProjectsWindow  pos=(735, 425) hidden=projects_hidden  z_idx=Some(z_idx) file_win_src=set_file_src/>
         <FileWindow      pos=(60, 90)   hidden=file_hidden      z_idx=Some(z_idx) src=file_src/>
-        <AdWindow        pos=(255, 22)  hidden=ad_hidden        z_idx=Some(z_idx)/>
+        <AdWindow        pos=(100, 600) hidden=ad_hidden        z_idx=Some(z_idx)/>
         <div style="height: 65px"></div> // spacer in narrow view
         <Footer items=footer_items/>
     }
@@ -146,7 +200,7 @@ fn MusicPage(cx: Scope) -> impl IntoView {
 
 #[component]
 fn Footer(cx: Scope, items: Vec<(&'static str, RwSignal<bool>)>) -> impl IntoView {
-    view! { cx, <footer>
+    view! { cx, <footer style="z-index: -1">
         <a class="title win-minimized favicon" href="/"></a> {
             items
                 .into_iter()
@@ -636,6 +690,7 @@ enum LoadingWindowVariant {
     HomePageLink,
     PageComingSoon,
     PageNotFound,
+    StackOverflow,
 }
 
 #[component]
@@ -675,6 +730,12 @@ fn LoadingWindow(
                 <img src="/assets/infinity.svg" style="width: 100%; height: 100px" draggable="false"/>
             </div> }
         }
+        LoadingWindowVariant::StackOverflow => {
+            title = "Uh-oh! The stack overflowed".to_string();
+            view! { cx, <div style="cursor: pointer" on:click=move |_| nav("/", Default::default()).unwrap()>
+                <img src="/assets/infinity.svg" style="width: 100%; height: 100px" draggable="false"/>
+            </div> }
+        }
     };
 
     view! { cx,
@@ -699,6 +760,22 @@ fn AdWindow(
 
     view! { cx,
         <Window id="ad-win" title="Advertisement".to_string() content=content pos=pos hidden=hidden z_idx=z_idx/>
+    }
+}
+
+#[component]
+fn WebringWindow(
+    cx: Scope,
+    pos: (i32, i32),
+    hidden: RwSignal<bool>,
+    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
+) -> impl IntoView {
+    let content = view! { cx, <div>
+       <iframe id="bucket-webring" style="width: 100%; height: 50px; border: none;" src="https://webring.bucketfish.me/embed.html?name=etbcor"></iframe>
+    </div> };
+
+    view! { cx,
+        <Window id="webring-win" title="Webring".to_string() content=content pos=pos hidden=hidden z_idx=z_idx/>
     }
 }
 
