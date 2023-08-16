@@ -112,6 +112,7 @@ fn HomePageRecursive(cx: Scope, recursions: usize) -> impl IntoView {
         <MetaWindow    pos=(485, 212+y_offset) hidden=meta_hidden      z_idx=z_idx recursions={recursions + 1}/>
         <div style="height: 65px"></div> // spacer in narrow view
         <div class:hidden=move || {recursions > 0}><Footer items=footer_items/></div>
+        <Cyberpunk/>
     }
 }
 
@@ -202,7 +203,7 @@ fn MusicPage(cx: Scope) -> impl IntoView {
 
 #[component]
 fn Footer(cx: Scope, items: Vec<(&'static str, RwSignal<bool>)>) -> impl IntoView {
-    view! { cx, <footer style="z-index: -1">
+    view! { cx, <footer>
         <a class="title win-minimized favicon" href="/"></a> {
             items
                 .into_iter()
@@ -772,8 +773,8 @@ fn WebringWindow(
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
-    let content = view! { cx, <div>
-       <iframe id="bucket-webring" style="width: 100%; height: 63px; border: none;" src="https://webring.bucketfish.me/embed.html?name=etbcor"></iframe>
+    let content = view! { cx, <div style="margin-left: 16px; margin-right: 16px">
+       <iframe id="bucket-webring" style="width: 100%; height: 63px; border: none" src="https://webring.bucketfish.me/embed.html?name=etbcor"></iframe>
     </div> };
 
     view! { cx,
@@ -830,4 +831,13 @@ fn ExternalLink(
             </a>
         }
     }
+}
+
+#[component]
+fn Cyberpunk(cx: Scope) -> impl IntoView {
+    view! { cx, <div id="cyberpunk" style="width: 700px; height: 500px">
+        <video muted autoplay loop="true" poster="/assets/cyberpunk.png">
+            <source src="/assets/cyberpunk.webm" type="video/webm"/>
+        </video>
+    </div> }
 }
