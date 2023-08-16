@@ -82,8 +82,9 @@ fn HomePageRecursive(cx: Scope, recursions: usize) -> impl IntoView {
     let music_hidden = create_rw_signal(cx, false);
     let tp_hidden = create_rw_signal(cx, false);
     let webring_hidden = create_rw_signal(cx, false);
-    let ad_hidden = create_rw_signal(cx, false);
     let meta_hidden = create_rw_signal(cx, false);
+    let ad_hidden = create_rw_signal(cx, false);
+    let john_hidden = create_rw_signal(cx, false);
 
     let footer_items = vec![
         ("\"Inspiration\"", loading_hidden),
@@ -102,12 +103,13 @@ fn HomePageRecursive(cx: Scope, recursions: usize) -> impl IntoView {
 
     view! { cx,
         <LoadingWindow pos=(20, 20+y_offset)   hidden=loading_hidden   z_idx=z_idx variant=LoadingWindowVariant::Default/>
-        <LinkWindow    pos=(300, 20+y_offset)  hidden=portfolio_hidden z_idx=z_idx id="portfolio-link-win" title="Portfolio".to_string() bg_img="/assets/file-icon.svg"       src="/portfolio"/>
-        <LinkWindow    pos=(20, 280+y_offset)  hidden=music_hidden     z_idx=z_idx id="music-link-win"     title="Music".to_string()     bg_img="/assets/wireless-nature.png" src="/music"/>
-        <LinkWindow    pos=(300, 330+y_offset) hidden=tp_hidden        z_idx=z_idx id="tp-link-win"        title="toki pona".to_string() bg_img="/assets/itan.svg"            src="/tp"/>
-        <WebringWindow pos=(20, 590+y_offset)  hidden=webring_hidden   z_idx=z_idx/>
-        <AdWindow      pos=(525, 20+y_offset)  hidden=ad_hidden        z_idx=z_idx/>
-        <MetaWindow    pos=(525, 222+y_offset) hidden=meta_hidden      z_idx=z_idx recursions={recursions + 1}/>
+        <LinkWindow    pos=(280, 20+y_offset)  hidden=portfolio_hidden z_idx=z_idx id="portfolio-link-win" title="Portfolio".to_string() bg_img="/assets/file-icon.svg"       src="/portfolio"/>
+        <LinkWindow    pos=(20, 269+y_offset)  hidden=music_hidden     z_idx=z_idx id="music-link-win"     title="Music".to_string()     bg_img="/assets/wireless-nature.png" src="/music"/>
+        <LinkWindow    pos=(280, 319+y_offset) hidden=tp_hidden        z_idx=z_idx id="tp-link-win"        title="toki pona".to_string() bg_img="/assets/itan.svg"            src="/tp"/>
+        <WebringWindow pos=(20, 568+y_offset)  hidden=webring_hidden   z_idx=z_idx/>
+        <AdWindow      pos=(485, 20+y_offset)  hidden=ad_hidden        z_idx=z_idx/>
+        <JohnWindow    pos=(20, 710+y_offset)  hidden=john_hidden      z_idx=z_idx/>
+        <MetaWindow    pos=(485, 212+y_offset) hidden=meta_hidden      z_idx=z_idx recursions={recursions + 1}/>
         <div style="height: 65px"></div> // spacer in narrow view
         <div class:hidden=move || {recursions > 0}><Footer items=footer_items/></div>
     }
@@ -130,7 +132,7 @@ fn MetaWindow(
                 on:click=move |_| deeper.set(true)
             ></div>
             <div class:hidden=move || !deeper()>
-                <div style="width: 785px; min-height: 700px">
+                <div style="width: 745px; height: 856px">
                     <HomePageRecursive recursions=recursions/>
                 </div>
             </div>
@@ -771,11 +773,27 @@ fn WebringWindow(
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
     let content = view! { cx, <div>
-       <iframe id="bucket-webring" style="width: 100%; height: 50px; border: none;" src="https://webring.bucketfish.me/embed.html?name=etbcor"></iframe>
+       <iframe id="bucket-webring" style="width: 100%; height: 63px; border: none;" src="https://webring.bucketfish.me/embed.html?name=etbcor"></iframe>
     </div> };
 
     view! { cx,
         <Window id="webring-win" title="Webring".to_string() content=content pos=pos hidden=hidden z_idx=z_idx/>
+    }
+}
+
+#[component]
+fn JohnWindow(
+    cx: Scope,
+    pos: (i32, i32),
+    hidden: RwSignal<bool>,
+    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
+) -> impl IntoView {
+    let content = view! { cx, <div>
+       <iframe style="width: 100%; height:94px; border:none" src="https://john.citrons.xyz/embed?ref=example.com"></iframe>
+    </div> };
+
+    view! { cx,
+        <Window id="john-win" title="Johnvertisement".to_string() content=content pos=pos hidden=hidden z_idx=z_idx/>
     }
 }
 

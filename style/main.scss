@@ -215,7 +215,15 @@ ul {
 	}
 
 	#webring-win {
-		width: 450px;
+		width: 430px;
+	}
+
+	#music-link-win {
+		width: 225;
+	}
+
+	#john-win {
+		width: 690px;
 	}
 }
 
@@ -243,6 +251,7 @@ div.win-content :last-child {
 #music-link-win>.win-content,
 #ad-win>.win-content,
 #meta-win>.win-content,
+#john-win>.win-content,
 #tp-link-win>.win-content {
 	padding: 0px;
 	background: linear-gradient(24deg, #d593db, #ebc0ef, #ef9e91, #f9a4a4, #d8bf6b, #dedf91, #74e186, #7edce1, #a29cef);
@@ -301,10 +310,14 @@ div.win-content :last-child {
 	cursor: alias;
 }
 
+#john-win>.win-content {
+	width: 690px;
+	height: 85px;
+}
+
 details:not([open]) {
 	cursor: pointer;
 }
-
 
 footer {
 	position: fixed;
