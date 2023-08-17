@@ -71,6 +71,7 @@ footer {
 	border-radius: 5px;
 	box-shadow: 5px 3px #462255;
 	background-color: #EEE;
+	overflow: hidden;
 	color: #000;
 }
 
@@ -195,6 +196,7 @@ footer {
 }
 
 .win-content {
+	max-width: 100%;
 	padding: 0px;
 }
 
@@ -225,6 +227,7 @@ footer {
 		margin-left: auto;
 		margin-right: auto;
 		width: fit-content;
+		max-width: 90%;
 	}
 
 	#ad-win {

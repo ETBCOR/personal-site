@@ -349,8 +349,8 @@ fn JohnWindow(
     let size = create_rw_signal(cx, size);
     let content = view! { cx, <div>
        <iframe
-            src="https://john.citrons.xyz/embed?ref=example.com"
-            style="padding: 0px; width: 100%; height: 100%; border:none"
+            src="https://john.citrons.xyz/embed?ref=etbcor.com"
+            style="width: 100%; border:none"
         ></iframe>
     </div> };
 
