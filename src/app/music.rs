@@ -1,15 +1,29 @@
-use crate::app::{Cyberpunk, LoadingWindow, LoadingWindowVariant, Window};
+use crate::app::{
+    Cyberpunk, Footer, JohnWindow, LinkWindow, LoadingWindow, LoadingWindowVariant, Window,
+};
 use leptos::*;
 
 #[component]
 pub fn MusicPage(cx: Scope) -> impl IntoView {
     let loading_hidden = create_rw_signal(cx, false);
+    let my_music_hidden = create_rw_signal(cx, false);
     let spotify_hidden = create_rw_signal(cx, false);
+    let john_hidden = create_rw_signal(cx, false);
+
+    let footer_items = vec![
+        ("\"Inspiration\"", loading_hidden),
+        ("My Music", my_music_hidden),
+        ("Playlists", spotify_hidden),
+        ("Johnvertisement", john_hidden),
+    ];
+    let z_idx = Some(create_rw_signal(cx, 1));
 
     view! { cx,
-        <LoadingWindow         pos=(20, 20)  size=(255, 255) hidden=loading_hidden variant=LoadingWindowVariant::HomePageLink/>
-        <SpotifyPlaylistWindow pos=(310, 20) size=(440, 400) hidden=spotify_hidden/>
-        // <Footer items=footer_items/>
+        <LoadingWindow         pos=(20, 20)  size=(255, 255) hidden=loading_hidden  z_idx=z_idx variant=LoadingWindowVariant::HomePageLink/>
+        <LinkWindow            pos=(20, 347) size=(255, 255) hidden=my_music_hidden z_idx=z_idx id="my-music-win" title="My Music (coming soon)".to_string() bg_img="" src="/music"/>
+        <SpotifyPlaylistWindow pos=(310, 20) size=(440, 582) hidden=spotify_hidden  z_idx=z_idx/>
+        <JohnWindow            pos=(20, 674) size=(730, 90)  hidden=john_hidden     z_idx=z_idx/>
+        <Footer items=footer_items/>
         <Cyberpunk/>
     }
 }
@@ -104,5 +118,33 @@ fn SpotifyPlaylist(
             loading="lazy"
             class:spaced=spaced
         ></iframe><br/>
+    }
+}
+
+#[component]
+pub fn MusicLinkWindow(
+    cx: Scope,
+    pos: (i32, i32),
+    size: (u32, u32),
+    hidden: RwSignal<bool>,
+    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
+) -> impl IntoView {
+    let size = create_rw_signal(cx, size);
+    let nav = leptos_router::use_navigate(cx);
+    let content = view! { cx, <div style="height: 227px; cursor: pointer">
+        <video
+            style="width: 100%"
+            muted
+            autoplay
+            loop="true"
+            poster="/assets/music-icon.png"
+            on:click=move |_| nav("/music", Default::default()).unwrap()
+            on:contextmenu=move |e| e.prevent_default()>
+            <source src="/assets/music-icon.webm" type="video/webm"/>
+        </video>
+    </div> };
+
+    view! { cx,
+        <Window id="music-link-win" title="Music".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx rainbow=true/>
     }
 }

@@ -360,6 +360,29 @@ fn JohnWindow(
 }
 
 #[component]
+fn LinkWindow(
+    cx: Scope,
+    pos: (i32, i32),
+    size: (u32, u32),
+    hidden: RwSignal<bool>,
+    id: &'static str,
+    title: String,
+    bg_img: &'static str,
+    src: &'static str,
+    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
+) -> impl IntoView {
+    let size = create_rw_signal(cx, size);
+    let nav = leptos_router::use_navigate(cx);
+    let content = view! { cx, <div style="cursor: pointer; text-align: center" on:click=move |_| nav(src, Default::default()).unwrap()>
+        <img src=bg_img style="padding: 10px" draggable=false/>
+    </div> };
+
+    view! { cx,
+        <Window id=id title=title content=content pos=pos size=size hidden=hidden z_idx=z_idx rainbow=true/>
+    }
+}
+
+#[component]
 fn ExternalLink(
     cx: Scope,
     href: &'static str,

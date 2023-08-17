@@ -1,6 +1,7 @@
+use crate::app::music::MusicLinkWindow;
 use crate::app::{
-    AdWindow, Cyberpunk, Footer, JohnWindow, LoadingWindow, LoadingWindowVariant, WebringWindow,
-    Window,
+    AdWindow, Cyberpunk, Footer, JohnWindow, LinkWindow, LoadingWindow, LoadingWindowVariant,
+    WebringWindow, Window,
 };
 use leptos::*;
 
@@ -90,56 +91,5 @@ fn MetaWindow(
 
     view! { cx,
         <Window id="meta-win" title="Meta, man...".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx rainbow=true/>
-    }
-}
-
-#[component]
-fn LinkWindow(
-    cx: Scope,
-    pos: (i32, i32),
-    size: (u32, u32),
-    hidden: RwSignal<bool>,
-    id: &'static str,
-    title: String,
-    bg_img: &'static str,
-    src: &'static str,
-    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
-) -> impl IntoView {
-    let size = create_rw_signal(cx, size);
-    let nav = leptos_router::use_navigate(cx);
-    let content = view! { cx, <div style="cursor: pointer; text-align: center" on:click=move |_| nav(src, Default::default()).unwrap()>
-        <img src=bg_img style="padding: 10px" draggable=false/>
-    </div> };
-
-    view! { cx,
-        <Window id=id title=title content=content pos=pos size=size hidden=hidden z_idx=z_idx rainbow=true/>
-    }
-}
-
-#[component]
-fn MusicLinkWindow(
-    cx: Scope,
-    pos: (i32, i32),
-    size: (u32, u32),
-    hidden: RwSignal<bool>,
-    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
-) -> impl IntoView {
-    let size = create_rw_signal(cx, size);
-    let nav = leptos_router::use_navigate(cx);
-    let content = view! { cx, <div style="height: 227px; cursor: pointer">
-        <video
-            style="width: 100%"
-            muted
-            autoplay
-            loop="true"
-            poster="/assets/music-icon.png"
-            on:click=move |_| nav("/music", Default::default()).unwrap()
-            on:contextmenu=move |e| e.prevent_default()>
-            <source src="/assets/music-icon.webm" type="video/webm"/>
-        </video>
-    </div> };
-
-    view! { cx,
-        <Window id="music-link-win" title="Music".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx rainbow=true/>
     }
 }
