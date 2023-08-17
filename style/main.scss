@@ -1,3 +1,4 @@
+// general
 body {
 	color: black;
 	text-align: center;
@@ -8,12 +9,8 @@ body {
 	background-attachment: fixed;
 }
 
-main {
-	overflow: auto;
-}
-
-summary u {
-	color: #AA4465;
+div {
+	display: block;
 }
 
 a:link,
@@ -21,14 +18,9 @@ a:visited {
 	color: #AA4465;
 }
 
-
 summary u:hover,
 a:hover {
 	color: #462255;
-}
-
-div {
-	display: block;
 }
 
 p,
@@ -47,11 +39,31 @@ ul {
 	padding-left: 20px;
 }
 
-.spaced {
-	padding-bottom: 10px;
+#cyberpunk {
+	position: fixed;
+	right: 0px;
+	bottom: 0px;
+	z-index: -2;
+	scale: 60%;
+	transform-origin: 100% 102%;
 }
 
+footer {
+	position: fixed;
+	right: 0px;
+	bottom: 0px;
+	z-index: 4096;
+	width: fit-content;
+	text-align: left;
+	padding-bottom: 3px;
+	padding-right: 5px;
+	border-top: 5px solid #AA4465;
+	border-left: 5px solid #AA4465;
+	border-radius: 15px 0px 0px 0px;
+	background-image: linear-gradient(to top, #42e3ad, #0aff9d);
+}
 
+// windows
 .win-outer {
 	position: absolute;
 	text-align: left;
@@ -126,11 +138,10 @@ ul {
 .win-minimized {
 	font-family: 'VT323';
 	font-size: x-large;
-	display: inline;
+	display: inline-flex;
 	padding: 5px;
 	border: #AA4465 solid 5px;
 	border-radius: 5px;
-	display: inline-table;
 	vertical-align: middle;
 	cursor: pointer;
 	margin: 5px;
@@ -139,28 +150,29 @@ ul {
 	background-image: linear-gradient(to right, #93E1D8, #DDFFF7)
 }
 
+// images
 .favicon {
+	background-image: url("/assets/favicon.ico");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 110%;
 	padding: 0;
 	width: 32px;
 	height: 32px;
-	background-position: center;
-	background-size: 90%;
-	background-image: url("/assets/favicon.ico");
 }
 
 .win-close {
-	margin: 7px;
-	margin-left: auto;
-	float: right;
-	display: block;
-	cursor: not-allowed;
-	width: 20px;
-	height: 20px;
+	background-image: url("/assets/close-window.png");
 	background-position: center;
 	background-repeat: no-repeat;
-	background-image: url("/assets/close-window.png");
-	image-rendering: pixelated;
 	background-color: #AA4465;
+	display: block;
+	float: right;
+	width: 20px;
+	height: 20px;
+	margin: 7px;
+	margin-left: auto;
+	cursor: not-allowed;
 	box-shadow: 2px 2px #462255;
 }
 
@@ -168,15 +180,10 @@ ul {
 	background-image: url("/assets/close-window-hover.png");
 }
 
-.external-link {
-	cursor: alias;
-}
-
 .external-link>span {
 	background-image: url("/assets/external-link.png");
 	background-position: center;
 	background-repeat: no-repeat;
-	image-rendering: pixelated;
 	display: inline-block;
 	offset: bottom 100px;
 	width: 14px;
@@ -200,17 +207,7 @@ ul {
 	width: 100%;
 }
 
-.scroll {
-	overflow-x: hidden;
-	overflow-y: auto;
-}
-
-@media (min-width: 901px) {
-	footer {
-		z-index: -1;
-	}
-}
-
+// mobile view
 @media (max-width: 900px) {
 	.win-outer {
 		position: inherit;
@@ -221,16 +218,8 @@ ul {
 		width: fit-content;
 	}
 
-	.win-content {
-		width: auto;
-	}
-
 	#ad-win {
 		display: none;
-	}
-
-	footer {
-		z-index: 4096;
 	}
 }
 
@@ -238,14 +227,29 @@ div.win-content :last-child {
 	margin-bottom: 0px;
 }
 
-// #loading-win>.win-content,
-// #portfolio-link-win>.win-content,
-// #music-link-win>.win-content,
-// #ad-win>.win-content,
-// #meta-win>.win-content,
-// #john-win>.win-content,
-// #spotify-win>div>.tab-outer1
-// #tp-link-win>.win-content {
+#webring-win>.win-content {
+	background-color: #454545;
+	cursor: alias;
+}
+
+details:not([open]) {
+	cursor: pointer;
+}
+
+// style override classe
+.spaced {
+	padding-bottom: 10px;
+}
+
+.external-link {
+	cursor: alias;
+}
+
+.scroll {
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
 .rainbow {
 	background: linear-gradient(24deg, #d593db, #ebc0ef, #ef9e91, #f9a4a4, #d8bf6b, #dedf91, #74e186, #7edce1, #a29cef);
 	background-size: 800% 800%;
@@ -264,39 +268,6 @@ div.win-content :last-child {
 	100% {
 		background-position: 0% 82%
 	}
-}
-
-#webring-win>.win-content {
-	background-color: #454545;
-	cursor: alias;
-}
-
-details:not([open]) {
-	cursor: pointer;
-}
-
-footer {
-	position: fixed;
-	right: 0px;
-	bottom: 0px;
-	width: fit-content;
-	text-align: left;
-	padding-bottom: 3px;
-	padding-right: 5px;
-	border-top: 5px solid #AA4465;
-	border-left: 5px solid #AA4465;
-	border-radius: 15px 0px 0px 0px;
-	background-image: linear-gradient(to top, #42e3ad, #0aff9d);
-}
-
-#cyberpunk {
-	position: fixed;
-	right: 0px;
-	bottom: 0px;
-	z-index: -2;
-	scale: 60%;
-	transform-origin: 100% 102%;
-	// object-fit: scale-down;
 }
 
 .hidden {
