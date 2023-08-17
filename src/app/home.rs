@@ -22,6 +22,7 @@ fn HomePage(cx: Scope, recursions: usize) -> impl IntoView {
         ("toki pona", tp_hidden),
         ("Webring", webring_hidden),
         ("Meta", meta_hidden),
+        ("Johnvertisement", john_hidden),
     ];
     let z_idx = if recursions == 0 {
         Some(create_rw_signal(cx, 1))
