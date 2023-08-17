@@ -37,7 +37,23 @@ fn SpotifyPlaylistWindow(
                     <SpotifyPlaylist src="3K8Kg0C1GVI14q3KUBqfUd"/>
                     <SpotifyPlaylist src="2q5WCLRthMkrtOOApVGeYW"/>
                     <SpotifyPlaylist src="0S8eDcRFe43fJHlOUAdiBE"/>
-                    <SpotifyPlaylist src="6LwfptFt77pViRyjBR2a3u" spaced=false/>
+                    <SpotifyPlaylist src="6LwfptFt77pViRyjBR2a3u"/>
+                    <SpotifyPlaylist src="37i9dQZEVXcKWDpjwB0tqt" spaced=false/>
+                </div> },
+            ),
+            (
+                "Mood",
+                view! { cx, <div class="tab-outer" style="padding: 10px">
+                    <SpotifyPlaylist src="5JS3lDWT6W7vkghXsQHiQn"/>
+                    <SpotifyPlaylist src="1q7j8e6UWAC4p78QizSOqk"/>
+                    <SpotifyPlaylist src="6iVCPGSpMstM56Ajj0NSYI"/>
+                    <SpotifyPlaylist src="1TcG56ZvcjxIfs78p4U2ND"/>
+                    <SpotifyPlaylist src="6FQt8KArNQWlxxn5guwvFr"/>
+                    <SpotifyPlaylist src="0UQ9W2q0BAawJbNAuXN480"/>
+                    <SpotifyPlaylist src="3Qm6zeVhUSJFIyBeluWTXy"/>
+                    <SpotifyPlaylist src="3m5Dh6k8JzhVBHEajV86YA"/>
+                    <SpotifyPlaylist src="5cEz3iuf5aC9YMf3ZkI08g"/>
+                    <SpotifyPlaylist src="439886CxFFQD4sBKmaf2v9" spaced=false/>
                 </div> },
             ),
             (
@@ -61,14 +77,14 @@ fn SpotifyPlaylistWindow(
                     <SpotifyPlaylist src="5cnkxBVOu3Ompr3E7QlKa3"/>
                     <SpotifyPlaylist src="37Zs98sWQAJ5SpS60hVvf1"/>
                     <SpotifyPlaylist src="1fqYiy4hDIsByrWdTTYfYA"/>
-                    <SpotifyPlaylist src="77SM9ZJXNZtwZNlISBPz4P"/>
+                    <SpotifyPlaylist src="77SM9ZJXNZtwZNlISBPz4P" spaced=false/>
                 </div> },
             ),
         ],
     ));
 
     view! { cx,
-        <Window id="spotify-win" title="Some of my Spotify playlists".to_string() content=content tabs=tabs pos=pos size=size hidden=hidden z_idx=z_idx scroll=true rainbow=true/>
+        <Window id="spotify-win" title="My Public Spotify Playlists".to_string() content=content tabs=tabs pos=pos size=size hidden=hidden z_idx=z_idx scroll=true rainbow=true/>
     }
 }
 
