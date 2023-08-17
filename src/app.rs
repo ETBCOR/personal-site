@@ -112,9 +112,7 @@ fn HomePage(cx: Scope, recursions: usize) -> impl IntoView {
 #[component]
 fn HomePageEntry(cx: Scope) -> impl IntoView {
     view! { cx,
-        // <audio autoplay>
-            // <source src="/assets/Aquarius.wav" type="audio/wav"/>
-        // </audio>
+        // <audio autoplay><source src="/assets/Aquarius.wav" type="audio/wav"/></audio>
         <HomePage recursions=0/>
         <Cyberpunk/>
     }
