@@ -64,7 +64,8 @@ fn NotFound(cx: Scope) -> impl IntoView {
     let loading = create_rw_signal(cx, false);
 
     view! { cx,
-        <LoadingWindow pos=(100, 100) size=(100, 100) hidden=loading variant=LoadingWindowVariant::PageNotFound/>
+        <LoadingWindow pos=(20, 20) size=(500, 500) hidden=loading variant=LoadingWindowVariant::PageNotFound/>
+        <Cyberpunk/>
     }
 }
 
@@ -105,14 +106,17 @@ fn HomePage(cx: Scope, recursions: usize) -> impl IntoView {
         <MetaWindow    pos=(485, 192  +y_offset) size=(200, 437) hidden=meta_hidden      z_idx=z_idx recursions={recursions + 1}/>
         <div style="height: 65px"></div> // spacer in narrow view
         <div class:hidden=move || {recursions > 0}><Footer items=footer_items/></div>
-        <Cyberpunk/>
     }
 }
 
 #[component]
 fn HomePageEntry(cx: Scope) -> impl IntoView {
     view! { cx,
+        // <audio autoplay>
+            // <source src="/assets/Aquarius.wav" type="audio/wav"/>
+        // </audio>
         <HomePage recursions=0/>
+        <Cyberpunk/>
     }
 }
 
@@ -146,12 +150,12 @@ fn MetaWindow(
         </div> }
     } else {
         view! { cx, <div>
-            <LoadingWindow pos=(0, 150) size=(100, 100) hidden=hidden variant=LoadingWindowVariant::StackOverflow/>
+            <LoadingWindow pos=(0, 150) size=(200, 500) hidden=hidden variant=LoadingWindowVariant::StackOverflow/>
         </div> }
     };
 
     view! { cx,
-        <Window id="meta-win" title="Meta, man...".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx/>
+        <Window id="meta-win" title="Meta, man...".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx rainbow=true/>
     }
 }
 
@@ -176,15 +180,16 @@ fn PortfolioPage(cx: Scope) -> impl IntoView {
     let z_idx = create_rw_signal(cx, 1);
 
     view! { cx,
-        <LoadingWindow   pos=(465, 325) size=(100, 100) hidden=loading_hidden   z_idx=Some(z_idx) variant=LoadingWindowVariant::HomePageLink/>
-        <AboutWindow     pos=(25, 20)   size=(640, 110) hidden=about_hidden     z_idx=Some(z_idx)/>
-        <EducationWindow pos=(25, 210)  size=(100, 100) hidden=education_hidden z_idx=Some(z_idx)/>
-        <SkillsWindow    pos=(735, 20)  size=(100, 100) hidden=skills_hidden    z_idx=Some(z_idx)/>
-        <ProjectsWindow  pos=(735, 425) size=(100, 100) hidden=projects_hidden  z_idx=Some(z_idx) file_win_src=set_file_src/>
-        <FileWindow      pos=(60, 90)   size=(100, 100) hidden=file_hidden      z_idx=Some(z_idx) src=file_src/>
-        <AdWindow        pos=(100, 600) size=(100, 100) hidden=ad_hidden        z_idx=Some(z_idx)/>
+        <LoadingWindow   pos=(435, 204) size=(225, 202) hidden=loading_hidden   z_idx=Some(z_idx) variant=LoadingWindowVariant::HomePageLink/>
+        <AboutWindow     pos=(20, 20)   size=(640, 112) hidden=about_hidden     z_idx=Some(z_idx)/>
+        <EducationWindow pos=(20, 204)  size=(380, 572) hidden=education_hidden z_idx=Some(z_idx)/>
+        <SkillsWindow    pos=(695, 20)  size=(550, 386) hidden=skills_hidden    z_idx=Some(z_idx)/>
+        <ProjectsWindow  pos=(435, 478) size=(810, 298) hidden=projects_hidden  z_idx=Some(z_idx) file_win_src=set_file_src/>
+        <FileWindow      pos=(100, 100) size=(100, 100) hidden=file_hidden      z_idx=Some(z_idx) src=file_src/>
+        <AdWindow        pos=(100, 600) size=(200, 100) hidden=ad_hidden        z_idx=Some(z_idx)/>
         <div style="height: 65px"></div> // spacer in narrow view
         <Footer items=footer_items/>
+        <Cyberpunk/>
     }
 }
 
@@ -193,7 +198,8 @@ fn TokiPonaPage(cx: Scope) -> impl IntoView {
     let loading = create_rw_signal(cx, false);
 
     view! { cx,
-        <LoadingWindow pos=(100, 100) size=(100, 100) hidden=loading variant=LoadingWindowVariant::PageComingSoon/>
+        <LoadingWindow pos=(20, 20) size=(500, 500) hidden=loading variant=LoadingWindowVariant::PageComingSoon/>
+        <Cyberpunk/>
     }
 }
 
@@ -203,8 +209,10 @@ fn MusicPage(cx: Scope) -> impl IntoView {
     let spotify_hidden = create_rw_signal(cx, false);
 
     view! { cx,
-        <LoadingWindow   pos=(500, 20) size=(100, 100) hidden=loading_hidden variant=LoadingWindowVariant::HomePageLink/>
-        <SpotifyPlaylistWindow pos=(20, 20) size=(100, 100) hidden=spotify_hidden/>
+        <LoadingWindow         pos=(20, 20)  size=(255, 255) hidden=loading_hidden variant=LoadingWindowVariant::HomePageLink/>
+        <SpotifyPlaylistWindow pos=(310, 20) size=(440, 400) hidden=spotify_hidden/>
+        // <Footer items=footer_items/>
+        <Cyberpunk/>
     }
 }
 
@@ -225,7 +233,7 @@ fn SpotifyPlaylistWindow(
         vec![
             (
                 "Main",
-                view! { cx, <div class="tab-outer">
+                view! { cx, <div class="tab-outer" style="padding: 10px">
                     <SpotifyPlaylist src="1QPAKgnxEMYOBJFVmRhwM1"/>
                     <SpotifyPlaylist src="0DXYn6zngiQp5AQNOToO3i"/>
                     <SpotifyPlaylist src="3K8Kg0C1GVI14q3KUBqfUd"/>
@@ -236,7 +244,7 @@ fn SpotifyPlaylistWindow(
             ),
             (
                 "Genres",
-                view! { cx, <div class="tab-outer">
+                view! { cx, <div class="tab-outer" style="padding: 10px">
                     <SpotifyPlaylist src="4RCXWsAR5yT7P8pfaYKQK9"/>
                     <SpotifyPlaylist src="0ZarPheYW5A3Ut14uvvCYa"/>
                     <SpotifyPlaylist src="1eYJLMDpgoKD0F4LUH2Ezs"/>
@@ -262,7 +270,7 @@ fn SpotifyPlaylistWindow(
     ));
 
     view! { cx,
-        <Window id="spotify-win" title="Some of my Spotify playlists".to_string() content=content tabs=tabs pos=pos size=size hidden=hidden z_idx=z_idx/>
+        <Window id="spotify-win" title="Some of my Spotify playlists".to_string() content=content tabs=tabs pos=pos size=size hidden=hidden z_idx=z_idx scroll=true rainbow=true/>
     }
 }
 
@@ -319,6 +327,8 @@ fn Window(
     size: RwSignal<(u32, u32)>,
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
+    #[prop(default = false)] scroll: bool,
+    #[prop(default = false)] rainbow: bool,
 ) -> impl IntoView {
     let x = create_rw_signal(cx, pos.0);
     let y = create_rw_signal(cx, pos.1);
@@ -369,6 +379,14 @@ fn Window(
                     split[1].to_string()
                 }</span>
             </p> }
+        } else if title.starts_with("Obtain") {
+            let split: Vec<_> = title.split_whitespace().collect();
+            view! { cx, <p class="title">
+                "Obtain "
+                <span style="font-family: 'Cedarville Cursive', cursive; font-size: 12pt; font-style: oblique">{
+                    split[1].to_string()
+                }</span>
+            </p> }
         } else {
             view! { cx, <p class="title">{&title}</p> }
         }
@@ -403,14 +421,14 @@ fn Window(
                 .unzip();
 
             view! { cx,
-                <div class="win-content" style=get_size>
+                <div class="win-content" class:scroll={scroll} class:rainbow={rainbow} style=get_size>
                     <div class="tab-titlebar">{titles}</div>
                     <div class="tab-outer">{tabs}</div>
                 </div>
             }
         }
         None => view! { cx,
-            <div class="win-content" style=get_size>
+            <div class="win-content" class:scroll={scroll} class:rainbow={rainbow} style=get_size>
                 { content }
             </div>
         },
@@ -454,7 +472,7 @@ fn LinkWindow(
     </div> };
 
     view! { cx,
-        <Window id=id title=title content=content pos=pos size=size hidden=hidden z_idx=z_idx/>
+        <Window id=id title=title content=content pos=pos size=size hidden=hidden z_idx=z_idx rainbow=true/>
     }
 }
 
@@ -482,7 +500,7 @@ fn MusicLinkWindow(
     </div> };
 
     view! { cx,
-        <Window id="music-link-win" title="Music".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx/>
+        <Window id="music-link-win" title="Music".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx rainbow=true/>
     }
 }
 
@@ -519,7 +537,7 @@ fn EducationWindow(
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
-    let content = view! { cx, <div>
+    let content = view! { cx, <div style="padding: 10px">
         <h4>"Bachelor's Degree in Computer Science"</h4>
         <div class="spaced">
             "I spent 2019-2023 at the "<ExternalLink href="https://www.uidaho.edu/" display="University of Idaho"/>
@@ -589,7 +607,7 @@ fn SkillsWindow(
         vec![
             (
                 "Technical",
-                view! { cx, <div><ul>
+                view! { cx, <div style="padding: 10px"><ul>
                     <li class="spaced">"I'm proficient in multiple "<b>"programming languages"</b>":"<ul>
                         <li><span class="title">"C / C++"</span>" were the primary languages taught at my univirsity, so I'm very comfortable with them."</li>
                         <li><span class="title">"Rust"</span>" is currently my favorite language. I learned about it in 2022 "
@@ -633,7 +651,7 @@ fn SkillsWindow(
             ),
             (
                 "Audio / Visual",
-                view! { cx, <div><ul>
+                view! { cx, <div style="padding: 10px"><ul>
                     <li><b>"Audio"</b><ul>
                         <li class="spaced">
                             "I purchased "<ExternalLink href="https://www.ableton.com/en/live/" display="Ableton Live" title_style=true/>
@@ -664,7 +682,7 @@ fn SkillsWindow(
             ),
             (
                 "Other",
-                view! { cx, <div><ul>
+                view! { cx, <div style="padding: 10px"><ul>
                     <li class="spaced">"I speak "<b>"three languages"</b>":"<ul>
                         <li><span class="title">"English"</span>" (native)"</li>
                         <li><span class="title">"Spanish"</span>" (fluent)"</li>
@@ -682,7 +700,7 @@ fn SkillsWindow(
     ));
 
     view! { cx,
-        <Window id="skills-win" title="Skills".to_string() content=content tabs=tabs pos=pos size=size hidden=hidden z_idx=z_idx/>
+        <Window id="skills-win" title="Skills".to_string() content=content tabs=tabs pos=pos size=size hidden=hidden z_idx=z_idx scroll=true/>
     }
 }
 
@@ -699,20 +717,18 @@ fn ProjectsWindow(
     let fws = file_win_src;
     let active_tab = create_rw_signal(cx, "From CS Classes");
 
-    let content = view! { cx,
-        <div>"Failed to load tabs for this window"</div>
-    };
+    let content = view! { cx, <div></div> };
 
     let tabs = Some((
         active_tab,
         vec![
             (
                 "From CS Classes",
-                view! { cx, <div><ul>
+                view! { cx, <div style="padding: 10px"><ul>
                     <li class="spaced">
                         <ExternalLink href="https://catalog.uidaho.edu/courses/cs/#:~:text=CS%20415" display="CS415 | Computational Biology: Sequence Alignment" bold=true/><br/>
                         "Description: \"Design and analyze algorithms that address the computational problems posed by biological sequence data, "
-                        "such as DNA or protein sequences.\" Projects:"<br/>
+                        "such as DNA or protein sequences.\""<br/>"Projects:"<br/>
                         <FileLink src="https://drive.google.com/file/d/17M8KI3B6rCj2_WLL-YlbxBoK0WzTyexO/preview" display="GA Simulation Runner" file_win_src=fws/>
                         " | "<ExternalLink href="https://github.com/ETBCOR/cs415/tree/main/project01" display="Github Repository"/>
                         <br/>
@@ -769,7 +785,7 @@ fn ProjectsWindow(
             ),
             (
                 "Other Projects",
-                view! { cx, <div><ul>
+                view! { cx, <div style="padding: 10px"><ul>
                     <li class="spaced">
                         "I made "<b>"this very portfolio website"</b>" with "
                         <ExternalLink href="https://leptos.dev/" display="leptos"/>" (a full-stack web framework built in "
@@ -798,7 +814,7 @@ fn ProjectsWindow(
     ));
 
     view! { cx,
-        <Window id="projects-win" title="Projects".to_string() content=content tabs=tabs pos=pos size=size hidden=hidden z_idx=z_idx/>
+        <Window id="projects-win" title="Projects".to_string() content=content tabs=tabs pos=pos size=size hidden=hidden z_idx=z_idx scroll=true/>
     }
 }
 
@@ -850,38 +866,28 @@ fn LoadingWindow(
 
     let content = match variant {
         LoadingWindowVariant::Default => {
-            view! { cx, <div style="cursor: wait">
-                <img src="/assets/infinity.svg" style="width: 100%; height: 170px" draggable="false" title="ale li pona"/>
-            </div> }
+            view! { cx, <div class="loading-img" on:click=move |_| nav("/", Default::default()).unwrap() title="ale li pona" style="cursor: wait"></div> }
         }
         LoadingWindowVariant::HomePageLink => {
-            title = format!("Home w/{}", noun);
-            view! { cx, <div style="cursor: pointer" on:click=move |_| nav("/", Default::default()).unwrap()>
-                <img src="/assets/infinity.svg" style="width: 100%; height: 100px" draggable="false"/>
-            </div> }
+            title = format!("Obtain {}", noun);
+            view! { cx, <div class="loading-img" on:click=move |_| nav("/", Default::default()).unwrap() title="ale li pona" style="cursor: pointer"></div> }
         }
         LoadingWindowVariant::PageComingSoon => {
             title = "Page Coming Soon".to_string();
-            view! { cx, <div style="cursor: pointer" on:click=move |_| nav("/", Default::default()).unwrap()>
-                <img src="/assets/infinity.svg" style="width: 100%; height: 100px" draggable="false"/>
-            </div> }
+            view! { cx, <div class="loading-img" on:click=move |_| nav("/", Default::default()).unwrap() title="ale li pona" style="cursor: pointer"></div> }
         }
         LoadingWindowVariant::PageNotFound => {
             title = "Page Not Found".to_string();
-            view! { cx, <div style="cursor: pointer" on:click=move |_| nav("/", Default::default()).unwrap()>
-                <img src="/assets/infinity.svg" style="width: 100%; height: 100px" draggable="false"/>
-            </div> }
+            view! { cx, <div class="loading-img" on:click=move |_| nav("/", Default::default()).unwrap() title="ale li pona" style="cursor: pointer"></div> }
         }
         LoadingWindowVariant::StackOverflow => {
             title = "Uh-oh! The stack overflowed".to_string();
-            view! { cx, <div style="cursor: pointer" on:click=move |_| nav("/", Default::default()).unwrap()>
-                <img src="/assets/infinity.svg" style="width: 100%; height: 100px" draggable="false"/>
-            </div> }
+            view! { cx, <div class="loading-img" on:click=move |_| nav("/", Default::default()).unwrap() title="ale li pona" style="cursor: pointer"></div> }
         }
     };
 
     view! { cx,
-        <Window id="loading-win" title=title content=content pos=pos size=size hidden=hidden z_idx=z_idx/>
+        <Window id="loading-win" title=title content=content pos=pos size=size hidden=hidden z_idx=z_idx rainbow=true/>
     }
 }
 
@@ -894,12 +900,8 @@ fn AdWindow(
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
-    let content = view! { cx, <div style="height: 100px">
-        <img
-            src="/assets/ur-ad-here.png"
-            style="height: 100%; width: 100%; image-rendering: pixelated"
-            draggable="false"
-        />
+    let content = view! { cx, <div>
+        <img class="rainbow" src="/assets/ur-ad-here.png" draggable="false" />
     </div> };
 
     view! { cx,

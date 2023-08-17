@@ -173,14 +173,14 @@ ul {
 }
 
 .external-link>span {
+	background-image: url("/assets/external-link.png");
+	background-position: center;
+	background-repeat: no-repeat;
+	image-rendering: pixelated;
 	display: inline-block;
 	offset: bottom 100px;
 	width: 14px;
 	height: 14px;
-	background-position: center;
-	background-repeat: no-repeat;
-	background-image: url("/assets/external-link.png");
-	image-rendering: pixelated;
 }
 
 .external-link:hover>span {
@@ -189,7 +189,20 @@ ul {
 
 .win-content {
 	padding: 0px;
-	overflow: hidden;
+}
+
+.loading-img {
+	background-image: url("/assets/infinity.svg");
+	background-position: center;
+	background-repeat: no-repeat;
+	cursor: pointer;
+	height: 100%;
+	width: 100%;
+}
+
+.scroll {
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 
 @media (min-width: 901px) {
@@ -225,14 +238,15 @@ div.win-content :last-child {
 	margin-bottom: 0px;
 }
 
-#loading-win>.win-content,
-#portfolio-link-win>.win-content,
-#music-link-win>.win-content,
-#ad-win>.win-content,
-#meta-win>.win-content,
-#john-win>.win-content,
-#spotify-win>div>.tab-outer,
-#tp-link-win>.win-content {
+// #loading-win>.win-content,
+// #portfolio-link-win>.win-content,
+// #music-link-win>.win-content,
+// #ad-win>.win-content,
+// #meta-win>.win-content,
+// #john-win>.win-content,
+// #spotify-win>div>.tab-outer1
+// #tp-link-win>.win-content {
+.rainbow {
 	background: linear-gradient(24deg, #d593db, #ebc0ef, #ef9e91, #f9a4a4, #d8bf6b, #dedf91, #74e186, #7edce1, #a29cef);
 	background-size: 800% 800%;
 	animation: rainbow 30s ease infinite;
@@ -252,40 +266,9 @@ div.win-content :last-child {
 	}
 }
 
-#projects-win>div>div.win-content {
-	height: 265px;
-	overflow-y: auto;
-}
-
-#skills-win>div>div.win-content {
-	height: 265px;
-	overflow-y: auto;
-}
-
 #webring-win>.win-content {
 	background-color: #454545;
 	cursor: alias;
-}
-
-#meta-win>.win-content {
-	width: 100%;
-	height: fit-content;
-	background-color: #AA4465;
-}
-
-.o-tawa-insa {
-	// min-width: 225px;
-	// width: 100%;
-	// height: 426px;
-	// background-image: url("/assets/o-tawa-insa.svg");
-	// background-position: center;
-	// background-repeat: no-repeat;
-	// cursor: alias;
-}
-
-#john-win>.win-content {
-	width: 690px;
-	height: 85px;
 }
 
 details:not([open]) {
