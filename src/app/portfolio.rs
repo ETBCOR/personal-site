@@ -1,5 +1,5 @@
 use crate::app::{
-    AdWindow, Cyberpunk, ExternalLink, Footer, LoadingWindow, LoadingWindowVariant, Window,
+    AdWindow, ExternalLink, Footer, GoatCounter, LoadingWindow, LoadingWindowVariant, Window,
 };
 use leptos::*;
 
@@ -33,7 +33,7 @@ pub fn PortfolioPage(cx: Scope) -> impl IntoView {
         <AdWindow        pos=(100, 600) size=(200, 100) hidden=ad_hidden        z_idx=Some(z_idx)/>
         <div style="height: 65px"></div> // spacer in narrow view
         <Footer items=footer_items/>
-        <Cyberpunk/>
+        <GoatCounter path="/portfolio"/>
     }
 }
 

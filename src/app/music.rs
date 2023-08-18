@@ -1,5 +1,5 @@
 use crate::app::{
-    Cyberpunk, Footer, JohnWindow, LinkWindow, LoadingWindow, LoadingWindowVariant, Window,
+    Footer, GoatCounter, JohnWindow, LinkWindow, LoadingWindow, LoadingWindowVariant, Window,
 };
 use leptos::*;
 
@@ -24,7 +24,7 @@ pub fn MusicPage(cx: Scope) -> impl IntoView {
         <SpotifyPlaylistWindow pos=(310, 20) size=(440, 582) hidden=spotify_hidden  z_idx=z_idx/>
         <JohnWindow            pos=(20, 674) size=(730, 90)  hidden=john_hidden     z_idx=z_idx/>
         <Footer items=footer_items/>
-        <Cyberpunk/>
+        <GoatCounter path="/music"/>
     }
 }
 

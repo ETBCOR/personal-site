@@ -1,4 +1,4 @@
-use crate::app::{Cyberpunk, LoadingWindow, LoadingWindowVariant};
+use crate::app::{GoatCounter, LoadingWindow, LoadingWindowVariant};
 use leptos::*;
 
 #[component]
@@ -7,6 +7,6 @@ pub fn TokiPonaPage(cx: Scope) -> impl IntoView {
 
     view! { cx,
         <LoadingWindow pos=(20, 20) size=(500, 500) hidden=loading variant=LoadingWindowVariant::PageComingSoon/>
-        <Cyberpunk/>
+        <GoatCounter path="/tp"/>
     }
 }

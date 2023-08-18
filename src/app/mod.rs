@@ -12,36 +12,51 @@ pub mod tp;
 
 #[component]
 pub fn App(cx: Scope) -> impl IntoView {
-    // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context(cx);
 
     view! { cx,
-        // id=leptos means cargo-leptos will hot-reload this stylesheet
+        <Title text="etbcor's website"/>
         <Stylesheet id="leptos" href="/pkg/portfolio_site.css"/>
 
-        <Title text="etbcor's website"/>
-
         // google fonts
-        <Link rel="preconnect" href="https://fonts.googleapis.com"/>
-        <Link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+        <Link href="https://fonts.googleapis.com" rel="preconnect"/>
+        <Link href="https://fonts.gstatic.com" rel="preconnect" crossorigin=""/>
         <Link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet"/>
         <Link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,600;0,700;1,600;1,700&display=swap" rel="stylesheet"/>
         <Link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet"/>
+
 
         // main router
         <Router>
             <main>
                 <Routes>
-                    <Route path="/" view=home::HomePageEntry/>
+                    <Route path="/"          view=home::HomePageEntry/>
                     <Route path="/portfolio" view=portfolio::PortfolioPage/>
-                    <Route path="/tp" view=tp::TokiPonaPage/>
-                    <Route path="/music" view=music::MusicPage/>
-                    <Route path="/*any" view=NotFoundPage/>
+                    <Route path="/tp"        view=tp::TokiPonaPage/>
+                    <Route path="/music"     view=music::MusicPage/>
+                    <Route path="/*any"      view=NotFoundPage/>
                 </Routes>
+                <Cyberpunk/>
             </main>
         </Router>
     }
 }
+
+#[component]
+fn GoatCounter(cx: Scope, path: &'static str) -> impl IntoView {
+    let settings = format!("{{\"path\": \"{}\"}}", path);
+    view! { cx,
+        <script data-goatcounter="https://etbcor.goatcounter.com/count"
+                data-goatcounter-settings=settings
+                async src="//gc.zgo.at/count.js"
+        ></script>
+    }
+}
+
+type Tabs = Option<(
+    RwSignal<&'static str>,
+    Vec<(&'static str, HtmlElement<html::Div>)>,
+)>;
 
 #[component]
 fn Window(
@@ -191,7 +206,6 @@ fn NotFoundPage(cx: Scope) -> impl IntoView {
 
     view! { cx,
         <LoadingWindow pos=(20, 20) size=(500, 500) hidden=loading variant=LoadingWindowVariant::PageNotFound/>
-        <Cyberpunk/>
     }
 }
 
@@ -213,10 +227,6 @@ fn Footer(cx: Scope, items: Vec<(&'static str, RwSignal<bool>)>) -> impl IntoVie
         <a class="title win-minimized favicon" href="/"></a>
     </footer> }
 }
-type Tabs = Option<(
-    RwSignal<&'static str>,
-    Vec<(&'static str, HtmlElement<html::Div>)>,
-)>;
 
 #[component]
 fn Cyberpunk(cx: Scope) -> impl IntoView {
@@ -248,6 +258,7 @@ const ABSTRACT_NOUNS: [&str; 95] = [
     "Adaptability", "Flexibility", "Openness", "Belonging", "Ingenuity", "Mediation"
 ];
 
+#[derive(PartialEq)]
 enum LoadingWindowVariant {
     Default,
     HomePageLink,
@@ -266,31 +277,25 @@ fn LoadingWindow(
     variant: LoadingWindowVariant,
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
+
     let mut rng = rand::thread_rng();
     let noun: &'static str = ABSTRACT_NOUNS.choose(&mut rng).unwrap();
-    let mut title = format!("Loading {}", noun);
-    let nav = leptos_router::use_navigate(cx);
+    let title = match variant {
+        LoadingWindowVariant::Default => format!("Loading {}", noun),
+        LoadingWindowVariant::HomePageLink => format!("Obtain {}", noun),
+        LoadingWindowVariant::PageComingSoon => "Page Coming Soon".to_string(),
+        LoadingWindowVariant::PageNotFound => "Page Not Found".to_string(),
+        LoadingWindowVariant::StackOverflow => "Uh-oh! The stack overflowed".to_string(),
+    };
 
-    let content = match variant {
-        LoadingWindowVariant::Default => {
-            view! { cx, <div class="loading-img" on:click=move |_| nav("/", Default::default()).unwrap() title="ale li pona" style="cursor: wait"></div> }
-        }
-        LoadingWindowVariant::HomePageLink => {
-            title = format!("Obtain {}", noun);
-            view! { cx, <div class="loading-img" on:click=move |_| nav("/", Default::default()).unwrap() title="ale li pona" style="cursor: pointer"></div> }
-        }
-        LoadingWindowVariant::PageComingSoon => {
-            title = "Page Coming Soon".to_string();
-            view! { cx, <div class="loading-img" on:click=move |_| nav("/", Default::default()).unwrap() title="ale li pona" style="cursor: pointer"></div> }
-        }
-        LoadingWindowVariant::PageNotFound => {
-            title = "Page Not Found".to_string();
-            view! { cx, <div class="loading-img" on:click=move |_| nav("/", Default::default()).unwrap() title="ale li pona" style="cursor: pointer"></div> }
-        }
-        LoadingWindowVariant::StackOverflow => {
-            title = "Uh-oh! The stack overflowed".to_string();
-            view! { cx, <div class="loading-img" on:click=move |_| nav("/", Default::default()).unwrap() title="ale li pona" style="cursor: pointer"></div> }
-        }
+    let nav = leptos_router::use_navigate(cx);
+    let content = view! { cx,
+        <div
+            class="loading-img"
+            class:wait={variant == LoadingWindowVariant::Default}
+            on:click=move |_| nav("/", Default::default()).unwrap()
+            title="ale li pona"
+        ></div>
     };
 
     view! { cx,

@@ -1,6 +1,6 @@
 use crate::app::music::MusicLinkWindow;
 use crate::app::{
-    AdWindow, Cyberpunk, Footer, JohnWindow, LinkWindow, LoadingWindow, LoadingWindowVariant,
+    AdWindow, Footer, GoatCounter, JohnWindow, LinkWindow, LoadingWindow, LoadingWindowVariant,
     WebringWindow, Window,
 };
 use leptos::*;
@@ -49,9 +49,8 @@ fn HomePage(cx: Scope, recursions: usize) -> impl IntoView {
 #[component]
 pub fn HomePageEntry(cx: Scope) -> impl IntoView {
     view! { cx,
-        // <audio autoplay><source src="/assets/Aquarius.wav" type="audio/wav"/></audio>
         <HomePage recursions=0/>
-        <Cyberpunk/>
+        <GoatCounter path="/"/>
     }
 }
 
