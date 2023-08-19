@@ -21,7 +21,7 @@ pub fn MusicPage(cx: Scope) -> impl IntoView {
     view! { cx,
         <LoadingWindow         pos=(20, 20)  size=(255, 255) hidden=loading_hidden  z_idx=z_idx variant=LoadingWindowVariant::HomePageLink/>
         <LinkWindow            pos=(20, 347) size=(255, 255) hidden=my_music_hidden z_idx=z_idx id="my-music-win" title="My Music (coming soon)".to_string() bg_img="" src="/music"/>
-        <SpotifyPlaylistWindow pos=(310, 20) size=(440, 582) hidden=spotify_hidden  z_idx=z_idx/>
+        <SpotifyPlaylistWindow pos=(310, 20) size=(440, 548) hidden=spotify_hidden  z_idx=z_idx/>
         <JohnWindow            pos=(20, 674) size=(730, 90)  hidden=john_hidden     z_idx=z_idx/>
         <Footer items=footer_items/>
         <GoatCounter path="/music"/>
@@ -131,7 +131,7 @@ pub fn MusicLinkWindow(
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
     let nav = leptos_router::use_navigate(cx);
-    let content = view! { cx, <div style="height: 227px; cursor: pointer">
+    let content = view! { cx, <div style="cursor: pointer">
         <video
             style="width: 100%"
             muted

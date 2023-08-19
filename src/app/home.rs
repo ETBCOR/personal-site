@@ -41,8 +41,11 @@ fn HomePage(cx: Scope, recursions: usize) -> impl IntoView {
         <AdWindow      pos=(485, 20   +y_offset) size=(200, 100) hidden=ad_hidden        z_idx=z_idx/>
         <JohnWindow    pos=(20, 701   +y_offset) size=(665, 82)  hidden=john_hidden      z_idx=z_idx/>
         <MetaWindow    pos=(485, 192  +y_offset) size=(200, 437) hidden=meta_hidden      z_idx=z_idx recursions={recursions + 1}/>
-        <div style="height: 65px"></div> // spacer in narrow view
-        <div class:hidden=move || {recursions > 0}><Footer items=footer_items/></div>
+        <div class:hidden=move || {recursions > 0}>
+            <div style="height: 65px"></div>
+            <Footer items=footer_items/>
+        </div>
+        <div class:hidden=move || {recursions > 0} style="height: 20px"></div>
     }
 }
 

@@ -222,9 +222,9 @@ footer {
 	background-image: url("/assets/wireless-nature.png");
 	background-position: center;
 	background-repeat: no-repeat;
-	scale: 110%;
 	width: 100%;
 	height: 100%;
+	overflow: hidden;
 }
 
 // mobile view
@@ -238,17 +238,24 @@ footer {
 		max-width: 90%;
 	}
 
+	.win-content {
+		overflow-y: auto;
+	}
+
 	#ad-win {
 		display: none;
 	}
 
-	#meta-win>.win-content {
-		overflow: hidden;
+	#john-win>.win-content {
+		overflow-y: hidden;
 	}
 
-	.win-content {
-		overflow-y: auto;
-		padding-top: 1px;
+	#john-win>.win-content {
+		height: fit-content;
+	}
+
+	#meta-win>.win-content {
+		overflow: hidden;
 	}
 }
 
