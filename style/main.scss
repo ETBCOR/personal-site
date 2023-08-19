@@ -78,6 +78,8 @@ footer {
 .win-titlebar {
 	font-size: x-large;
 	display: flex;
+	position: relative;
+	z-index: 2048;
 	padding-left: 10px;
 	cursor: grab;
 	user-select: none;
@@ -248,12 +250,10 @@ footer {
 
 	#john-win>.win-content {
 		overflow-y: hidden;
+		height: fit-content !important;
 	}
 
-	#john-win>.win-content {
-		height: fit-content;
-	}
-
+	#music-link-win>.win-content,
 	#meta-win>.win-content {
 		overflow: hidden;
 	}
