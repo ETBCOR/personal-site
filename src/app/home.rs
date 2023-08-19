@@ -57,7 +57,7 @@ pub fn HomePageEntry(cx: Scope) -> impl IntoView {
     }
 }
 
-const STACK_OVERFLOW_LIMIT: usize = 4;
+const STACK_OVERFLOW_LIMIT: usize = 8;
 #[component]
 fn MetaWindow(
     cx: Scope,
