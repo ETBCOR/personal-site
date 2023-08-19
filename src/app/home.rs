@@ -34,9 +34,9 @@ fn HomePage(cx: Scope, recursions: usize) -> impl IntoView {
 
     view! { cx,
         <LoadingWindow pos=(20, 20    +y_offset) size=(225, 170) hidden=loading_hidden   z_idx=z_idx variant=LoadingWindowVariant::Default/>
-        <LinkWindow    pos=(280, 20   +y_offset) size=(170, 220) hidden=portfolio_hidden z_idx=z_idx id="portfolio-link-win" title="Portfolio".to_string() bg_img="/assets/file-icon.svg"       src="/portfolio"/>
+        <LinkWindow    pos=(280, 20   +y_offset) size=(170, 220) hidden=portfolio_hidden z_idx=z_idx id="portfolio-link-win" title="Portfolio".to_string() bg_img="/assets/file-icon.svg"       src="/portfolio" diag=true/>
         <MusicLinkWindow pos=(20, 262 +y_offset) size=(225, 225) hidden=music_hidden     z_idx=z_idx/> // music link window
-        <LinkWindow    pos=(280, 309  +y_offset) size=(170, 178) hidden=tp_hidden        z_idx=z_idx id="tp-link-win"        title="toki pona".to_string() bg_img="/assets/itan.svg"            src="/tp"/>
+        <LinkWindow    pos=(280, 309  +y_offset) size=(170, 178) hidden=tp_hidden        z_idx=z_idx id="tp-link-win"        title="toki pona".to_string() bg_img="/assets/itan.svg"            src="/tp" diag_tp=true/>
         <WebringWindow pos=(20, 559   +y_offset) size=(430, 70)  hidden=webring_hidden   z_idx=z_idx/>
         <AdWindow      pos=(485, 20   +y_offset) size=(200, 100) hidden=ad_hidden        z_idx=z_idx/>
         <JohnWindow    pos=(20, 701   +y_offset) size=(665, 82)  hidden=john_hidden      z_idx=z_idx/>

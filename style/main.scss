@@ -286,6 +286,42 @@ details:not([open]) {
 	}
 }
 
+.diag {
+	margin: 0;
+	overflow: hidden;
+	background: linear-gradient(45deg, #ff78e0 25%, #0aff9d 25%, #0aff9d 50%, #ff78e0 50%, #ff78e0 75%, #0aff9d 75%, #0aff9d);
+	background-size: 50px 50px;
+	animation: diag 6s linear infinite;
+}
+
+.diag-tp {
+	margin: 0;
+	overflow: hidden;
+	background: linear-gradient(-45deg, #ffff63 25%, #000099 25%, #000099 50%, #ffff63 50%, #ffff63 75%, #000099 75%, #000099);
+	background-size: 100px 100px;
+	animation: diag-tp 15s linear infinite;
+}
+
+@keyframes diag-tp {
+	0% {
+		background-position: 0 0;
+	}
+
+	100% {
+		background-position: 0px 100px;
+	}
+}
+
+@keyframes diag {
+	0% {
+		background-position: 0 0;
+	}
+
+	100% {
+		background-position: 0px 50px;
+	}
+}
+
 .hidden {
 	visibility: hidden;
 	display: none;

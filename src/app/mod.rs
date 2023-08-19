@@ -46,10 +46,11 @@ pub fn App(cx: Scope) -> impl IntoView {
 fn GoatCounter(cx: Scope, path: &'static str) -> impl IntoView {
     let settings = format!("{{\"path\": \"{}\"}}", path);
     view! { cx,
-        <script data-goatcounter="https://etbcor.goatcounter.com/count"
-                data-goatcounter-settings=settings
-                async src="//gc.zgo.at/count.js"
-        ></script>
+        <script
+            data-goatcounter="https://etbcor.goatcounter.com/count"
+            data-goatcounter-settings=settings
+            async src="//gc.zgo.at/count.js">
+        </script>
     }
 }
 
@@ -69,8 +70,10 @@ fn Window(
     size: RwSignal<(u32, u32)>,
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
+    #[prop(default = false)] diag: bool,
     #[prop(default = false)] scroll: bool,
     #[prop(default = false)] rainbow: bool,
+    #[prop(default = false)] diag_tp: bool,
 ) -> impl IntoView {
     let x = create_rw_signal(cx, pos.0);
     let y = create_rw_signal(cx, pos.1);
@@ -163,14 +166,14 @@ fn Window(
                 .unzip();
 
             view! { cx,
-                <div class="win-content" class:scroll={scroll} class:rainbow={rainbow} style=get_size>
+                <div class="win-content" class:diag={diag} class:diag-tp={diag_tp} class:scroll={scroll} class:rainbow={rainbow} style=get_size>
                     <div class="tab-titlebar">{titles}</div>
                     <div class="tab-outer">{tabs}</div>
                 </div>
             }
         }
         None => view! { cx,
-            <div class="win-content" class:scroll={scroll} class:rainbow={rainbow} style=get_size>
+            <div class="win-content" class:diag={diag} class:diag-tp={diag_tp} class:scroll={scroll} class:rainbow={rainbow} style=get_size>
                 { content }
             </div>
         },
@@ -313,7 +316,7 @@ fn AdWindow(
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
     let content = view! { cx, <div>
-        <img class="rainbow" src="/assets/ur-ad-here.png" draggable="false" />
+        <img src="/assets/ur-ad-here.png" draggable="false"/>
     </div> };
 
     view! { cx,
@@ -375,15 +378,17 @@ fn LinkWindow(
     bg_img: &'static str,
     src: &'static str,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
+    #[prop(default = false)] diag: bool,
+    #[prop(default = false)] diag_tp: bool,
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
     let nav = leptos_router::use_navigate(cx);
     let content = view! { cx, <div style="cursor: pointer; text-align: center" on:click=move |_| nav(src, Default::default()).unwrap()>
-        <img src=bg_img style="padding: 10px" draggable=false/>
+        <img src=bg_img style="padding: 0px" draggable=false/>
     </div> };
 
     view! { cx,
-        <Window id=id title=title content=content pos=pos size=size hidden=hidden z_idx=z_idx rainbow=true/>
+        <Window id=id title=title content=content pos=pos size=size hidden=hidden z_idx=z_idx rainbow={!diag && !diag_tp} diag={diag} diag_tp={diag_tp}/>
     }
 }
 
