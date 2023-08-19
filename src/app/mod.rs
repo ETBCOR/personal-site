@@ -6,6 +6,7 @@ use rand::seq::SliceRandom;
 use web_sys::AddEventListenerOptions;
 
 pub mod home;
+pub mod insa;
 pub mod music;
 pub mod portfolio;
 pub mod tp;
@@ -32,8 +33,9 @@ pub fn App(cx: Scope) -> impl IntoView {
                 <Routes>
                     <Route path="/"          view=home::HomePageEntry/>
                     <Route path="/portfolio" view=portfolio::PortfolioPage/>
-                    <Route path="/tp"        view=tp::TokiPonaPage/>
                     <Route path="/music"     view=music::MusicPage/>
+                    <Route path="/tp"        view=tp::TokiPonaPage/>
+                    <Route path="/insa"      view=insa::InsaPage/>
                     <Route path="/*any"      view=NotFoundPage/>
                 </Routes>
                 <Cyberpunk/>
@@ -261,7 +263,7 @@ const ABSTRACT_NOUNS: [&str; 95] = [
     "Adaptability", "Flexibility", "Openness", "Belonging", "Ingenuity", "Mediation"
 ];
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Copy, Clone)]
 enum LoadingWindowVariant {
     Default,
     HomePageLink,
@@ -296,7 +298,7 @@ fn LoadingWindow(
         <div
             class="loading-img"
             class:wait={variant == LoadingWindowVariant::Default}
-            on:click=move |_| nav("/", Default::default()).unwrap()
+            on:click=move |_| nav(if variant == LoadingWindowVariant::StackOverflow {"/insa"} else { "/" }, Default::default()).unwrap()
             title="ale li pona"
         ></div>
     };

@@ -42,10 +42,10 @@ fn HomePage(cx: Scope, recursions: usize) -> impl IntoView {
         <JohnWindow    pos=(20, 701   +y_offset) size=(665, 82)  hidden=john_hidden      z_idx=z_idx/>
         <MetaWindow    pos=(485, 192  +y_offset) size=(200, 437) hidden=meta_hidden      z_idx=z_idx recursions={recursions + 1}/>
         <div class:hidden=move || {recursions > 0}>
-            <div style="height: 65px"></div>
-            <Footer items=footer_items/>
+            <div style="height: 65px"></div> // large spacer
+            <Footer items=footer_items/>     // footer
         </div>
-        <div class:hidden=move || {recursions > 0} style="height: 20px"></div>
+        <div class:hidden=move || {recursions > 0} style="height: 20px"></div> // small spacer
     }
 }
 
@@ -57,6 +57,7 @@ pub fn HomePageEntry(cx: Scope) -> impl IntoView {
     }
 }
 
+const STACK_OVERFLOW_LIMIT: usize = 4;
 #[component]
 fn MetaWindow(
     cx: Scope,
@@ -67,31 +68,31 @@ fn MetaWindow(
     recursions: usize,
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
-    let content = if recursions < 8 {
-        let deeper = create_rw_signal(cx, false);
-        view! { cx, <div class:scroll=move || deeper()>
-            <video
-                style="cursor: alias"
-                muted
-                autoplay
-                loop="true"
-                poster="/assets/o-tawa-insa.svg"
-                class:hidden=move || deeper()
-                on:click=move |_| {deeper.set(true); size.set((720, 844))}>
-                on:contextmenu=move |e| e.prevent_default()>
-                <source src="/assets/o-tawa-insa.webm" type="video/webm"/>
-            </video>
-            <div>
-                <div class:hidden=move || !deeper()>
-                    <HomePage recursions=recursions/>
-                </div>
+    let deeper = create_rw_signal(cx, false);
+    let content = view! { cx, <div class:scroll=move || deeper()>
+        <video
+            style="cursor: alias"
+            muted
+            autoplay
+            loop="true"
+            poster="/assets/o-tawa-insa.svg"
+            class:hidden=move || deeper()
+            on:click=move |_| {deeper.set(true); size.set((720, 844))}>
+            on:contextmenu=move |e| e.prevent_default()>
+            <source src="/assets/o-tawa-insa.webm" type="video/webm"/>
+        </video>
+        <div>
+            <div class:hidden=move || !deeper()>
+                {
+                    if recursions <= STACK_OVERFLOW_LIMIT {
+                        view! { cx, <div> <HomePage recursions=recursions/> </div> }
+                    } else {
+                        view! { cx, <div> <LoadingWindow pos=(20, 55) size=(300, 100) hidden=hidden variant=LoadingWindowVariant::StackOverflow/> </div> }
+                    }
+                }
             </div>
-        </div> }
-    } else {
-        view! { cx, <div>
-            <LoadingWindow pos=(0, 150) size=(0, 0) hidden=hidden variant=LoadingWindowVariant::StackOverflow/>
-        </div> }
-    };
+        </div>
+    </div> };
 
     view! { cx,
         <Window id="meta-win" title="Meta, man...".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx rainbow=true/>
