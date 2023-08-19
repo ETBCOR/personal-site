@@ -355,10 +355,10 @@ fn JohnWindow(
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
-    let content = view! { cx, <div>
+    let content = view! { cx, <div class="rainbow">
        <iframe
             src="https://john.citrons.xyz/embed?ref=etbcor.com"
-            style="max-height: 94px; width: 100%; border:none"
+            style="max-height: 94px; width: 100%; aspect-ratio: 732 / 94; border:none"
         ></iframe>
     </div> };
 
