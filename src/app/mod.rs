@@ -166,9 +166,9 @@ fn Window(
                 .unzip();
 
             view! { cx,
-                <div class="win-content" class:diag={diag} class:diag-tp={diag_tp} class:scroll={scroll} class:rainbow={rainbow} style=get_size>
+                <div class="win-content">
                     <div class="tab-titlebar">{titles}</div>
-                    <div class="tab-outer">{tabs}</div>
+                    <div class="tab-outer" class:scroll={scroll} class:diag={diag} class:diag-tp={diag_tp} class:rainbow={rainbow} style=get_size>{tabs}</div>
                 </div>
             }
         }
@@ -358,12 +358,28 @@ fn JohnWindow(
     let content = view! { cx, <div>
        <iframe
             src="https://john.citrons.xyz/embed?ref=etbcor.com"
-            style="width: 100%; border:none"
+            style="max-height: 94px; width: 100%; border:none"
         ></iframe>
     </div> };
 
     view! { cx,
         <Window id="john-win" title="Johnvertisement".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx/>
+    }
+}
+
+#[component]
+fn LonelyWindow(
+    cx: Scope,
+    pos: (i32, i32),
+    size: (u32, u32),
+    hidden: RwSignal<bool>,
+    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
+) -> impl IntoView {
+    let size = create_rw_signal(cx, size);
+    let content = view! { cx, <div>
+    </div> };
+    view! { cx,
+        <Window id="lonely-win" title="A bit lonely...".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx/>
     }
 }
 

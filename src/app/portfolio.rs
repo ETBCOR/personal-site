@@ -27,8 +27,8 @@ pub fn PortfolioPage(cx: Scope) -> impl IntoView {
         <LoadingWindow   pos=(435, 204) size=(225, 202) hidden=loading_hidden   z_idx=Some(z_idx) variant=LoadingWindowVariant::HomePageLink/>
         <AboutWindow     pos=(20, 20)   size=(640, 112) hidden=about_hidden     z_idx=Some(z_idx)/>
         <EducationWindow pos=(20, 204)  size=(380, 572) hidden=education_hidden z_idx=Some(z_idx)/>
-        <SkillsWindow    pos=(695, 20)  size=(550, 386) hidden=skills_hidden    z_idx=Some(z_idx)/>
-        <ProjectsWindow  pos=(435, 478) size=(810, 298) hidden=projects_hidden  z_idx=Some(z_idx) file_win_src=set_file_src/>
+        <SkillsWindow    pos=(695, 20)  size=(550, 352) hidden=skills_hidden    z_idx=Some(z_idx)/>
+        <ProjectsWindow  pos=(435, 478) size=(810, 264) hidden=projects_hidden  z_idx=Some(z_idx) file_win_src=set_file_src/>
         <FileWindow      pos=(100, 100) size=(100, 100) hidden=file_hidden      z_idx=Some(z_idx) src=file_src/>
         <AdWindow        pos=(100, 600) size=(200, 100) hidden=ad_hidden        z_idx=Some(z_idx)/>
         <div style="height: 65px"></div> // spacer in narrow view

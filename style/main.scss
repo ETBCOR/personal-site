@@ -102,7 +102,12 @@ footer {
 	color: #AA4465;
 }
 
+.tab-outer {
+	height: 90%;
+}
+
 .tab-titlebar {
+	height: 34px;
 	display: flex;
 }
 
@@ -197,7 +202,7 @@ footer {
 
 .win-content {
 	max-width: 100%;
-	padding: 0px;
+	// padding: 0px;
 }
 
 .loading-img {
@@ -227,7 +232,6 @@ footer {
 	.win-outer {
 		position: inherit;
 		margin-top: 20px;
-		margin-bottom: 20px;
 		margin-left: auto;
 		margin-right: auto;
 		width: fit-content;
@@ -237,10 +241,19 @@ footer {
 	#ad-win {
 		display: none;
 	}
-}
 
-div.win-content :last-child {
-	margin-bottom: 0px;
+	#meta-win>.win-content {
+		overflow: hidden;
+	}
+
+	// #meta-win>.win-content>.meta-content {
+	// 	overflow-y: auto;
+	// }
+
+	// .win-content {
+	// overflow-y: auto;
+	// padding-top: 1px;
+	// }
 }
 
 #webring-win>.win-content {
@@ -262,6 +275,7 @@ details:not([open]) {
 }
 
 .scroll {
+	max-height: 100%;
 	overflow-x: hidden;
 	overflow-y: auto;
 }

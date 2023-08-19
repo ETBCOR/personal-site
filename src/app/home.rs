@@ -66,7 +66,7 @@ fn MetaWindow(
     let size = create_rw_signal(cx, size);
     let content = if recursions < 8 {
         let deeper = create_rw_signal(cx, false);
-        view! { cx, <div>
+        view! { cx, <div class:scroll=move || deeper()>
             <video
                 style="cursor: alias"
                 muted
@@ -78,13 +78,15 @@ fn MetaWindow(
                 on:contextmenu=move |e| e.prevent_default()>
                 <source src="/assets/o-tawa-insa.webm" type="video/webm"/>
             </video>
-            <div class:hidden=move || !deeper()>
-                <HomePage recursions=recursions/>
+            <div>
+                <div class:hidden=move || !deeper()>
+                    <HomePage recursions=recursions/>
+                </div>
             </div>
         </div> }
     } else {
         view! { cx, <div>
-            <LoadingWindow pos=(0, 150) size=(200, 500) hidden=hidden variant=LoadingWindowVariant::StackOverflow/>
+            <LoadingWindow pos=(0, 150) size=(0, 0) hidden=hidden variant=LoadingWindowVariant::StackOverflow/>
         </div> }
     };
 
