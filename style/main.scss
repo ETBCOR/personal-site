@@ -202,7 +202,7 @@ footer {
 
 .win-content {
 	max-width: 100%;
-	// padding: 0px;
+	padding: 0px;
 }
 
 .loading-img {
@@ -246,14 +246,10 @@ footer {
 		overflow: hidden;
 	}
 
-	// #meta-win>.win-content>.meta-content {
-	// 	overflow-y: auto;
-	// }
-
-	// .win-content {
-	// overflow-y: auto;
-	// padding-top: 1px;
-	// }
+	.win-content {
+		overflow-y: auto;
+		padding-top: 1px;
+	}
 }
 
 #webring-win>.win-content {
@@ -275,6 +271,7 @@ details:not([open]) {
 }
 
 .scroll {
+	max-width: 100%;
 	max-height: 100%;
 	overflow-x: hidden;
 	overflow-y: auto;
