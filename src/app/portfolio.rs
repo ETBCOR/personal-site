@@ -1,5 +1,6 @@
 use crate::app::{
-    AdWindow, ExternalLink, Footer, GoatCounter, LoadingWindow, LoadingWindowVariant, Window,
+    AdWindow, ExternalLink, FileLink, FileWindow, Footer, GoatCounter, LoadingWindow,
+    LoadingWindowVariant, Window, WindowContent,
 };
 use leptos::*;
 
@@ -29,22 +30,12 @@ pub fn PortfolioPage(cx: Scope) -> impl IntoView {
         <EducationWindow pos=(20, 204)  size=(380, 572) hidden=education_hidden z_idx=Some(z_idx)/>
         <SkillsWindow    pos=(695, 20)  size=(550, 352) hidden=skills_hidden    z_idx=Some(z_idx)/>
         <ProjectsWindow  pos=(435, 478) size=(810, 264) hidden=projects_hidden  z_idx=Some(z_idx) file_win_src=set_file_src/>
-        <FileWindow      pos=(100, 100) size=(100, 100) hidden=file_hidden      z_idx=Some(z_idx) src=file_src/>
+        <FileWindow      pos=(100, 100) size=(600, 700) hidden=file_hidden      z_idx=Some(z_idx) src=file_src/>
         <AdWindow        pos=(100, 600) size=(200, 100) hidden=ad_hidden        z_idx=Some(z_idx)/>
         <div style="height: 65px"></div> // spacer in narrow view
         <Footer items=footer_items/>
         <GoatCounter path="/portfolio"/>
     }
-}
-
-#[component]
-fn FileLink(
-    cx: Scope,
-    src: &'static str,
-    display: &'static str,
-    file_win_src: WriteSignal<Option<&'static str>>,
-) -> impl IntoView {
-    view! { cx, <a href="" on:mousedown=move |_| file_win_src.set(Some(src))>{display}</a> }
 }
 
 #[component]
@@ -56,7 +47,7 @@ fn AboutWindow(
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
-    let content = view! { cx, <div style="padding: 10px"><p>
+    let content = WindowContent::Page(view! { cx, <div style="padding: 10px"><p>
         "Hello! I'm Ethan, and was born in April 2001. "
         "I'm passionate about making software, writing music, and learning languages. Links: "
         <ExternalLink href="http://www.discordapp.com/users/207897365141520384" display="discord"/>", "
@@ -64,7 +55,7 @@ fn AboutWindow(
         <ExternalLink href="https://www.github.com/ETBCOR" display="GitHub"/>". "
         "Some names I use: "<span class="title">"etbcor"</span><i>" (username)"</i>", "<span class="title">"Friday"</span><i>" (in-person friends)"</i>", "
         <span class="title">"jan Itan"</span><i>" (toki pona community)"</i>". "<b>"Thanks for coming to my site!"</b>
-    </p> </div> };
+    </p> </div> });
 
     view! { cx,
         <Window id="about-win" title="About Me".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx/>
@@ -80,7 +71,7 @@ fn EducationWindow(
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
-    let content = view! { cx, <div style="padding: 10px">
+    let content = WindowContent::Page(view! { cx, <div style="padding: 10px">
         <h4>"Bachelor's Degree in Computer Science"</h4>
         <div class="spaced">
             "I spent 2019-2023 at the "<ExternalLink href="https://www.uidaho.edu/" display="University of Idaho"/>
@@ -89,7 +80,7 @@ fn EducationWindow(
         </div>
 
         <div>"CS Classes I took at UI:"</div>
-        <div style="border: 1px black solid; max-height: 110px; overflow-y: scroll">
+        <div style="border: 1px black solid; max-height: 110px; overflow-y: scroll" tabindex=0>
             <ul  style="font-family: consolas; font-size: 10pt; font-style: bold; line-height: 110%">
                 <li>"CS120 | Computer Science I"</li>
                 <li>"CS121 | Computer Science II"</li>
@@ -123,7 +114,7 @@ fn EducationWindow(
         <p>"I gained an interest for coding around the age of 10. A friend of mine showed me "
         <ExternalLink href="https://www.codecademy.com/" display="codecademy.com"/>
         " (back when it was still completely free!), which was very influential for me starting out."</p>
-    </div> };
+    </div> });
 
     view! { cx,
         <Window id="education-win" title="Education".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx/>
@@ -141,11 +132,7 @@ fn SkillsWindow(
     let size = create_rw_signal(cx, size);
     let active_tab = create_rw_signal(cx, "Technical");
 
-    let content = view! { cx,
-        <div>"Failed to load tabs for this window"</div>
-    };
-
-    let tabs = Some((
+    let content = WindowContent::Tabs((
         active_tab,
         vec![
             (
@@ -243,7 +230,7 @@ fn SkillsWindow(
     ));
 
     view! { cx,
-        <Window id="skills-win" title="Skills".to_string() content=content tabs=tabs pos=pos size=size hidden=hidden z_idx=z_idx scroll=true/>
+        <Window id="skills-win" title="Skills".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx scroll=true/>
     }
 }
 
@@ -260,9 +247,7 @@ fn ProjectsWindow(
     let fws = file_win_src;
     let active_tab = create_rw_signal(cx, "From CS Classes");
 
-    let content = view! { cx, <div></div> };
-
-    let tabs = Some((
+    let content = WindowContent::Tabs((
         active_tab,
         vec![
             (
@@ -357,29 +342,6 @@ fn ProjectsWindow(
     ));
 
     view! { cx,
-        <Window id="projects-win" title="Projects".to_string() content=content tabs=tabs pos=pos size=size hidden=hidden z_idx=z_idx scroll=true/>
-    }
-}
-
-#[component]
-fn FileWindow(
-    cx: Scope,
-    pos: (i32, i32),
-    size: (u32, u32),
-    hidden: RwSignal<bool>,
-    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
-    src: ReadSignal<Option<&'static str>>,
-) -> impl IntoView {
-    let size = create_rw_signal(cx, size);
-    let content = view! { cx, <div>
-        <iframe
-            src=move || { if src().is_some() { hidden.set(false); } src().unwrap_or("") }
-            allow="autoplay"
-            style="width: 100%; height: 655px"
-        ></iframe>
-    </div> };
-
-    view! { cx,
-        <Window id="file-win" title="File Viewer".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx/>
+        <Window id="projects-win" title="Projects".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx scroll=true/>
     }
 }

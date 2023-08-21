@@ -1,4 +1,4 @@
-use leptos::{ev::MouseEvent, *};
+use leptos::{ev::MouseEvent, html::ToHtmlElement, *};
 use leptos_meta::*;
 use leptos_router::*;
 use leptos_use::{use_event_listener, use_event_listener_with_options};
@@ -7,6 +7,7 @@ use web_sys::AddEventListenerOptions;
 
 pub mod home;
 pub mod insa;
+pub mod kalama_sin;
 pub mod music;
 pub mod portfolio;
 pub mod tp;
@@ -31,12 +32,13 @@ pub fn App(cx: Scope) -> impl IntoView {
         <Router>
             <main>
                 <Routes>
-                    <Route path="/"          view=home::HomePageEntry/>
-                    <Route path="/portfolio" view=portfolio::PortfolioPage/>
-                    <Route path="/music"     view=music::MusicPage/>
-                    <Route path="/tp"        view=tp::TokiPonaPage/>
-                    <Route path="/insa"      view=insa::InsaPage/>
-                    <Route path="/*any"      view=NotFoundPage/>
+                    <Route path="/"              view=home::HomePageEntry/>
+                    <Route path="/portfolio"     view=portfolio::PortfolioPage/>
+                    <Route path="/music"         view=music::MusicPage/>
+                    <Route path="/tp"            view=tp::TokiPonaPage/>
+                    <Route path="/tp/kalama_sin" view=kalama_sin::KalamaSinPage/>
+                    <Route path="/insa"          view=insa::InsaPage/>
+                    <Route path="/*any"          view=NotFoundPage/>
                 </Routes>
                 <Cyberpunk/>
             </main>
@@ -56,18 +58,22 @@ fn GoatCounter(cx: Scope, path: &'static str) -> impl IntoView {
     }
 }
 
-type Tabs = Option<(
-    RwSignal<&'static str>,
-    Vec<(&'static str, HtmlElement<html::Div>)>,
-)>;
+enum WindowContent {
+    Page(HtmlElement<html::Div>),
+    Tabs(
+        (
+            RwSignal<&'static str>,
+            Vec<(&'static str, HtmlElement<html::Div>)>,
+        ),
+    ),
+}
 
 #[component]
 fn Window(
     cx: Scope,
     id: &'static str,
     title: String,
-    content: HtmlElement<html::Div>,
-    #[prop(default = None)] tabs: Tabs,
+    content: WindowContent,
     pos: (i32, i32),
     size: RwSignal<(u32, u32)>,
     hidden: RwSignal<bool>,
@@ -134,6 +140,14 @@ fn Window(
                     split[1].to_string()
                 }</span>
             </p> }
+        } else if title.starts_with("o pona") {
+            let split: Vec<_> = title.split_whitespace().collect();
+            view! { cx, <p class="title">
+                "o "
+                <span style="font-family: 'Cedarville Cursive', cursive; font-size: 12pt; font-style: oblique">{
+                    split[1].to_string()
+                }</span>
+            </p> }
         } else {
             view! { cx, <p class="title">{&title}</p> }
         }
@@ -142,8 +156,13 @@ fn Window(
     let get_pos = move || format!("left: {}px; top: {}px; z-index: {}", x(), y(), this_z_idx());
     let get_size = move || format!("width: {}px; height: {}px", size().0, size().1);
 
-    let get_content = match tabs {
-        Some((active_tab, combined_vec)) => {
+    let get_content = match content {
+        WindowContent::Page(content) => view! { cx,
+            <div class="win-content" style=get_size class:diag={diag} class:diag-tp={diag_tp} class:scroll={scroll} class:rainbow={rainbow}>
+                { content }
+            </div>
+        },
+        WindowContent::Tabs((active_tab, combined_vec)) => {
             let (titles, tabs): (Vec<_>, Vec<_>) = combined_vec
                 .into_iter()
                 .map(|(title, content)| {
@@ -152,13 +171,16 @@ fn Window(
                             <div
                                 class="title"
                                 class:active=move || active_tab().eq(title)
-                                on:click=move |_| active_tab.set(title)>
+                                on:click=move |_| active_tab.set(title)
+                                tabindex=0
+                                on:keydown=move |k| if k.key() == "Enter" { active_tab.set(title) }>
                                 { title }
                             </div>
                         },
                         view! { cx,
                             <div
                                 class="tab-content"
+                                tabindex=0
                                 class:hidden=move || !active_tab().eq(title)>
                                 { content }
                             </div>
@@ -174,26 +196,38 @@ fn Window(
                 </div>
             }
         }
-        None => view! { cx,
-            <div class="win-content" class:diag={diag} class:diag-tp={diag_tp} class:scroll={scroll} class:rainbow={rainbow} style=get_size>
-                { content }
-            </div>
-        },
     };
 
     view! { cx,
         <div
             id=id
             class="win-outer"
-            class:hidden={move || hidden()}
-            style=get_pos>
+            style=get_pos
+            class:hidden={move || hidden()}>
             <div
                 class="win-titlebar"
-                on:mousedown=drag>
+                on:mousedown=drag
+                tabindex=0
+                on:keydown=move |k| {
+                    if let Some(z_idx) = z_idx {
+                        z_idx.update(|z| *z = *z + 1);
+                        this_z_idx.set(z_idx());
+                    }
+                    if match k.key().as_str() {
+                        "ArrowUp" => { y.update(|a| *a = *a - 10); true }
+                        "ArrowDown" => { y.update(|a| *a = *a + 10); true }
+                        "ArrowLeft" => { x.update(|a| *a = *a - 10); true }
+                        "ArrowRight" => { x.update(|a| *a = *a + 10); true }
+                        _ => false,
+                    } { k.prevent_default() }
+                }
+            >
                 { get_title }
                 <a
                     class="win-close"
-                    on:mousedown=move |_| hidden.set(true)></a>
+                    on:mousedown=move |_| hidden.set(true)
+                    tabindex=0
+                    on:keydown=move |k| if k.key() == "Enter" { hidden.set(true) }></a>
             </div>
             { get_content }
         </div>
@@ -223,8 +257,10 @@ fn Footer(cx: Scope, items: Vec<(&'static str, RwSignal<bool>)>) -> impl IntoVie
                 .map(|(title, hidden)| view! { cx,
                     <div
                         class="title win-minimized"
-                        on:mousedown=move |_| hidden.update(|h| *h = !*h)
+                        on:mousedown=move |_| hidden.set(false)
                         class:hidden=move || !hidden()
+                        tabindex=0
+                        on:keydown=move |k| if k.key() == "Enter" { hidden.set(false) }
                     >{title}</div>
                 })
                 .collect::<Vec<_>>()
@@ -267,9 +303,11 @@ const ABSTRACT_NOUNS: [&str; 95] = [
 enum LoadingWindowVariant {
     Default,
     HomePageLink,
+    #[allow(dead_code)]
     PageComingSoon,
     PageNotFound,
     StackOverflow,
+    TP,
 }
 
 #[component]
@@ -285,23 +323,28 @@ fn LoadingWindow(
 
     let mut rng = rand::thread_rng();
     let noun: &'static str = ABSTRACT_NOUNS.choose(&mut rng).unwrap();
-    let title = match variant {
-        LoadingWindowVariant::Default => format!("Loading {}", noun),
-        LoadingWindowVariant::HomePageLink => format!("Obtain {}", noun),
-        LoadingWindowVariant::PageComingSoon => "Page Coming Soon".to_string(),
-        LoadingWindowVariant::PageNotFound => "Page Not Found".to_string(),
-        LoadingWindowVariant::StackOverflow => "Uh-oh! The stack overflowed".to_string(),
+    let title = {
+        use LoadingWindowVariant::*;
+        match variant {
+            Default => format!("Loading {}", noun),
+            HomePageLink => format!("Obtain {}", noun),
+            PageComingSoon => "Page Coming Soon".to_string(),
+            PageNotFound => "Page Not Found".to_string(),
+            StackOverflow => "Uh-oh! The stack overflowed".to_string(),
+            TP => "o pona".to_string(),
+        }
     };
 
-    let nav = leptos_router::use_navigate(cx);
-    let content = view! { cx,
+    let content = WindowContent::Page(view! { cx,
         <div
             class="loading-img"
             class:wait={variant == LoadingWindowVariant::Default}
-            on:click=move |_| nav(if variant == LoadingWindowVariant::StackOverflow {"/insa"} else { "/" }, Default::default()).unwrap()
+            on:click=move |_| leptos_router::use_navigate(cx)(if variant == LoadingWindowVariant::StackOverflow { "/insa" } else { "/" }, Default::default(),).unwrap()
+            on:keydown=move |k| if k.key() == "Enter" { leptos_router::use_navigate(cx)(if variant == LoadingWindowVariant::StackOverflow { "/insa" } else { "/" }, Default::default(),).unwrap() }
+            tabindex=0
             title="ale li pona"
         ></div>
-    };
+    });
 
     view! { cx,
         <Window id="loading-win" title=title content=content pos=pos size=size hidden=hidden z_idx=z_idx rainbow=true/>
@@ -317,9 +360,9 @@ fn AdWindow(
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
-    let content = view! { cx, <div>
+    let content = WindowContent::Page(view! { cx, <div>
         <img src="/assets/ur-ad-here.png" draggable="false"/>
-    </div> };
+    </div> });
 
     view! { cx,
         <Window id="ad-win" title="Advertisement".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx/>
@@ -335,13 +378,15 @@ fn WebringWindow(
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
-    let content = view! { cx, <div style="margin-left: 16px; margin-right: 16px">
-       <iframe
-        src="https://webring.bucketfish.me/embed.html?name=etbcor"
-        id="bucket-webring"
-        style="width: 100%; height: 63px; border: none"
-    ></iframe>
-    </div> };
+    let content = WindowContent::Page(
+        view! { cx, <div style="margin-left: 16px; margin-right: 16px">
+           <iframe
+            src="https://webring.bucketfish.me/embed.html?name=etbcor"
+            id="bucket-webring"
+            style="width: 100%; height: 63px; border: none"
+        ></iframe>
+        </div> },
+    );
 
     view! { cx,
         <Window id="webring-win" title="Webring".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx/>
@@ -357,12 +402,12 @@ fn JohnWindow(
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
-    let content = view! { cx, <div class="rainbow">
+    let content = WindowContent::Page(view! { cx, <div class="rainbow">
        <iframe
             src="https://john.citrons.xyz/embed?ref=etbcor.com"
             style="max-height: 94px; width: 100%; aspect-ratio: 732 / 94; border:none"
         ></iframe>
-    </div> };
+    </div> });
 
     view! { cx,
         <Window id="john-win" title="Johnvertisement".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx/>
@@ -378,8 +423,8 @@ fn LonelyWindow(
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
-    let content = view! { cx, <div>
-    </div> };
+    let content = WindowContent::Page(view! { cx, <div tabindex=0>
+    </div> });
     view! { cx,
         <Window id="lonely-win" title="A bit lonely...".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx/>
     }
@@ -398,12 +443,31 @@ fn LinkWindow(
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
     #[prop(default = false)] diag: bool,
     #[prop(default = false)] diag_tp: bool,
+    #[prop(default = false)] external: bool,
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
-    let nav = leptos_router::use_navigate(cx);
-    let content = view! { cx, <div style="cursor: pointer; text-align: center" on:click=move |_| nav(src, Default::default()).unwrap()>
-        <img src=bg_img style="padding: 0px" draggable=false/>
-    </div> };
+    let content = WindowContent::Page(if external {
+        view! { cx, <div style="cursor: alias; text-align: center">
+            <a href=src target="_blank" style="max-height: 100%">
+                <img
+                    src=bg_img
+                    style="padding: 0px; max-height: 100%; max-width: 100%"
+                    draggable=false
+                />
+            </a>
+        </div> }
+    } else {
+        view! { cx, <div style="cursor: pointer; text-align: center">
+            <img
+                src=bg_img
+                style="padding: 0px; max-height: 100%; max-width: 100%"
+                draggable=false
+                on:click=move |_| leptos_router::use_navigate(cx)(src, Default::default()).unwrap()
+                on:keydown=move |k| if k.key() == "Enter" { leptos_router::use_navigate(cx)(src, Default::default()).unwrap() }
+                tabindex=0
+            />
+        </div> }
+    });
 
     view! { cx,
         <Window id=id title=title content=content pos=pos size=size hidden=hidden z_idx=z_idx rainbow={!diag && !diag_tp} diag={diag} diag_tp={diag_tp}/>
@@ -433,4 +497,36 @@ fn ExternalLink(
             </a>
         }
     }
+}
+
+#[component]
+fn FileWindow(
+    cx: Scope,
+    pos: (i32, i32),
+    size: (u32, u32),
+    hidden: RwSignal<bool>,
+    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
+    src: ReadSignal<Option<&'static str>>,
+) -> impl IntoView {
+    let size = create_rw_signal(cx, size);
+    let content = WindowContent::Page(view! { cx, <div>
+        <iframe
+            src=move || { if src().is_some() { hidden.set(false); } src().unwrap_or("") }
+            allow="autoplay"
+            style="width: 100%; height: 655px"></iframe>
+    </div> });
+
+    view! { cx,
+        <Window id="file-win" title="File Viewer".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx/>
+    }
+}
+
+#[component]
+fn FileLink(
+    cx: Scope,
+    src: &'static str,
+    display: &'static str,
+    file_win_src: WriteSignal<Option<&'static str>>,
+) -> impl IntoView {
+    view! { cx, <a href="" on:mousedown=move |_| file_win_src.set(Some(src))>{display}</a> }
 }
