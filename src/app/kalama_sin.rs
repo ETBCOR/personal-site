@@ -25,8 +25,8 @@ pub fn KalamaSinPage(cx: Scope) -> impl IntoView {
         <LoadingWindow   pos=(20, 20)  size=(255, 255) hidden=loading_hidden    z_idx=z_idx variant=LoadingWindowVariant::TP/>
         <LinkWindow      pos=(20, 347) size=(255, 255) hidden=link_win_hidden   z_idx=z_idx id="kalama-sin-link-win" title="lon ilo RedCircle".to_string() bg_img="/assets/kalama-sin.webp" src="https://redcircle.com/shows/kalama-sin" external=true/>
         <KalamaSinWindow pos=(310, 20) size=(440, 582) hidden=kalama_sin_hidden z_idx=z_idx file_win_src=set_file_src/>
+        <FileWindow      pos=(782, 20) size=(700, 744) hidden=file_hidden       z_idx=z_idx src=file_src/>
         <JohnWindow      pos=(20, 674) size=(730, 90)  hidden=john_hidden       z_idx=z_idx/>
-        <FileWindow      pos=(782, 20) size=(600, 744) hidden=file_hidden       z_idx=z_idx src=file_src/>
         <Footer items=footer_items/>
         <GoatCounter path="/tp"/>
     }
@@ -77,9 +77,9 @@ fn KalamaSinWindow(
             <li><FileLink src="https://docs.google.com/document/d/1dXmde4rhkUqtGcVrK1d4iC15Yiz2jjmblfuLGt-W0CU/preview" display="#24: ijo sin, tan jan Lakuse" file_win_src=fws/></li>
             <li><FileLink src="https://docs.google.com/document/d/1vKsPFBHWWOTt-eQ0VNkC007ubsvpG_A9xDS7rz7PmpU/preview" display="#25: suno pi toki pona, tan jan Lakuse tan jan Tepo tan palisa jelo Natan tan jan Kepe" file_win_src=fws/></li>
             <li><FileLink src="https://lipumonsuta.neocities.org/mun-monsuta/o-moku-pona" display="#26: o moku pona! tan jan Simiman" file_win_src=fws/></li>
-            <li><FileLink src="" display="#27: sona pi toki luka, tan jan Lakuse tan jan Tepo (pini ala!)" file_win_src=fws/></li>
-            <li><FileLink src="" display="#28: ma tomo Win, tan jan Ke Tami tan kulupu pi ma Win (pini ala!)" file_win_src=fws/></li>
-            <li><FileLink src="" display="#29: pakala li lon telo sijelo loje, tan jan Luke tan jan Kiwisin (pini ala!)" file_win_src=fws/></li>
+            <li><FileLink src="/pini_ala" display="#27: sona pi toki luka, tan jan Lakuse tan jan Tepo (pini ala!)" file_win_src=fws/></li>
+            <li><FileLink src="/pini_ala" display="#28: ma tomo Win, tan jan Ke Tami tan kulupu pi ma Win (pini ala!)" file_win_src=fws/></li>
+            <li><FileLink src="/pini_ala" display="#29: pakala li lon telo sijelo loje, tan jan Luke tan jan Kiwisin (pini ala!)" file_win_src=fws/></li>
         </ul>
     </div> });
 

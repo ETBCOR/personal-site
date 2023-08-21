@@ -69,16 +69,17 @@ fn MetaWindow(
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
     let deeper = create_rw_signal(cx, false);
-    let content = WindowContent::Page(view! { cx, <div>
+    let content = WindowContent::Page(view! { cx, <div style="width: 100%; height: 100%">
         <div
             class:scroll=move || deeper()
             class:hidden=move || deeper()
             on:click=move |_| {deeper.set(true); size.set((720, 844))}
             on:keydown=move |k| if k.key() == "Enter" {deeper.set(true); size.set((720, 844))}
             tabindex=0
+            style="width: 100%; height: 100%"
         >
             <video
-                style="cursor: alias"
+                style="cursor: alias; width: 100%; height: 100%; text-align: center"
                 muted
                 autoplay
                 loop="true"

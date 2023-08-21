@@ -77,12 +77,16 @@ fn Window(
     pos: (i32, i32),
     size: RwSignal<(u32, u32)>,
     hidden: RwSignal<bool>,
+    #[prop(default = true)] expandable: bool,
+    #[prop(default = false)] expanded: bool,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
     #[prop(default = false)] diag: bool,
     #[prop(default = false)] scroll: bool,
     #[prop(default = false)] rainbow: bool,
     #[prop(default = false)] diag_tp: bool,
 ) -> impl IntoView {
+    let expanded = create_rw_signal(cx, expanded);
+
     let x = create_rw_signal(cx, pos.0);
     let y = create_rw_signal(cx, pos.1);
     let dx = create_rw_signal(cx, 0);
@@ -106,8 +110,10 @@ fn Window(
         dx.set(x.get_untracked() - e.client_x());
         dy.set(y.get_untracked() - e.client_y());
         let drag_cleanup = use_event_listener(cx, document(), ev::mousemove, move |e| {
-            x.set(e.client_x() + dx.get_untracked());
-            y.set(e.client_y() + dy.get_untracked());
+            if !expanded() {
+                x.set(e.client_x() + dx.get_untracked());
+                y.set(e.client_y() + dy.get_untracked());
+            }
         });
 
         let mut once_opt = AddEventListenerOptions::new();
@@ -153,12 +159,38 @@ fn Window(
         }
     };
 
-    let get_pos = move || format!("left: {}px; top: {}px; z-index: {}", x(), y(), this_z_idx());
-    let get_size = move || format!("width: {}px; height: {}px", size().0, size().1);
+    let get_pos_size = move || {
+        if !expanded() {
+            format!(
+                "left: {}px; top: {}px; width: {}px; height: {}px; z-index: {}",
+                x(),
+                y(),
+                size().0,
+                size().1 + 39, // add space for title
+                this_z_idx()
+            )
+        } else {
+            "".to_string()
+        }
+    };
+    let get_content_size = move || {
+        if !expanded() {
+            format!("height: {}px", size().1)
+        } else {
+            "".to_string()
+        }
+    };
+    let get_tab_size = move || {
+        if !expanded() {
+            format!("height: {}px", size().1 - 34)
+        } else {
+            "".to_string()
+        }
+    };
 
     let get_content = match content {
         WindowContent::Page(content) => view! { cx,
-            <div class="win-content" style=get_size class:diag={diag} class:diag-tp={diag_tp} class:scroll={scroll} class:rainbow={rainbow}>
+            <div class="win-content" style=get_content_size class:diag={diag} class:diag-tp={diag_tp} class:scroll={scroll} class:rainbow={rainbow}>
                 { content }
             </div>
         },
@@ -190,9 +222,9 @@ fn Window(
                 .unzip();
 
             view! { cx,
-                <div class="win-content">
+                <div class="win-content" style=get_content_size>
                     <div class="tab-titlebar">{titles}</div>
-                    <div class="tab-outer" class:scroll={scroll} class:diag={diag} class:diag-tp={diag_tp} class:rainbow={rainbow} style=get_size>{tabs}</div>
+                    <div class="tab-outer" style=get_tab_size class:scroll={scroll} class:diag={diag} class:diag-tp={diag_tp} class:rainbow={rainbow}>{tabs}</div>
                 </div>
             }
         }
@@ -202,8 +234,10 @@ fn Window(
         <div
             id=id
             class="win-outer"
-            style=get_pos
-            class:hidden={move || hidden()}>
+            style=get_pos_size
+            class:hidden=move || hidden()
+            class:win-expanded=move || expanded()
+        >
             <div
                 class="win-titlebar"
                 on:mousedown=drag
@@ -213,21 +247,32 @@ fn Window(
                         z_idx.update(|z| *z = *z + 1);
                         this_z_idx.set(z_idx());
                     }
-                    if match k.key().as_str() {
-                        "ArrowUp" => { y.update(|a| *a = *a - 10); true }
-                        "ArrowDown" => { y.update(|a| *a = *a + 10); true }
-                        "ArrowLeft" => { x.update(|a| *a = *a - 10); true }
-                        "ArrowRight" => { x.update(|a| *a = *a + 10); true }
-                        _ => false,
-                    } { k.prevent_default() }
+                    if !expanded() {
+                        if match k.key().as_str() {
+                            "ArrowUp" => { y.update(|a| *a = *a - 10); true }
+                            "ArrowDown" => { y.update(|a| *a = *a + 10); true }
+                            "ArrowLeft" => { x.update(|a| *a = *a - 10); true }
+                            "ArrowRight" => { x.update(|a| *a = *a + 10); true }
+                            _ => false,
+                        } { k.prevent_default() }
+                    }
                 }
             >
                 { get_title }
-                <a
-                    class="win-close"
-                    on:mousedown=move |_| hidden.set(true)
-                    tabindex=0
-                    on:keydown=move |k| if k.key() == "Enter" { hidden.set(true) }></a>
+                <div class="win-buttons">
+                    { if expandable { Some(view! { cx, <a
+                        class="win-expand"
+                        on:mousedown=move |_| expanded.update(|e| *e = !*e)
+                        on:keydown=move |k| if k.key() == "Enter" { expanded.update(|e| *e = !*e) }
+                        tabindex=0
+                    ></a> }) } else { None } }
+                    <a
+                        class="win-close"
+                        on:mousedown=move |_| hidden.set(true)
+                        on:keydown=move |k| if k.key() == "Enter" { hidden.set(true) }
+                        tabindex=0
+                    ></a>
+                </div>
             </div>
             { get_content }
         </div>
@@ -347,7 +392,7 @@ fn LoadingWindow(
     });
 
     view! { cx,
-        <Window id="loading-win" title=title content=content pos=pos size=size hidden=hidden z_idx=z_idx rainbow=true/>
+        <Window id="loading-win" title=title content=content pos=pos size=size hidden=hidden expandable=false z_idx=z_idx rainbow=true/>
     }
 }
 
@@ -365,7 +410,7 @@ fn AdWindow(
     </div> });
 
     view! { cx,
-        <Window id="ad-win" title="Advertisement".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx/>
+        <Window id="ad-win" title="Advertisement".to_string() content=content pos=pos size=size hidden=hidden expandable=false z_idx=z_idx/>
     }
 }
 
@@ -389,7 +434,7 @@ fn WebringWindow(
     );
 
     view! { cx,
-        <Window id="webring-win" title="Webring".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx/>
+        <Window id="webring-win" title="Webring".to_string() content=content pos=pos size=size hidden=hidden expandable=false z_idx=z_idx/>
     }
 }
 
@@ -410,7 +455,7 @@ fn JohnWindow(
     </div> });
 
     view! { cx,
-        <Window id="john-win" title="Johnvertisement".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx/>
+        <Window id="john-win" title="Johnvertisement".to_string() content=content pos=pos size=size hidden=hidden expandable=false z_idx=z_idx/>
     }
 }
 
@@ -426,7 +471,7 @@ fn LonelyWindow(
     let content = WindowContent::Page(view! { cx, <div tabindex=0>
     </div> });
     view! { cx,
-        <Window id="lonely-win" title="A bit lonely...".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx/>
+        <Window id="lonely-win" title="A bit lonely...".to_string() content=content pos=pos size=size hidden=hidden expandable=false z_idx=z_idx/>
     }
 }
 
@@ -470,7 +515,7 @@ fn LinkWindow(
     });
 
     view! { cx,
-        <Window id=id title=title content=content pos=pos size=size hidden=hidden z_idx=z_idx rainbow={!diag && !diag_tp} diag={diag} diag_tp={diag_tp}/>
+        <Window id=id title=title content=content pos=pos size=size hidden=hidden expandable=false z_idx=z_idx rainbow={!diag && !diag_tp} diag={diag} diag_tp={diag_tp}/>
     }
 }
 
@@ -509,15 +554,15 @@ fn FileWindow(
     src: ReadSignal<Option<&'static str>>,
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
-    let content = WindowContent::Page(view! { cx, <div>
+    let content = WindowContent::Page(view! { cx, <div style="width: 100%; height: 100%">
         <iframe
             src=move || { if src().is_some() { hidden.set(false); } src().unwrap_or("") }
             allow="autoplay"
-            style="width: 100%; height: 655px"></iframe>
+            style="width: 100%; height: 100%"></iframe>
     </div> });
 
     view! { cx,
-        <Window id="file-win" title="File Viewer".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx/>
+        <Window id="file-win" title="File Viewer".to_string() content=content pos=pos size=size hidden=hidden expanded=true z_idx=z_idx/>
     }
 }
 
@@ -528,5 +573,5 @@ fn FileLink(
     display: &'static str,
     file_win_src: WriteSignal<Option<&'static str>>,
 ) -> impl IntoView {
-    view! { cx, <a href="" on:mousedown=move |_| file_win_src.set(Some(src))>{display}</a> }
+    view! { cx, <a href="" on:mousedown=move |_| file_win_src.set(Some(src)) on:keydown=move |k| if k.key() == "Enter" { file_win_src.set(Some(src)) }>{display}</a> }
 }
