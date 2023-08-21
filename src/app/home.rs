@@ -71,12 +71,12 @@ fn MetaWindow(
     let deeper = create_rw_signal(cx, false);
     let content = WindowContent::Page(view! { cx, <div style="width: 100%; height: 100%">
         <div
-            class:scroll=move || deeper()
+            class="meta-preview"
             class:hidden=move || deeper()
             on:click=move |_| {deeper.set(true); size.set((720, 844))}
             on:keydown=move |k| if k.key() == "Enter" {deeper.set(true); size.set((720, 844))}
             tabindex=0
-            style="width: 100%; height: 100%"
+            // style="width: 100%; height: 100%"
         >
             <video
                 style="cursor: alias; width: 100%; height: 100%; text-align: center"
@@ -88,7 +88,7 @@ fn MetaWindow(
                 <source src="/assets/o-tawa-insa.webm" type="video/webm"/>
             </video>
         </div>
-        <div class:hidden=move || !deeper()>
+        <div class="meta-meta scroll" style="height: 844px" class:hidden=move || !deeper()>
             {
                 if recursions <= STACK_OVERFLOW_LIMIT {
                     view! { cx, <div> <HomePage recursions=recursions/> </div> }

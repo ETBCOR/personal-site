@@ -77,10 +77,10 @@ footer {
 
 .win-expanded {
 	z-index: 2048;
-	left: 10px;
-	top: 10px;
-	right: 10px;
-	bottom: 10px;
+	left: 20px;
+	top: 20px;
+	right: 20px;
+	bottom: 20px;
 }
 
 .win-titlebar {
@@ -238,6 +238,7 @@ footer {
 
 .win-content {
 	max-width: 100%;
+	// min-height: 100%;
 	padding: 0px;
 }
 
@@ -263,6 +264,10 @@ footer {
 	overflow: hidden;
 }
 
+#spotify-win>.win-content>.tab-outer {
+	overflow: auto;
+}
+
 // mobile view
 @media (max-width: 900px) {
 	.win-outer {
@@ -274,8 +279,6 @@ footer {
 		max-width: 90%;
 	}
 
-	.win-expanded {}
-
 	.win-content {
 		overflow-y: auto;
 	}
@@ -284,15 +287,27 @@ footer {
 		display: none;
 	}
 
+	#john-win,
 	#john-win>.win-content {
 		overflow-y: hidden;
 		height: fit-content !important;
 	}
 
 	#music-link-win>.win-content,
-	#meta-win>.win-content {
+	#meta-win>.win-content,
+	.meta-preview {
 		overflow: hidden;
 	}
+
+	#meta-win {
+		margin-bottom: 20px;
+	}
+}
+
+.meta-meta {
+	max-height: 100%;
+	overflow-y: auto;
+	// overflow-x: hidden;
 }
 
 #webring-win>.win-content {

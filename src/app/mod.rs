@@ -110,7 +110,7 @@ fn Window(
         dx.set(x.get_untracked() - e.client_x());
         dy.set(y.get_untracked() - e.client_y());
         let drag_cleanup = use_event_listener(cx, document(), ev::mousemove, move |e| {
-            if !expanded() {
+            if !expanded.get_untracked() {
                 x.set(e.client_x() + dx.get_untracked());
                 y.set(e.client_y() + dy.get_untracked());
             }

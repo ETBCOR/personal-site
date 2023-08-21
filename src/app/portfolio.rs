@@ -47,7 +47,7 @@ fn AboutWindow(
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
-    let content = WindowContent::Page(view! { cx, <div style="padding: 10px"><p>
+    let content = WindowContent::Page(view! { cx, <div style="padding: 10px" tabindex=0><p>
         "Hello! I'm Ethan, and was born in April 2001. "
         "I'm passionate about making software, writing music, and learning languages. Links: "
         <ExternalLink href="http://www.discordapp.com/users/207897365141520384" display="discord"/>", "
