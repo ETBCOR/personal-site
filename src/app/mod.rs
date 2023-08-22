@@ -58,7 +58,7 @@ fn GoatCounter(cx: Scope, path: &'static str) -> impl IntoView {
     }
 }
 
-enum WindowContent {
+pub enum WindowContent {
     Page(HtmlElement<html::Div>),
     Tabs(
         (
@@ -68,13 +68,19 @@ enum WindowContent {
     ),
 }
 
+pub enum WindowPos {
+    Val((i32, i32)),
+    Sig(RwSignal<(i32, i32)>),
+    SigOffset(RwSignal<(i32, i32)>),
+}
+
 #[component]
 fn Window(
     cx: Scope,
     id: &'static str,
     title: String,
     content: WindowContent,
-    pos: (i32, i32),
+    pos: WindowPos,
     size: RwSignal<(u32, u32)>,
     hidden: RwSignal<bool>,
     #[prop(default = true)] expandable: bool,
@@ -85,13 +91,18 @@ fn Window(
     #[prop(default = false)] rainbow: bool,
     #[prop(default = false)] diag_tp: bool,
 ) -> impl IntoView {
+    let mut offset = false;
+    let pos = match pos {
+        WindowPos::Val(v) => create_rw_signal(cx, v),
+        WindowPos::Sig(s) => s,
+        WindowPos::SigOffset(s) => {
+            offset = true;
+            s
+        }
+    };
+    let dpos = create_rw_signal(cx, (0, 0));
+
     let expanded = create_rw_signal(cx, expanded);
-
-    let x = create_rw_signal(cx, pos.0);
-    let y = create_rw_signal(cx, pos.1);
-    let dx = create_rw_signal(cx, 0);
-    let dy = create_rw_signal(cx, 0);
-
     let this_z_idx = create_rw_signal(
         cx,
         if id.eq("ad-win") || !z_idx.is_some() {
@@ -107,12 +118,12 @@ fn Window(
             this_z_idx.set(z_idx());
         }
 
-        dx.set(x.get_untracked() - e.client_x());
-        dy.set(y.get_untracked() - e.client_y());
+        let (x, y) = pos.get_untracked();
+        dpos.set((x - e.client_x(), y - e.client_y()));
         let drag_cleanup = use_event_listener(cx, document(), ev::mousemove, move |e| {
             if !expanded.get_untracked() {
-                x.set(e.client_x() + dx.get_untracked());
-                y.set(e.client_y() + dy.get_untracked());
+                let (dx, dy) = dpos.get_untracked();
+                pos.set((e.client_x() + dx, e.client_y() + dy))
             }
         });
 
@@ -163,8 +174,8 @@ fn Window(
         if !expanded() {
             format!(
                 "left: {}px; top: {}px; width: {}px; height: {}px; z-index: {}",
-                x(),
-                y(),
+                pos().0,
+                pos().1 + if offset { 35 } else { 0 },
                 size().0,
                 size().1 + 34, // add space for title
                 this_z_idx()
@@ -249,10 +260,10 @@ fn Window(
                     }
                     if !expanded() {
                         if match k.key().as_str() {
-                            "ArrowUp" => { y.update(|a| *a = *a - 10); true }
-                            "ArrowDown" => { y.update(|a| *a = *a + 10); true }
-                            "ArrowLeft" => { x.update(|a| *a = *a - 10); true }
-                            "ArrowRight" => { x.update(|a| *a = *a + 10); true }
+                            "ArrowUp" => { pos.update(|(_, a)| *a = *a - 10); true }
+                            "ArrowDown" => { pos.update(|(_, a)| *a = *a + 10); true }
+                            "ArrowLeft" => { pos.update(|(a, _)| *a = *a - 10); true }
+                            "ArrowRight" => { pos.update(|(a, _)| *a = *a + 10); true }
                             _ => false,
                         } { k.prevent_default() }
                     }
@@ -291,7 +302,7 @@ fn NotFoundPage(cx: Scope) -> impl IntoView {
     let loading = create_rw_signal(cx, false);
 
     view! { cx,
-        <LoadingWindow pos=(20, 20) size=(500, 500) hidden=loading variant=LoadingWindowVariant::PageNotFound/>
+        <LoadingWindow pos=WindowPos::Val((20, 20)) size=(500, 500) hidden=loading variant=LoadingWindowVariant::PageNotFound/>
     }
 }
 
@@ -360,7 +371,7 @@ enum LoadingWindowVariant {
 #[component]
 fn LoadingWindow(
     cx: Scope,
-    pos: (i32, i32),
+    pos: WindowPos,
     size: (u32, u32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
@@ -401,7 +412,7 @@ fn LoadingWindow(
 #[component]
 fn AdWindow(
     cx: Scope,
-    pos: (i32, i32),
+    pos: WindowPos,
     size: (u32, u32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
@@ -416,34 +427,60 @@ fn AdWindow(
     }
 }
 
+enum Webring {
+    Bucket,
+    Kulupu,
+}
+
 #[component]
 fn WebringWindow(
     cx: Scope,
-    pos: (i32, i32),
+    pos: WindowPos,
     size: (u32, u32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
+    webring: Webring,
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
-    let content = WindowContent::Page(
-        view! { cx, <div style="margin-left: 16px; margin-right: 16px">
-           <iframe
-            src="https://webring.bucketfish.me/embed.html?name=etbcor"
-            id="bucket-webring"
-            style="width: 100%; height: 63px; border: none"
-        ></iframe>
+    let id = match webring {
+        Webring::Bucket => "bucket-webring-win",
+        Webring::Kulupu => "kulupu-webring-win",
+    };
+    let content = WindowContent::Page(match webring {
+        Webring::Bucket => view! { cx, <div style="margin-left: 16px; margin-right: 16px">
+            <iframe
+                src="https://webring.bucketfish.me/embed.html?name=etbcor"
+                id="bucket-webring"
+                style="width: 100%; height: 63px; border: none"
+            ></iframe>
         </div> },
-    );
+        Webring::Kulupu => {
+            view! { cx, <div id="sike-pona" style="margin-left: 16px; margin-right: 16px; height: 90%">
+                <link rel="stylesheet" href="https://sike.pona.la/embed.css"/>
+                <span id="left">
+                    <a href="https://sike.pona.la/jan/jan%20Itan/prev.html" id="prev">"← prev"</a>
+                    </span>
+                <span id="mid"><a href="https://sike.pona.la">
+                    <img class="tokipona" src="https://sike.pona.la/assets/tokipona.svg"></img>
+                    "sike pona"
+                    <img class="tokipona" src="https://sike.pona.la/assets/tokipona.svg"></img>
+                </a></span>
+                <span id="right">
+                <a href="https://sike.pona.la/jan/jan%20Itan/next.html" id="next">"next →"</a>
+                </span>
+            </div> }
+        }
+    });
 
     view! { cx,
-        <Window id="webring-win" title="Webring".to_string() content=content pos=pos size=size hidden=hidden expandable=false z_idx=z_idx/>
+        <Window id=id title="Webring".to_string() content=content pos=pos size=size hidden=hidden expandable=false z_idx=z_idx/>
     }
 }
 
 #[component]
 fn JohnWindow(
     cx: Scope,
-    pos: (i32, i32),
+    pos: WindowPos,
     size: (u32, u32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
@@ -464,7 +501,7 @@ fn JohnWindow(
 #[component]
 fn LonelyWindow(
     cx: Scope,
-    pos: (i32, i32),
+    pos: WindowPos,
     size: (u32, u32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
@@ -480,7 +517,7 @@ fn LonelyWindow(
 #[component]
 fn LinkWindow(
     cx: Scope,
-    pos: (i32, i32),
+    pos: WindowPos,
     size: (u32, u32),
     hidden: RwSignal<bool>,
     id: &'static str,
@@ -549,7 +586,7 @@ fn ExternalLink(
 #[component]
 fn FileWindow(
     cx: Scope,
-    pos: (i32, i32),
+    pos: WindowPos,
     size: (u32, u32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,

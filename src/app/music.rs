@@ -1,6 +1,6 @@
 use crate::app::{
     Footer, GoatCounter, JohnWindow, LinkWindow, LoadingWindow, LoadingWindowVariant, Window,
-    WindowContent,
+    WindowContent, WindowPos,
 };
 use leptos::*;
 
@@ -20,10 +20,10 @@ pub fn MusicPage(cx: Scope) -> impl IntoView {
     let z_idx = Some(create_rw_signal(cx, 1));
 
     view! { cx,
-        <LoadingWindow         pos=(20, 20)  size=(255, 255) hidden=loading_hidden  z_idx=z_idx variant=LoadingWindowVariant::HomePageLink/>
-        <LinkWindow            pos=(20, 347) size=(255, 255) hidden=my_music_hidden z_idx=z_idx id="my-music-win" title="My Music (coming soon)".to_string() bg_img="" src="/music"/>
-        <SpotifyPlaylistWindow pos=(310, 20) size=(440, 582) hidden=spotify_hidden  z_idx=z_idx/>
-        <JohnWindow            pos=(20, 674) size=(730, 90)  hidden=john_hidden     z_idx=z_idx/>
+        <LoadingWindow         pos=WindowPos::Val((20, 20))  size=(255, 255) hidden=loading_hidden  z_idx=z_idx variant=LoadingWindowVariant::HomePageLink/>
+        <LinkWindow            pos=WindowPos::Val((20, 347)) size=(255, 255) hidden=my_music_hidden z_idx=z_idx id="my-music-win" title="My Music (coming soon)".to_string() bg_img="" src="/music"/>
+        <SpotifyPlaylistWindow pos=WindowPos::Val((310, 20)) size=(440, 582) hidden=spotify_hidden  z_idx=z_idx/>
+        <JohnWindow            pos=WindowPos::Val((20, 674)) size=(730, 90)  hidden=john_hidden     z_idx=z_idx/>
         <Footer items=footer_items/>
         <GoatCounter path="/music"/>
     }
@@ -32,7 +32,7 @@ pub fn MusicPage(cx: Scope) -> impl IntoView {
 #[component]
 fn SpotifyPlaylistWindow(
     cx: Scope,
-    pos: (i32, i32),
+    pos: WindowPos,
     size: (u32, u32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
@@ -123,7 +123,7 @@ fn SpotifyPlaylist(
 #[component]
 pub fn MusicLinkWindow(
     cx: Scope,
-    pos: (i32, i32),
+    pos: WindowPos,
     size: (u32, u32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,

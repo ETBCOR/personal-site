@@ -1,6 +1,6 @@
 use crate::app::{
     AdWindow, ExternalLink, FileLink, FileWindow, Footer, GoatCounter, LoadingWindow,
-    LoadingWindowVariant, Window, WindowContent,
+    LoadingWindowVariant, Window, WindowContent, WindowPos,
 };
 use leptos::*;
 
@@ -25,13 +25,13 @@ pub fn PortfolioPage(cx: Scope) -> impl IntoView {
     let z_idx = create_rw_signal(cx, 1);
 
     view! { cx,
-        <LoadingWindow   pos=(435, 204) size=(225, 202) hidden=loading_hidden   z_idx=Some(z_idx) variant=LoadingWindowVariant::HomePageLink/>
-        <AboutWindow     pos=(20, 20)   size=(640, 112) hidden=about_hidden     z_idx=Some(z_idx)/>
-        <EducationWindow pos=(20, 204)  size=(380, 572) hidden=education_hidden z_idx=Some(z_idx)/>
-        <SkillsWindow    pos=(695, 20)  size=(550, 386) hidden=skills_hidden    z_idx=Some(z_idx)/>
-        <ProjectsWindow  pos=(435, 478) size=(810, 298) hidden=projects_hidden  z_idx=Some(z_idx) file_win_src=set_file_src/>
-        <FileWindow      pos=(1278, 20) size=(500, 756) hidden=file_hidden      z_idx=Some(z_idx) src=file_src/>
-        <AdWindow        pos=(100, 600) size=(200, 100) hidden=ad_hidden        z_idx=Some(z_idx)/>
+        <LoadingWindow   pos=WindowPos::Val((435, 204)) size=(225, 202) hidden=loading_hidden   z_idx=Some(z_idx) variant=LoadingWindowVariant::HomePageLink/>
+        <AboutWindow     pos=WindowPos::Val((20, 20))   size=(640, 112) hidden=about_hidden     z_idx=Some(z_idx)/>
+        <EducationWindow pos=WindowPos::Val((20, 204))  size=(380, 572) hidden=education_hidden z_idx=Some(z_idx)/>
+        <SkillsWindow    pos=WindowPos::Val((695, 20))  size=(550, 386) hidden=skills_hidden    z_idx=Some(z_idx)/>
+        <ProjectsWindow  pos=WindowPos::Val((435, 478)) size=(810, 298) hidden=projects_hidden  z_idx=Some(z_idx) file_win_src=set_file_src/>
+        <FileWindow      pos=WindowPos::Val((1278, 20)) size=(500, 756) hidden=file_hidden      z_idx=Some(z_idx) src=file_src/>
+        <AdWindow        pos=WindowPos::Val((100, 600)) size=(200, 100) hidden=ad_hidden        z_idx=Some(z_idx)/>
         <div style="height: 65px"></div> // spacer in narrow view
         <Footer items=footer_items/>
         <GoatCounter path="/portfolio"/>
@@ -41,7 +41,7 @@ pub fn PortfolioPage(cx: Scope) -> impl IntoView {
 #[component]
 fn AboutWindow(
     cx: Scope,
-    pos: (i32, i32),
+    pos: WindowPos,
     size: (u32, u32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
@@ -65,7 +65,7 @@ fn AboutWindow(
 #[component]
 fn EducationWindow(
     cx: Scope,
-    pos: (i32, i32),
+    pos: WindowPos,
     size: (u32, u32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
@@ -124,7 +124,7 @@ fn EducationWindow(
 #[component]
 fn SkillsWindow(
     cx: Scope,
-    pos: (i32, i32),
+    pos: WindowPos,
     size: (u32, u32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
@@ -237,7 +237,7 @@ fn SkillsWindow(
 #[component]
 fn ProjectsWindow(
     cx: Scope,
-    pos: (i32, i32),
+    pos: WindowPos,
     size: (u32, u32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,

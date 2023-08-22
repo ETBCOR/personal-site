@@ -1,6 +1,6 @@
 use crate::app::{
     ExternalLink, FileLink, FileWindow, Footer, GoatCounter, JohnWindow, LinkWindow, LoadingWindow,
-    LoadingWindowVariant, Window, WindowContent,
+    LoadingWindowVariant, Window, WindowContent, WindowPos,
 };
 use leptos::*;
 
@@ -22,11 +22,11 @@ pub fn KalamaSinPage(cx: Scope) -> impl IntoView {
     let z_idx = Some(create_rw_signal(cx, 1));
 
     view! { cx,
-        <LoadingWindow   pos=(20, 20)  size=(255, 255) hidden=loading_hidden    z_idx=z_idx variant=LoadingWindowVariant::TP/>
-        <LinkWindow      pos=(20, 347) size=(255, 255) hidden=link_win_hidden   z_idx=z_idx id="kalama-sin-link-win" title="lon ilo RedCircle".to_string() bg_img="/assets/kalama-sin.webp" src="https://redcircle.com/shows/kalama-sin" external=true/>
-        <KalamaSinWindow pos=(310, 20) size=(440, 582) hidden=kalama_sin_hidden z_idx=z_idx file_win_src=set_file_src/>
-        <FileWindow      pos=(782, 20) size=(700, 744) hidden=file_hidden       z_idx=z_idx src=file_src/>
-        <JohnWindow      pos=(20, 674) size=(730, 90)  hidden=john_hidden       z_idx=z_idx/>
+        <LoadingWindow   pos=WindowPos::Val((20, 20))  size=(255, 255) hidden=loading_hidden    z_idx=z_idx variant=LoadingWindowVariant::TP/>
+        <LinkWindow      pos=WindowPos::Val((20, 347)) size=(255, 255) hidden=link_win_hidden   z_idx=z_idx id="kalama-sin-link-win" title="lon ilo RedCircle".to_string() bg_img="/assets/kalama-sin.webp" src="https://redcircle.com/shows/kalama-sin" external=true/>
+        <KalamaSinWindow pos=WindowPos::Val((310, 20)) size=(440, 582) hidden=kalama_sin_hidden z_idx=z_idx file_win_src=set_file_src/>
+        <FileWindow      pos=WindowPos::Val((782, 20)) size=(700, 744) hidden=file_hidden       z_idx=z_idx src=file_src/>
+        <JohnWindow      pos=WindowPos::Val((20, 674)) size=(730, 90)  hidden=john_hidden       z_idx=z_idx/>
         <Footer items=footer_items/>
         <GoatCounter path="/tp"/>
     }
@@ -35,7 +35,7 @@ pub fn KalamaSinPage(cx: Scope) -> impl IntoView {
 #[component]
 fn KalamaSinWindow(
     cx: Scope,
-    pos: (i32, i32),
+    pos: WindowPos,
     size: (u32, u32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
@@ -89,7 +89,7 @@ fn KalamaSinWindow(
 // #[component]
 // fn KalamaSinWindow(
 //     cx: Scope,
-//     pos: (i32, i32),
+//     pos: WindowPos,
 //     size: (u32, u32),
 //     hidden: RwSignal<bool>,
 //     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,

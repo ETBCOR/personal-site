@@ -295,7 +295,7 @@ footer {
 	}
 
 	#music-link-win>.win-content,
-	#meta-win>.win-content,
+	// #meta-win>.win-content,
 	.meta-preview {
 		overflow: hidden;
 	}
@@ -305,15 +305,22 @@ footer {
 	}
 }
 
-.meta-meta {
-	max-height: 100%;
-	overflow-y: auto;
-	// overflow-x: hidden;
+#meta-win {
+	overflow: visible;
 }
 
-#webring-win>.win-content {
+.meta-meta {
+	max-height: 100%;
+	overflow: visible;
+}
+
+#bucket-webring-win>.win-content {
 	background-color: #454545;
 	cursor: alias;
+}
+
+#file-win>.win-content {
+	height: 100%;
 }
 
 details:not([open]) {
