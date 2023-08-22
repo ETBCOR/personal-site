@@ -1,6 +1,6 @@
 use crate::app::{
-    ExternalLink, FileLink, FileWindow, Footer, GoatCounter, JohnWindow, LinkWindow, LoadingWindow,
-    LoadingWindowVariant, Window, WindowContent, WindowPos,
+    ExternalLink, FileLink, FileWindow, Footer, GoatCounter, LinkWindow, LoadingWindow,
+    LoadingWindowVariant, Webring, WebringWindow, Window, WindowContent, WindowPos,
 };
 use leptos::*;
 
@@ -9,24 +9,27 @@ pub fn KalamaSinPage(cx: Scope) -> impl IntoView {
     let loading_hidden = create_rw_signal(cx, false);
     let link_win_hidden = create_rw_signal(cx, false);
     let kalama_sin_hidden = create_rw_signal(cx, false);
-    let john_hidden = create_rw_signal(cx, false);
+    let webring_hidden = create_rw_signal(cx, false);
     let file_hidden = create_rw_signal(cx, true);
+    let tp_hidden = create_rw_signal(cx, false);
 
     let footer_items = vec![
         ("\"Inspiration\"", loading_hidden),
         ("lon ilo RedCircle", link_win_hidden),
         ("sitelen toki pi kalama sin", kalama_sin_hidden),
-        ("Johnvertisement", john_hidden),
+        ("sike ilo", webring_hidden),
+        ("toki pona", tp_hidden),
     ];
     let (file_src, set_file_src) = create_signal(cx, None);
     let z_idx = Some(create_rw_signal(cx, 1));
 
     view! { cx,
-        <LoadingWindow   pos=WindowPos::Val((20, 20))  size=(255, 255) hidden=loading_hidden    z_idx=z_idx variant=LoadingWindowVariant::TP/>
-        <LinkWindow      pos=WindowPos::Val((20, 347)) size=(255, 255) hidden=link_win_hidden   z_idx=z_idx id="kalama-sin-link-win" title="lon ilo RedCircle".to_string() bg_img="/assets/kalama-sin.webp" src="https://redcircle.com/shows/kalama-sin" external=true/>
-        <KalamaSinWindow pos=WindowPos::Val((310, 20)) size=(440, 582) hidden=kalama_sin_hidden z_idx=z_idx file_win_src=set_file_src/>
-        <FileWindow      pos=WindowPos::Val((782, 20)) size=(700, 744) hidden=file_hidden       z_idx=z_idx src=file_src/>
-        <JohnWindow      pos=WindowPos::Val((20, 674)) size=(730, 90)  hidden=john_hidden       z_idx=z_idx/>
+        <LoadingWindow   pos=WindowPos::Val((20, 20))   size=(255, 255) hidden=loading_hidden    z_idx=z_idx variant=LoadingWindowVariant::TP/>
+        <LinkWindow      pos=WindowPos::Val((20, 347))  size=(255, 255) hidden=link_win_hidden   z_idx=z_idx id="kalama-sin-link-win" title="lon ilo RedCircle".to_string() bg_img="/assets/kalama-sin.webp" src="https://redcircle.com/shows/kalama-sin" external=true/>
+        <KalamaSinWindow pos=WindowPos::Val((310, 20))  size=(440, 582) hidden=kalama_sin_hidden z_idx=z_idx file_win_src=set_file_src/>
+        <FileWindow      pos=WindowPos::Val((782, 20))  size=(700, 744) hidden=file_hidden       z_idx=z_idx src=file_src/>
+        <WebringWindow   pos=WindowPos::Val((20, 674))  size=(430, 70)  hidden=webring_hidden     z_idx=z_idx webring=Webring::Kulupu/>
+        <LinkWindow      pos=WindowPos::Val((580, 670)) size=(170, 178) hidden=tp_hidden         z_idx=z_idx id="tp-link-win"        title="toki pona".to_string() bg_img="/assets/itan.svg"            src="/tp" diag_tp=true/>
         <Footer items=footer_items/>
         <GoatCounter path="/tp"/>
     }
