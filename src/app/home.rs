@@ -6,15 +6,15 @@ use crate::app::{
 use leptos::*;
 
 #[component]
-fn HomePage(cx: Scope, recursions: usize) -> impl IntoView {
-    let loading_hidden = create_rw_signal(cx, false);
-    let portfolio_hidden = create_rw_signal(cx, false);
-    let music_hidden = create_rw_signal(cx, false);
-    let tp_hidden = create_rw_signal(cx, false);
-    let webring_hidden = create_rw_signal(cx, false);
-    let meta_hidden = create_rw_signal(cx, false);
-    let ad_hidden = create_rw_signal(cx, false);
-    let john_hidden = create_rw_signal(cx, false);
+fn HomePage(cx: Scope, recursions: usize, hidden_sigs: Vec<RwSignal<bool>>) -> impl IntoView {
+    let loading_hidden = hidden_sigs[0];
+    let portfolio_hidden = hidden_sigs[1];
+    let music_hidden = hidden_sigs[2];
+    let tp_hidden = hidden_sigs[3];
+    let webring_hidden = hidden_sigs[4];
+    let meta_hidden = hidden_sigs[5];
+    let ad_hidden = hidden_sigs[6];
+    let john_hidden = hidden_sigs[7];
 
     let footer_items = vec![
         ("\"Inspiration\"", loading_hidden),
@@ -40,7 +40,7 @@ fn HomePage(cx: Scope, recursions: usize) -> impl IntoView {
         <WebringWindow pos=(20, 559   +y_offset) size=(430, 70)  hidden=webring_hidden   z_idx=z_idx/>
         <AdWindow      pos=(485, 20   +y_offset) size=(200, 100) hidden=ad_hidden        z_idx=z_idx/>
         <JohnWindow    pos=(20, 701   +y_offset) size=(665, 82)  hidden=john_hidden      z_idx=z_idx/>
-        <MetaWindow    pos=(485, 192  +y_offset) size=(200, 437) hidden=meta_hidden      z_idx=z_idx recursions={recursions + 1}/>
+        <MetaWindow    pos=(485, 192  +y_offset) size=(200, 437) hidden=meta_hidden      z_idx=z_idx recursions={recursions + 1} hidden_sigs=hidden_sigs/>
         <div class:hidden=move || {recursions > 0}>
             <div style="height: 65px"></div> // large spacer
             <Footer items=footer_items/>     // footer
@@ -51,8 +51,28 @@ fn HomePage(cx: Scope, recursions: usize) -> impl IntoView {
 
 #[component]
 pub fn HomePageEntry(cx: Scope) -> impl IntoView {
+    let loading_hidden = create_rw_signal(cx, false);
+    let portfolio_hidden = create_rw_signal(cx, false);
+    let music_hidden = create_rw_signal(cx, false);
+    let tp_hidden = create_rw_signal(cx, false);
+    let webring_hidden = create_rw_signal(cx, false);
+    let meta_hidden = create_rw_signal(cx, false);
+    let ad_hidden = create_rw_signal(cx, false);
+    let john_hidden = create_rw_signal(cx, false);
+
+    let hidden_sigs = vec![
+        loading_hidden,
+        portfolio_hidden,
+        music_hidden,
+        tp_hidden,
+        webring_hidden,
+        meta_hidden,
+        ad_hidden,
+        john_hidden,
+    ];
+
     view! { cx,
-        <HomePage recursions=0/>
+        <HomePage recursions=0 hidden_sigs=hidden_sigs/>
         <GoatCounter path="/"/>
     }
 }
@@ -66,6 +86,7 @@ fn MetaWindow(
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
     recursions: usize,
+    hidden_sigs: Vec<RwSignal<bool>>,
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
     let deeper = create_rw_signal(cx, false);
@@ -91,7 +112,7 @@ fn MetaWindow(
         <div class="meta-meta scroll" style="height: 844px" class:hidden=move || !deeper()>
             {
                 if recursions <= STACK_OVERFLOW_LIMIT {
-                    view! { cx, <div> <HomePage recursions=recursions/> </div> }
+                    view! { cx, <div> <HomePage recursions=recursions hidden_sigs=hidden_sigs/> </div> }
                 } else {
                     view! { cx, <div> <LoadingWindow pos=(20, 55) size=(300, 100) hidden=hidden variant=LoadingWindowVariant::StackOverflow/> </div> }
                 }
