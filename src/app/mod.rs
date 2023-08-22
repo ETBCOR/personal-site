@@ -68,6 +68,7 @@ pub enum WindowContent {
     ),
 }
 
+#[derive(Copy, Clone)]
 pub enum WindowPos {
     Val((i32, i32)),
     Sig(RwSignal<(i32, i32)>),
@@ -83,9 +84,9 @@ fn Window(
     pos: WindowPos,
     size: RwSignal<(u32, u32)>,
     hidden: RwSignal<bool>,
+    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
     #[prop(default = true)] expandable: bool,
     #[prop(default = false)] expanded: bool,
-    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
     #[prop(default = false)] diag: bool,
     #[prop(default = false)] scroll: bool,
     #[prop(default = false)] rainbow: bool,

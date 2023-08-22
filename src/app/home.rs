@@ -6,19 +6,15 @@ use crate::app::{
 use leptos::*;
 
 #[component]
-fn HomePage(
-    cx: Scope,
-    recursions: usize,
-    sigs: Vec<(RwSignal<(i32, i32)>, RwSignal<bool>)>,
-) -> impl IntoView {
-    let (loading_pos, loading_hidden) = sigs[0];
-    let (portfolio_pos, portfolio_hidden) = sigs[1];
-    let (music_pos, music_hidden) = sigs[2];
-    let (tp_pos, tp_hidden) = sigs[3];
-    let (webring_pos, webring_hidden) = sigs[4];
-    let (meta_pos, meta_hidden) = sigs[5];
-    let (ad_pos, ad_hidden) = sigs[6];
-    let (john_pos, john_hidden) = sigs[7];
+fn HomePage(cx: Scope, recursions: usize, sigs: Vec<(WindowPos, RwSignal<bool>)>) -> impl IntoView {
+    let (mut loading_pos, loading_hidden) = sigs[0];
+    let (mut portfolio_pos, portfolio_hidden) = sigs[1];
+    let (mut music_pos, music_hidden) = sigs[2];
+    let (mut tp_pos, tp_hidden) = sigs[3];
+    let (mut webring_pos, webring_hidden) = sigs[4];
+    let (mut meta_pos, meta_hidden) = sigs[5];
+    let (mut ad_pos, ad_hidden) = sigs[6];
+    let (mut john_pos, john_hidden) = sigs[7];
 
     let footer_items = vec![
         ("\"Inspiration\"", loading_hidden),
@@ -35,15 +31,53 @@ fn HomePage(
         None
     };
 
+    if recursions == 1 {
+        if let WindowPos::Sig(p) = loading_pos {
+            loading_pos = WindowPos::SigOffset(p);
+        };
+        if let WindowPos::Sig(p) = portfolio_pos {
+            portfolio_pos = WindowPos::SigOffset(p);
+        };
+        if let WindowPos::Sig(p) = music_pos {
+            music_pos = WindowPos::SigOffset(p);
+        };
+        if let WindowPos::Sig(p) = tp_pos {
+            tp_pos = WindowPos::SigOffset(p);
+        };
+        if let WindowPos::Sig(p) = webring_pos {
+            webring_pos = WindowPos::SigOffset(p);
+        };
+        if let WindowPos::Sig(p) = meta_pos {
+            meta_pos = WindowPos::SigOffset(p);
+        };
+        if let WindowPos::Sig(p) = ad_pos {
+            ad_pos = WindowPos::SigOffset(p);
+        };
+        if let WindowPos::Sig(p) = john_pos {
+            john_pos = WindowPos::SigOffset(p);
+        };
+    }
+
+    let sigs = vec![
+        (loading_pos, loading_hidden),
+        (portfolio_pos, portfolio_hidden),
+        (music_pos, music_hidden),
+        (tp_pos, tp_hidden),
+        (webring_pos, webring_hidden),
+        (meta_pos, meta_hidden),
+        (ad_pos, ad_hidden),
+        (john_pos, john_hidden),
+    ];
+
     view! { cx,
-        <LoadingWindow   pos=WindowPos::SigOffset(loading_pos)   size=(225, 170) hidden=loading_hidden   z_idx=z_idx variant=LoadingWindowVariant::Default/>
-        <LinkWindow      pos=WindowPos::SigOffset(portfolio_pos) size=(170, 220) hidden=portfolio_hidden z_idx=z_idx id="portfolio-link-win" title="Portfolio".to_string() bg_img="/assets/file-icon.svg"       src="/portfolio" diag=true/>
-        <MusicLinkWindow pos=WindowPos::SigOffset(music_pos)     size=(225, 225) hidden=music_hidden     z_idx=z_idx/> // music link window
-        <LinkWindow      pos=WindowPos::SigOffset(tp_pos)        size=(170, 178) hidden=tp_hidden        z_idx=z_idx id="tp-link-win"        title="toki pona".to_string() bg_img="/assets/itan.svg"            src="/tp" diag_tp=true/>
-        <WebringWindow   pos=WindowPos::SigOffset(webring_pos)   size=(430, 70)  hidden=webring_hidden   z_idx=z_idx webring=Webring::Bucket/>
-        <AdWindow        pos=WindowPos::SigOffset(ad_pos)        size=(200, 100) hidden=ad_hidden        z_idx=z_idx/>
-        <JohnWindow      pos=WindowPos::SigOffset(john_pos)      size=(665, 82)  hidden=john_hidden      z_idx=z_idx/>
-        <MetaWindow      pos=WindowPos::SigOffset(meta_pos)      size=(200, 437) hidden=meta_hidden      z_idx=z_idx recursions={recursions + 1} sigs=sigs/>
+        <LoadingWindow   pos=loading_pos   size=(225, 170) hidden=loading_hidden   z_idx=z_idx variant=LoadingWindowVariant::Default/>
+        <LinkWindow      pos=portfolio_pos size=(170, 220) hidden=portfolio_hidden z_idx=z_idx id="portfolio-link-win" title="Portfolio".to_string() bg_img="/assets/file-icon.svg"       src="/portfolio" diag=true/>
+        <MusicLinkWindow pos=music_pos     size=(225, 225) hidden=music_hidden     z_idx=z_idx/> // music link window
+        <LinkWindow      pos=tp_pos        size=(170, 178) hidden=tp_hidden        z_idx=z_idx id="tp-link-win"        title="toki pona".to_string() bg_img="/assets/itan.svg"            src="/tp" diag_tp=true/>
+        <WebringWindow   pos=webring_pos   size=(430, 70)  hidden=webring_hidden   z_idx=z_idx webring=Webring::Bucket/>
+        <AdWindow        pos=ad_pos        size=(200, 100) hidden=ad_hidden        z_idx=z_idx/>
+        <JohnWindow      pos=john_pos      size=(665, 82)  hidden=john_hidden      z_idx=z_idx/>
+        <MetaWindow      pos=meta_pos      size=(200, 437) hidden=meta_hidden      z_idx=z_idx recursions={recursions + 1} sigs=sigs/>
         <div class:hidden=move || {recursions > 0}>
             <div style="height: 65px"></div> // large spacer
             <Footer items=footer_items/>     // footer
@@ -63,14 +97,14 @@ pub fn HomePageEntry(cx: Scope) -> impl IntoView {
     let ad_hidden = create_rw_signal(cx, false);
     let john_hidden = create_rw_signal(cx, false);
 
-    let loading_pos = create_rw_signal(cx, (20, 20));
-    let portfolio_pos = create_rw_signal(cx, (280, 20));
-    let music_pos = create_rw_signal(cx, (20, 262));
-    let tp_pos = create_rw_signal(cx, (280, 309));
-    let webring_pos = create_rw_signal(cx, (20, 559));
-    let meta_pos = create_rw_signal(cx, (485, 192));
-    let ad_pos = create_rw_signal(cx, (485, 20));
-    let john_pos = create_rw_signal(cx, (20, 701));
+    let loading_pos = WindowPos::Sig(create_rw_signal(cx, (20, 20)));
+    let portfolio_pos = WindowPos::Sig(create_rw_signal(cx, (280, 20)));
+    let music_pos = WindowPos::Sig(create_rw_signal(cx, (20, 262)));
+    let tp_pos = WindowPos::Sig(create_rw_signal(cx, (280, 309)));
+    let webring_pos = WindowPos::Sig(create_rw_signal(cx, (20, 559)));
+    let meta_pos = WindowPos::Sig(create_rw_signal(cx, (485, 192)));
+    let ad_pos = WindowPos::Sig(create_rw_signal(cx, (485, 20)));
+    let john_pos = WindowPos::Sig(create_rw_signal(cx, (20, 701)));
 
     let sigs = vec![
         (loading_pos, loading_hidden),
@@ -98,7 +132,7 @@ fn MetaWindow(
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
     recursions: usize,
-    sigs: Vec<(RwSignal<(i32, i32)>, RwSignal<bool>)>,
+    sigs: Vec<(WindowPos, RwSignal<bool>)>,
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
     let deeper = create_rw_signal(cx, false);
