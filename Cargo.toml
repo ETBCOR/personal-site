@@ -1,6 +1,6 @@
 [package]
 name = "portfolio_site"
-version = "0.2.02"
+version = "0.2.2"
 edition = "2021"
 
 [lib]
