@@ -44,7 +44,7 @@ fn KalamaSinWindow(
     let size = create_rw_signal(cx, size);
     let fws = file_win_src;
 
-    let content = WindowContent::Page(view! { cx, <div style="padding: 10px" tabindex=0>
+    let content = WindowContent::Page(view! { cx, <div style="padding: 5px" tabindex=0>
         <p>
             "mi pali e sitelen anpa lon "<ExternalLink href="https://redcircle.com/shows/kalama-sin" display="kalama sin"/>". pali mi li pona "
             <ExternalLink href="https://www.youtube.com/playlist?list=PLjOmpMyMxd8Qs2mAXcLk817tQy_AQj09u" display="lon ilo Jutu"/>
@@ -95,7 +95,7 @@ fn KalamaSinWindow(
 //     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 // ) -> impl IntoView {
 //     let size = create_rw_signal(cx, size);
-//     let content = view! { cx, <div style="padding: 10px" tabindex=0>
+//     let content = view! { cx, <div style="padding: 5px" tabindex=0>
 //         <p>""</p>
 //     </div> };
 

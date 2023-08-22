@@ -166,7 +166,7 @@ fn Window(
                 x(),
                 y(),
                 size().0,
-                size().1 + 39, // add space for title
+                size().1 + 34, // add space for title
                 this_z_idx()
             )
         } else {
@@ -203,7 +203,7 @@ fn Window(
                             <div
                                 class="title"
                                 class:active=move || active_tab().eq(title)
-                                on:click=move |_| active_tab.set(title)
+                                on:mousedown=move |_| active_tab.set(title)
                                 tabindex=0
                                 on:keydown=move |k| if k.key() == "Enter" { active_tab.set(title) }>
                                 { title }
@@ -262,12 +262,14 @@ fn Window(
                 <div class="win-buttons">
                     { if expandable { Some(view! { cx, <a
                         class="win-expand"
+                        title="expand window"
                         on:mousedown=move |_| expanded.update(|e| *e = !*e)
                         on:keydown=move |k| if k.key() == "Enter" { expanded.update(|e| *e = !*e) }
                         tabindex=0
                     ></a> }) } else { None } }
                     <a
                         class="win-close"
+                        title="close window"
                         on:mousedown=move |_| hidden.set(true)
                         on:keydown=move |k| if k.key() == "Enter" { hidden.set(true) }
                         tabindex=0
@@ -384,7 +386,7 @@ fn LoadingWindow(
         <div
             class="loading-img"
             class:wait={variant == LoadingWindowVariant::Default}
-            on:click=move |_| leptos_router::use_navigate(cx)(if variant == LoadingWindowVariant::StackOverflow { "/insa" } else { "/" }, Default::default(),).unwrap()
+            on:mousedown=move |_| leptos_router::use_navigate(cx)(if variant == LoadingWindowVariant::StackOverflow { "/insa" } else { "/" }, Default::default(),).unwrap()
             on:keydown=move |k| if k.key() == "Enter" { leptos_router::use_navigate(cx)(if variant == LoadingWindowVariant::StackOverflow { "/insa" } else { "/" }, Default::default(),).unwrap() }
             tabindex=0
             title="ale li pona"
@@ -507,7 +509,7 @@ fn LinkWindow(
                 src=bg_img
                 style="padding: 0px; max-height: 100%; max-width: 100%"
                 draggable=false
-                on:click=move |_| leptos_router::use_navigate(cx)(src, Default::default()).unwrap()
+                on:mousedown=move |_| leptos_router::use_navigate(cx)(src, Default::default()).unwrap()
                 on:keydown=move |k| if k.key() == "Enter" { leptos_router::use_navigate(cx)(src, Default::default()).unwrap() }
                 tabindex=0
             />

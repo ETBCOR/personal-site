@@ -73,7 +73,7 @@ fn MetaWindow(
         <div
             class="meta-preview"
             class:hidden=move || deeper()
-            on:click=move |_| {deeper.set(true); size.set((720, 844))}
+            on:mousedown=move |_| {deeper.set(true); size.set((720, 844))}
             on:keydown=move |k| if k.key() == "Enter" {deeper.set(true); size.set((720, 844))}
             tabindex=0
             // style="width: 100%; height: 100%"

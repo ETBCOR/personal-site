@@ -47,7 +47,7 @@ fn AboutWindow(
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
-    let content = WindowContent::Page(view! { cx, <div style="padding: 10px" tabindex=0><p>
+    let content = WindowContent::Page(view! { cx, <div style="padding: 5px" tabindex=0><p>
         "Hello! I'm Ethan, and was born in April 2001. "
         "I'm passionate about making software, writing music, and learning languages. Links: "
         <ExternalLink href="http://www.discordapp.com/users/207897365141520384" display="discord"/>", "
@@ -71,7 +71,7 @@ fn EducationWindow(
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
-    let content = WindowContent::Page(view! { cx, <div style="padding: 10px">
+    let content = WindowContent::Page(view! { cx, <div style="padding: 5px" tabindex=0>
         <h4>"Bachelor's Degree in Computer Science"</h4>
         <div class="spaced">
             "I spent 2019-2023 at the "<ExternalLink href="https://www.uidaho.edu/" display="University of Idaho"/>
@@ -137,7 +137,7 @@ fn SkillsWindow(
         vec![
             (
                 "Technical",
-                view! { cx, <div style="padding: 10px"><ul>
+                view! { cx, <div style="padding: 5px"><ul>
                     <li class="spaced">"I'm proficient in multiple "<b>"programming languages"</b>":"<ul>
                         <li><span class="title">"C / C++"</span>" were the primary languages taught at my univirsity, so I'm very comfortable with them."</li>
                         <li><span class="title">"Rust"</span>" is currently my favorite language. I learned about it in 2022 "
@@ -181,7 +181,7 @@ fn SkillsWindow(
             ),
             (
                 "Audio / Visual",
-                view! { cx, <div style="padding: 10px"><ul>
+                view! { cx, <div style="padding: 5px"><ul>
                     <li><b>"Audio"</b><ul>
                         <li class="spaced">
                             "I purchased "<ExternalLink href="https://www.ableton.com/en/live/" display="Ableton Live" title_style=true/>
@@ -212,7 +212,7 @@ fn SkillsWindow(
             ),
             (
                 "Other",
-                view! { cx, <div style="padding: 10px"><ul>
+                view! { cx, <div style="padding: 5px"><ul>
                     <li class="spaced">"I speak "<b>"three languages"</b>":"<ul>
                         <li><span class="title">"English"</span>" (native)"</li>
                         <li><span class="title">"Spanish"</span>" (fluent)"</li>
@@ -252,7 +252,7 @@ fn ProjectsWindow(
         vec![
             (
                 "From CS Classes",
-                view! { cx, <div style="padding: 10px"><ul>
+                view! { cx, <div style="padding: 5px"><ul>
                     <li class="spaced">
                         <ExternalLink href="https://catalog.uidaho.edu/courses/cs/#:~:text=CS%20415" display="CS415 | Computational Biology: Sequence Alignment" bold=true/><br/>
                         "Description: \"Design and analyze algorithms that address the computational problems posed by biological sequence data, "
@@ -313,7 +313,7 @@ fn ProjectsWindow(
             ),
             (
                 "Other Projects",
-                view! { cx, <div style="padding: 10px"><ul>
+                view! { cx, <div style="padding: 5px"><ul>
                     <li class="spaced">
                         "I made "<b>"this very portfolio website"</b>" with "
                         <ExternalLink href="https://leptos.dev/" display="leptos"/>" (a full-stack web framework built in "

@@ -44,7 +44,7 @@ fn SpotifyPlaylistWindow(
         vec![
             (
                 "Main",
-                view! { cx, <div class="tab-outer" style="padding: 10px" tabindex=0>
+                view! { cx, <div class="tab-outer" style="padding: 5px" tabindex=0>
                     <SpotifyPlaylist src="1QPAKgnxEMYOBJFVmRhwM1"/>
                     <SpotifyPlaylist src="0DXYn6zngiQp5AQNOToO3i"/>
                     <SpotifyPlaylist src="3K8Kg0C1GVI14q3KUBqfUd"/>
@@ -56,7 +56,7 @@ fn SpotifyPlaylistWindow(
             ),
             (
                 "Mood",
-                view! { cx, <div class="tab-outer" style="padding: 10px" tabindex=0>
+                view! { cx, <div class="tab-outer" style="padding: 5px" tabindex=0>
                     <SpotifyPlaylist src="5JS3lDWT6W7vkghXsQHiQn"/>
                     <SpotifyPlaylist src="1q7j8e6UWAC4p78QizSOqk"/>
                     <SpotifyPlaylist src="6iVCPGSpMstM56Ajj0NSYI"/>
@@ -71,7 +71,7 @@ fn SpotifyPlaylistWindow(
             ),
             (
                 "Genres",
-                view! { cx, <div class="tab-outer" style="padding: 10px" tabindex=0>
+                view! { cx, <div class="tab-outer" style="padding: 5px" tabindex=0>
                     <SpotifyPlaylist src="4RCXWsAR5yT7P8pfaYKQK9"/>
                     <SpotifyPlaylist src="0ZarPheYW5A3Ut14uvvCYa"/>
                     <SpotifyPlaylist src="1eYJLMDpgoKD0F4LUH2Ezs"/>
@@ -136,7 +136,7 @@ pub fn MusicLinkWindow(
             autoplay
             loop="true"
             poster="/assets/music-icon.png"
-            on:click=move |_| leptos_router::use_navigate(cx)("/music", Default::default()).unwrap()
+            on:mousedown=move |_| leptos_router::use_navigate(cx)("/music", Default::default()).unwrap()
             on:contextmenu=move |e| e.prevent_default()
             tabindex=0
             on:keydown=move |k| if k.key() == "Enter" { leptos_router::use_navigate(cx)("/music", Default::default()).unwrap() }
