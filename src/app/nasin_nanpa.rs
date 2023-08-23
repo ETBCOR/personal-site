@@ -46,6 +46,6 @@ fn NasinNanpaWindow(
     </p></div> });
 
     view! {cx,
-        <Window id="nasin-nanpa-win" title="nasin (…sitelen, tan anpa…) nanpa".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx/>
+        <Window id="nasin-nanpa-win" title="nasin sitelen tan anpa nanpa".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx/>
     }
 }
