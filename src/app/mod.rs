@@ -311,23 +311,27 @@ fn NotFoundPage(cx: Scope) -> impl IntoView {
 
 #[component]
 fn Footer(cx: Scope, items: Vec<(&'static str, RwSignal<bool>)>) -> impl IntoView {
-    view! { cx, <footer>
-        {
-            items
-                .into_iter()
-                .map(|(title, hidden)| view! { cx,
-                    <div
-                        class="title win-minimized"
-                        on:mousedown=move |_| hidden.set(false)
-                        class:hidden=move || !hidden()
-                        tabindex=0
-                        on:keydown=move |k| if k.key() == "Enter" { hidden.set(false) }
-                    >{title}</div>
-                })
-                .collect::<Vec<_>>()
-        }
-        <a class="title win-minimized favicon" href="/"></a>
-    </footer> }
+    view! { cx,
+        <div id="ale-li-pona"></div>
+        <footer>
+            {
+                items
+                    .into_iter()
+                    .map(|(title, hidden)| view! { cx,
+                        <div
+                            class="title win-minimized"
+                            on:mousedown=move |_| hidden.set(false)
+                            class:hidden=move || !hidden()
+                            tabindex=0
+                            on:keydown=move |k| if k.key() == "Enter" { hidden.set(false) }
+                            title="open window"
+                        >{title}</div>
+                    })
+                    .collect::<Vec<_>>()
+            }
+            <a class="title win-minimized favicon" href="/"></a>
+        </footer>
+    }
 }
 
 #[component]

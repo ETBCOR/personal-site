@@ -63,6 +63,18 @@ footer {
 	background-image: linear-gradient(to top, #42e3ad, #0aff9d);
 }
 
+#ale-li-pona {
+	background-image: url("/assets/ale-li-pona.gif");
+	background-position: top right;
+	background-repeat: no-repeat;
+	background-size: 50%;
+	position: fixed;
+	top: 0px;
+	right: 0px;
+	width: 300px;
+	height: 40px;
+}
+
 // windows
 .win-outer {
 	position: absolute;
