@@ -6,7 +6,11 @@ use crate::app::{
 use leptos::*;
 
 #[component]
-fn HomePage(cx: Scope, recursions: usize, sigs: Vec<(WindowPos, RwSignal<bool>)>) -> impl IntoView {
+fn HomePage(
+    cx: Scope,
+    recursions: usize,
+    mut sigs: Vec<(WindowPos, RwSignal<bool>)>,
+) -> impl IntoView {
     let (mut loading_pos, loading_hidden) = sigs[0];
     let (mut portfolio_pos, portfolio_hidden) = sigs[1];
     let (mut music_pos, music_hidden) = sigs[2];
@@ -56,24 +60,23 @@ fn HomePage(cx: Scope, recursions: usize, sigs: Vec<(WindowPos, RwSignal<bool>)>
         if let WindowPos::Sig(p) = john_pos {
             john_pos = WindowPos::SigOffset(p);
         };
+        sigs = vec![
+            (loading_pos, loading_hidden),
+            (portfolio_pos, portfolio_hidden),
+            (music_pos, music_hidden),
+            (tp_pos, tp_hidden),
+            (webring_pos, webring_hidden),
+            (meta_pos, meta_hidden),
+            (ad_pos, ad_hidden),
+            (john_pos, john_hidden),
+        ];
     }
-
-    let sigs = vec![
-        (loading_pos, loading_hidden),
-        (portfolio_pos, portfolio_hidden),
-        (music_pos, music_hidden),
-        (tp_pos, tp_hidden),
-        (webring_pos, webring_hidden),
-        (meta_pos, meta_hidden),
-        (ad_pos, ad_hidden),
-        (john_pos, john_hidden),
-    ];
 
     view! { cx,
         <LoadingWindow   pos=loading_pos   size=(225, 170) hidden=loading_hidden   z_idx=z_idx variant=LoadingWindowVariant::Default/>
-        <LinkWindow      pos=portfolio_pos size=(170, 220) hidden=portfolio_hidden z_idx=z_idx id="portfolio-link-win" title="Portfolio".to_string() bg_img="/assets/file-icon.svg"       src="/portfolio" diag=true/>
+        <LinkWindow      pos=portfolio_pos size=(170, 220) hidden=portfolio_hidden z_idx=z_idx id="portfolio-link-win" title="Portfolio".to_string() bg_img="/assets/file-icon.svg" src="/portfolio"/>
         <MusicLinkWindow pos=music_pos     size=(225, 225) hidden=music_hidden     z_idx=z_idx/> // music link window
-        <LinkWindow      pos=tp_pos        size=(170, 178) hidden=tp_hidden        z_idx=z_idx id="tp-link-win"        title="toki pona".to_string() bg_img="/assets/itan.svg"            src="/tp" diag_tp=true/>
+        <LinkWindow      pos=tp_pos        size=(170, 178) hidden=tp_hidden        z_idx=z_idx id="tp-link-win"        title="toki pona".to_string() bg_img="/assets/itan.svg" src="/tp" diag_tp=true/>
         <WebringWindow   pos=webring_pos   size=(430, 70)  hidden=webring_hidden   z_idx=z_idx webring=Webring::Bucket/>
         <AdWindow        pos=ad_pos        size=(200, 100) hidden=ad_hidden        z_idx=z_idx/>
         <JohnWindow      pos=john_pos      size=(665, 82)  hidden=john_hidden      z_idx=z_idx/>

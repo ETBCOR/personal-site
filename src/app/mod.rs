@@ -9,6 +9,7 @@ pub mod home;
 pub mod insa;
 pub mod kalama_sin;
 pub mod music;
+pub mod nasin_nanpa;
 pub mod portfolio;
 pub mod tp;
 
@@ -32,13 +33,14 @@ pub fn App(cx: Scope) -> impl IntoView {
         <Router>
             <main>
                 <Routes>
-                    <Route path="/"              view=home::HomePageEntry/>
-                    <Route path="/portfolio"     view=portfolio::PortfolioPage/>
-                    <Route path="/music"         view=music::MusicPage/>
-                    <Route path="/tp"            view=tp::TokiPonaPage/>
-                    <Route path="/tp/kalama_sin" view=kalama_sin::KalamaSinPage/>
-                    <Route path="/insa"          view=insa::InsaPage/>
-                    <Route path="/*any"          view=NotFoundPage/>
+                    <Route path="/"               view=home::HomePageEntry/>
+                    <Route path="/portfolio"      view=portfolio::PortfolioPage/>
+                    <Route path="/music"          view=music::MusicPage/>
+                    <Route path="/tp"             view=tp::TokiPonaPage/>
+                    <Route path="/tp/kalama_sin"  view=kalama_sin::KalamaSinPage/>
+                    <Route path="/tp/nasin_nanpa" view=nasin_nanpa::NasinNanpaPage/>
+                    <Route path="/insa"           view=insa::InsaPage/>
+                    <Route path="/*any"           view=NotFoundPage/>
                 </Routes>
                 <Cyberpunk/>
             </main>
@@ -176,9 +178,9 @@ fn Window(
             format!(
                 "left: {}px; top: {}px; width: {}px; height: {}px; z-index: {}",
                 pos().0,
-                pos().1 + if offset { 35 } else { 0 },
+                pos().1 + if offset { 35 } else { 0 }, // add space for meta title
                 size().0,
-                size().1 + 34, // add space for title
+                size().1 + 39, // add space for title
                 this_z_idx()
             )
         } else {
@@ -419,7 +421,7 @@ fn AdWindow(
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
-    let content = WindowContent::Page(view! { cx, <div>
+    let content = WindowContent::Page(view! { cx, <div style="cursor: wait">
         <img src="/assets/ur-ad-here.png" draggable="false"/>
     </div> });
 
@@ -430,7 +432,7 @@ fn AdWindow(
 
 enum Webring {
     Bucket,
-    Kulupu,
+    SikePona,
 }
 
 #[component]
@@ -445,8 +447,14 @@ fn WebringWindow(
     let size = create_rw_signal(cx, size);
     let id = match webring {
         Webring::Bucket => "bucket-webring-win",
-        Webring::Kulupu => "kulupu-webring-win",
+        Webring::SikePona => "sike-pona-webring-win",
     };
+    let title = match webring {
+        Webring::Bucket => "Bucket Webring",
+        Webring::SikePona => "sike pona",
+    }
+    .to_string();
+
     let content = WindowContent::Page(match webring {
         Webring::Bucket => view! { cx, <div style="margin-left: 16px; margin-right: 16px">
             <iframe
@@ -455,8 +463,8 @@ fn WebringWindow(
                 style="width: 100%; height: 63px; border: none"
             ></iframe>
         </div> },
-        Webring::Kulupu => {
-            view! { cx, <div id="sike-pona" style="margin-left: 16px; margin-right: 16px; height: 90%">
+        Webring::SikePona => {
+            view! { cx, <div id="sike-pona" style="margin-left: 16px; margin-right: 16px; height: 90%; color: #c8ace5">
                 <link rel="stylesheet" href="https://sike.pona.la/embed.css"/>
                 <span id="left">
                     <a href="https://sike.pona.la/jan/jan%20Itan/prev.html" id="prev">"← prev"</a>
@@ -474,7 +482,7 @@ fn WebringWindow(
     });
 
     view! { cx,
-        <Window id=id title="Webring".to_string() content=content pos=pos size=size hidden=hidden expandable=false z_idx=z_idx/>
+        <Window id=id title=title content=content pos=pos size=size hidden=hidden expandable=false z_idx=z_idx/>
     }
 }
 
@@ -532,20 +540,20 @@ fn LinkWindow(
 ) -> impl IntoView {
     let size = create_rw_signal(cx, size);
     let content = WindowContent::Page(if external {
-        view! { cx, <div style="cursor: alias; text-align: center">
-            <a href=src target="_blank" style="max-height: 100%">
+        view! { cx, <div style="cursor: alias; text-align: center; height: 100%">
+            <a href=src target="_blank" style="height: 100%">
                 <img
                     src=bg_img
-                    style="padding: 0px; max-height: 100%; max-width: 100%"
+                    style="padding: 0px; height: 100%; max-width: 100%"
                     draggable=false
                 />
             </a>
         </div> }
     } else {
-        view! { cx, <div style="cursor: pointer; text-align: center">
+        view! { cx, <div style="cursor: pointer; text-align: center; height: 100%">
             <img
                 src=bg_img
-                style="padding: 0px; max-height: 100%; max-width: 100%"
+                style="padding: 0px; height: 100%; max-width: 100%"
                 draggable=false
                 on:mousedown=move |_| leptos_router::use_navigate(cx)(src, Default::default()).unwrap()
                 on:keydown=move |k| if k.key() == "Enter" { leptos_router::use_navigate(cx)(src, Default::default()).unwrap() }

@@ -6,20 +6,20 @@ use leptos::*;
 
 #[component]
 pub fn PortfolioPage(cx: Scope) -> impl IntoView {
+    let loading_hidden = create_rw_signal(cx, false);
     let about_hidden = create_rw_signal(cx, false);
     let education_hidden = create_rw_signal(cx, false);
     let skills_hidden = create_rw_signal(cx, false);
     let projects_hidden = create_rw_signal(cx, false);
     let file_hidden = create_rw_signal(cx, true);
-    let loading_hidden = create_rw_signal(cx, false);
     let ad_hidden = create_rw_signal(cx, false);
 
     let footer_items = vec![
+        ("\"Inspiration\"", loading_hidden),
         ("About Me", about_hidden),
         ("Education", education_hidden),
         ("Projects", projects_hidden),
         ("Skills", skills_hidden),
-        ("\"Inspiration\"", loading_hidden),
     ];
     let (file_src, set_file_src) = create_signal(cx, None);
     let z_idx = create_rw_signal(cx, 1);
