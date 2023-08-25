@@ -75,6 +75,47 @@ footer {
 	height: 40px;
 }
 
+#nasa-a-a-a {
+	background-image: url("/assets/nasa-a-a-a.png");
+	background-position: top right;
+	background-repeat: no-repeat;
+	background-size: 50%;
+	position: fixed;
+	top: 0px;
+	right: 0px;
+	width: 100px;
+	height: 100px;
+}
+
+@font-face {
+	font-family: nasin-nanpa;
+	src: url("/assets/nasin-nanpa-2.7.1.otf");
+}
+
+#chat-bubble {
+	background-image: url("/assets/chat-bubble.png");
+	background-position: center;
+	position: fixed;
+	bottom: 380px;
+	right: 155px;
+	width: 600px;
+	height: 200px;
+	cursor: pointer;
+}
+
+#chat-bubble>div {
+	margin-top: 5px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 78%;
+	width: 92.7%;
+	font-family: nasin-nanpa;
+	font-size: 300%;
+
+}
+
+
 // windows
 .win-outer {
 	position: absolute;

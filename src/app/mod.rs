@@ -5,8 +5,8 @@ use leptos_use::{use_event_listener, use_event_listener_with_options};
 use rand::seq::SliceRandom;
 use web_sys::AddEventListenerOptions;
 
+pub mod anpa_nanpa;
 pub mod home;
-pub mod insa;
 pub mod kalama_sin;
 pub mod music;
 pub mod nasin_nanpa;
@@ -39,7 +39,7 @@ pub fn App(cx: Scope) -> impl IntoView {
                     <Route path="/tp"             view=tp::TokiPonaPage/>
                     <Route path="/tp/kalama_sin"  view=kalama_sin::KalamaSinPage/>
                     <Route path="/tp/nasin_nanpa" view=nasin_nanpa::NasinNanpaPage/>
-                    <Route path="/insa"           view=insa::InsaPage/>
+                    <Route path="/tp/anpa_nanpa"  view=anpa_nanpa::AnpaNanpaPage/>
                     <Route path="/*any"           view=NotFoundPage/>
                 </Routes>
                 <Cyberpunk/>
@@ -310,9 +310,14 @@ fn NotFoundPage(cx: Scope) -> impl IntoView {
 }
 
 #[component]
-fn Footer(cx: Scope, items: Vec<(&'static str, RwSignal<bool>)>) -> impl IntoView {
+fn Footer(
+    cx: Scope,
+    items: Vec<(&'static str, RwSignal<bool>)>,
+    #[prop(default = false)] nasa: bool,
+) -> impl IntoView {
     view! { cx,
         <div id="ale-li-pona"></div>
+        <div id="nasa-a-a-a" class:hidden={!nasa}></div>
         <footer>
             {
                 items
@@ -404,8 +409,8 @@ fn LoadingWindow(
         <div
             class="loading-img"
             class:wait={variant == LoadingWindowVariant::Default}
-            on:mousedown=move |_| leptos_router::use_navigate(cx)(if variant == LoadingWindowVariant::StackOverflow { "/insa" } else { "/" }, Default::default(),).unwrap()
-            on:keydown=move |k| if k.key() == "Enter" { leptos_router::use_navigate(cx)(if variant == LoadingWindowVariant::StackOverflow { "/insa" } else { "/" }, Default::default(),).unwrap() }
+            on:mousedown=move |_| leptos_router::use_navigate(cx)(if variant == LoadingWindowVariant::StackOverflow { "/tp/anpa_nanpa" } else { "/" }, Default::default(),).unwrap()
+            on:keydown=move |k| if k.key() == "Enter" { leptos_router::use_navigate(cx)(if variant == LoadingWindowVariant::StackOverflow { "/tp/anpa_nanpa" } else { "/" }, Default::default(),).unwrap() }
             tabindex=0
             title="ale li pona"
         ></div>
