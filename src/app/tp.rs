@@ -28,7 +28,7 @@ pub fn TokiPonaPage(cx: Scope) -> impl IntoView {
         <LinkWindow    pos=WindowPos::Val((310, 20))  size=(300, 255) hidden=nasin_nanpa_hidden z_idx=z_idx id="nasin-nanpa-link-win" title="nasin nanpa".to_string() bg_img="/assets/nasin-nanpa.png" src="/tp/nasin_nanpa"/>
         <LinkWindow    pos=WindowPos::Val((20, 347))  size=(255, 255) hidden=kalama_sin_hidden  z_idx=z_idx id="kalama-sin-link-win" title="kalama sin".to_string() bg_img="/assets/kalama-sin.webp" src="/tp/kalama_sin"/>
         <IjoAnteWindow pos=WindowPos::Val((310, 347)) size=(300, 255) hidden=ijo_ante_hidden    z_idx=z_idx file_win_src=set_file_src/>
-        <FileWindow    pos=WindowPos::Val((700, 20))  size=(700, 744) hidden=file_hidden       z_idx=z_idx src=file_src/>
+        <FileWindow    pos=WindowPos::Val((645, 20))  size=(700, 744) hidden=file_hidden       z_idx=z_idx src=file_src/>
         <WebringWindow pos=WindowPos::Val((20, 674))  size=(590, 70)  hidden=webring_hidden     z_idx=z_idx webring=Webring::SikePona/>
         <Footer items=footer_items/>
         <GoatCounter path="/tp"/>
@@ -58,8 +58,9 @@ fn IjoAnteWindow(
                     <ul>
                         <li>"nasin sitelen tan anpa nanpa (lon sewi ↑)"</li>
                         <li>"sitelen toki pi kalama sin (lon poka ←)"</li>
-                        <li><FileLink src="https://docs.google.com/document/d/1aI9lUDQ1YoMsB5KACGaAhsxnEenWLzN6UATqiunK0jw/preview" display="\"kala pi alasa kala\" — toki musi" file_win_src=fws/></li>
-                        <li><FileLink src="https://docs.google.com/document/d/1aI9lUDQ1YoMsB5KACGaAhsxnEenWLzN6UATqiunK0jw/preview" display="\"mu namako\" — toki musi" file_win_src=fws/></li>
+                        <li><FileLink src="https://docs.google.com/document/d/11rCtIptD3cQybXXYDv2S8ozZINYdIPx96BDM1yE2OU8/preview" display="\"kala pi alasa kala\" — toki musi" file_win_src=fws/></li>
+                        <li><FileLink src="https://docs.google.com/document/d/1FgoMDYm_R1mOZxF5fEFpc1-FzUG1lKJLWcIcyRMnzTU/preview" display="\"mu namako\" — toki musi" file_win_src=fws/></li>
+                        <li><FileLink src="https://docs.google.com/document/d/163dd0cseeR3qIpuRXlWZQClEbuLEAj3W7KRoXIo0b74/preview" display="ijo (nasa) tan anpa nanpa — toki nasa mute" file_win_src=fws/></li>
                     </ul>
                 </p></div> },
             ),

@@ -112,7 +112,21 @@ footer {
 	width: 92.7%;
 	font-family: nasin-nanpa;
 	font-size: 300%;
+	animation: chat-bubble-animation 5s infinite ease-in-out;
+}
 
+@keyframes chat-bubble-animation {
+	0% {
+		scale: 100%;
+	}
+
+	50% {
+		scale: 95%;
+	}
+
+	100% {
+		scale: 100%;
+	}
 }
 
 
