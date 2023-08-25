@@ -41,11 +41,47 @@ ul {
 
 #cyberpunk {
 	position: fixed;
+	transform-origin: 100% 102%;
+	scale: 60%;
 	right: 0px;
 	bottom: 0px;
 	z-index: -2;
-	scale: 60%;
-	transform-origin: 100% 102%;
+}
+
+#nanpa-suli {
+	position: fixed;
+	transform-origin: 0% 0%;
+	top: 0px;
+	left: 0px;
+	scale: 50%;
+	animation: nanpa-suli-animation 3s infinite linear;
+}
+
+@keyframes nanpa-suli-animation {
+	0% {
+		top: 0%;
+		left: 0%;
+	}
+
+	25% {
+		top: 10%;
+		left: 15%;
+	}
+
+	50% {
+		top: 0%;
+		left: 30%;
+	}
+
+	75% {
+		top: 10%;
+		left: 15%;
+	}
+
+	100% {
+		top: 0%;
+		left: 0%;
+	}
 }
 
 footer {

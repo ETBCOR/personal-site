@@ -86,15 +86,15 @@ fn IjoAnteWindow(
                 view! { cx, <div style="padding: 5px"><p>
                     "ijo pona mute pi toki pona li lon ni:"
                     <ul>
+                        <li><ExternalLink href="https://sona.pona.la/wiki/Main_Page" display="sona pona"/></li>
+                        <li><ExternalLink href="https://suno.pona.la/" display="suno pi toki pona"/></li>
                         <li><ExternalLink href="https://kulupu.pona.la/" display="kulupu lipu pona"/></li>
                         <li><ExternalLink href="http://utala.pona.la/" display="utala musi pi ma pona"/></li>
-                        <li><ExternalLink href="https://suno.pona.la/" display="suno pi toki pona"/></li>
                         <li><ExternalLink href="https://linku.la/" display="lipu Linku (lipu nimi pona)"/></li>
-                        <li><ExternalLink href="https://davidar.github.io/tp/" display="tomo pi sitelen tawa"/></li>
                         <li><ExternalLink href="https://jamesmoulang.itch.io/nasin-sona-musi" display="nasin sona musi"/></li>
+                        <li><ExternalLink href="https://davidar.github.io/tp/" display="tomo pi sitelen tawa"/></li>
                         <li><ExternalLink href="https://seka.pona.la/login" display="ma Seka (sama ilo Jutu - taso toki pona taso li lon)"/></li>
                         <li><ExternalLink href="https://www.youtube.com/playlist?list=PLwYL9_SRAk8EXSZPSTm9lm2kD_Z1RzUgm" display="o pilin e toki pona #opetp"/></li>
-                        <li><ExternalLink href="https://sona.pona.la/wiki/Main_Page" display="sona pona (lipu pi toki pona lon nasin Wiki)"/></li>
                         <li><ExternalLink href="https://sona.pona.la/wiki/Where_is_Toki_Pona_used%3F" display="\"seme li kepeken toki pona?\""/></li>
                     </ul>
                 </p></div> },

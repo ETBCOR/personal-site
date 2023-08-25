@@ -5,11 +5,11 @@ use leptos_use::{use_event_listener, use_event_listener_with_options};
 use rand::seq::SliceRandom;
 use web_sys::AddEventListenerOptions;
 
-pub mod anpa_nanpa;
 pub mod home;
 pub mod kalama_sin;
 pub mod music;
 pub mod nasin_nanpa;
+pub mod pakala;
 pub mod portfolio;
 pub mod tp;
 
@@ -39,7 +39,7 @@ pub fn App(cx: Scope) -> impl IntoView {
                     <Route path="/tp"             view=tp::TokiPonaPage/>
                     <Route path="/tp/kalama_sin"  view=kalama_sin::KalamaSinPage/>
                     <Route path="/tp/nasin_nanpa" view=nasin_nanpa::NasinNanpaPage/>
-                    <Route path="/tp/anpa_nanpa"  view=anpa_nanpa::AnpaNanpaPage/>
+                    <Route path="/pakala"         view=pakala::PakalaPage/>
                     <Route path="/*any"           view=NotFoundPage/>
                 </Routes>
                 <Cyberpunk/>
@@ -409,8 +409,8 @@ fn LoadingWindow(
         <div
             class="loading-img"
             class:wait={variant == LoadingWindowVariant::Default}
-            on:mousedown=move |_| leptos_router::use_navigate(cx)(if variant == LoadingWindowVariant::StackOverflow { "/tp/anpa_nanpa" } else { "/" }, Default::default(),).unwrap()
-            on:keydown=move |k| if k.key() == "Enter" { leptos_router::use_navigate(cx)(if variant == LoadingWindowVariant::StackOverflow { "/tp/anpa_nanpa" } else { "/" }, Default::default(),).unwrap() }
+            on:mousedown=move |_| leptos_router::use_navigate(cx)(if variant == LoadingWindowVariant::StackOverflow { "/pakala" } else { "/" }, Default::default(),).unwrap()
+            on:keydown=move |k| if k.key() == "Enter" { leptos_router::use_navigate(cx)(if variant == LoadingWindowVariant::StackOverflow { "/pakala" } else { "/" }, Default::default(),).unwrap() }
             tabindex=0
             title="ale li pona"
         ></div>
