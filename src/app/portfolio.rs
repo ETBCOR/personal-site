@@ -156,7 +156,7 @@ fn SkillsWindow(
                     </li>
 
                     <li class="spaced">
-                        "I'm farmiliar with "<b>"software development concepts"</b>
+                        "I'm familiar with "<b>"software development concepts"</b>
                         ", including code "<i>"modularity / testing / documentation / version control"</i>" techniques, "
                         <span class="title">"agile"</span>", "<span class="title">"continuous integration and delivery"
                         </span>" and "<span class="title">"the software development life cycle"</span>"."
