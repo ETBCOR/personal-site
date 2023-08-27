@@ -19,7 +19,7 @@ pub fn App(cx: Scope) -> impl IntoView {
 
     view! { cx,
         <Title text="etbcor's website"/>
-        <Stylesheet id="leptos" href="/pkg/portfolio_site.css"/>
+        <Stylesheet id="leptos" href="/pkg/personal_site.css"/>
 
         // google fonts
         <Link href="https://fonts.googleapis.com" rel="preconnect"/>
