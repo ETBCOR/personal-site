@@ -5,13 +5,13 @@ use crate::app::{
 use leptos::*;
 
 #[component]
-pub fn TokiPonaPage(cx: Scope) -> impl IntoView {
-    let loading_hidden = create_rw_signal(cx, false);
-    let nasin_nanpa_hidden = create_rw_signal(cx, false);
-    let kalama_sin_hidden = create_rw_signal(cx, false);
-    let ijo_ante_hidden = create_rw_signal(cx, false);
-    let file_hidden = create_rw_signal(cx, true);
-    let webring_hidden = create_rw_signal(cx, false);
+pub fn TokiPonaPage() -> impl IntoView {
+    let loading_hidden = create_rw_signal(false);
+    let nasin_nanpa_hidden = create_rw_signal(false);
+    let kalama_sin_hidden = create_rw_signal(false);
+    let ijo_ante_hidden = create_rw_signal(false);
+    let file_hidden = create_rw_signal(true);
+    let webring_hidden = create_rw_signal(false);
 
     let footer_items = vec![
         ("o pona", loading_hidden),
@@ -20,10 +20,10 @@ pub fn TokiPonaPage(cx: Scope) -> impl IntoView {
         ("ijo ante", ijo_ante_hidden),
         ("sike pona", webring_hidden),
     ];
-    let (file_src, set_file_src) = create_signal(cx, None);
-    let z_idx = Some(create_rw_signal(cx, 1));
+    let (file_src, set_file_src) = create_signal(None);
+    let z_idx = Some(create_rw_signal(1));
 
-    view! { cx,
+    view! {
         <LoadingWindow pos=WindowPos::Val((20, 20))   size=(255, 255) hidden=loading_hidden     z_idx=z_idx variant=LoadingWindowVariant::TP/>
         <LinkWindow    pos=WindowPos::Val((310, 20))  size=(300, 255) hidden=nasin_nanpa_hidden z_idx=z_idx id="nasin-nanpa-link-win" title="nasin nanpa".to_string() bg_img="/assets/nasin-nanpa.png" src="/tp/nasin_nanpa"/>
         <LinkWindow    pos=WindowPos::Val((20, 347))  size=(255, 255) hidden=kalama_sin_hidden  z_idx=z_idx id="kalama-sin-link-win" title="kalama sin".to_string() bg_img="/assets/kalama-sin.webp" src="/tp/kalama_sin"/>
@@ -37,23 +37,22 @@ pub fn TokiPonaPage(cx: Scope) -> impl IntoView {
 
 #[component]
 fn IjoAnteWindow(
-    cx: Scope,
     pos: WindowPos,
     size: (u32, u32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
     file_win_src: WriteSignal<Option<&'static str>>,
 ) -> impl IntoView {
-    let size = create_rw_signal(cx, size);
+    let size = create_rw_signal(size);
     let fws = file_win_src;
-    let active_tab = create_rw_signal(cx, "mi");
+    let active_tab = create_rw_signal("mi");
 
     let content = WindowContent::Tabs((
         active_tab,
         vec![
             (
                 "mi",
-                view! { cx, <div style="padding: 5px"><p>
+                view! { <div style="padding: 5px"><p>
                     "ijo mi pi toki pona li lon ni:"
                     <ul>
                         <li>"nasin sitelen tan anpa nanpa (lon sewi ↑)"</li>
@@ -66,7 +65,7 @@ fn IjoAnteWindow(
             ),
             (
                 "jan",
-                view! { cx, <div style="padding: 5px"><p>
+                view! { <div style="padding: 5px"><p>
                     "jan pona pi toki pona li lon ni:"
                     <ul>
                         <li><ExternalLink href="https://tbodt.com/" display="jan Tepo"/></li>
@@ -83,7 +82,7 @@ fn IjoAnteWindow(
             ),
             (
                 "ante",
-                view! { cx, <div style="padding: 5px"><p>
+                view! { <div style="padding: 5px"><p>
                     "ijo pona mute pi toki pona li lon ni:"
                     <ul>
                         <li><ExternalLink href="https://sona.pona.la/wiki/Main_Page" display="sona pona"/></li>
@@ -102,7 +101,7 @@ fn IjoAnteWindow(
         ],
     ));
 
-    view! {cx,
+    view! {
         <Window id="ijo-ante-win" title="ijo ante".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx scroll=true/>
     }
 }

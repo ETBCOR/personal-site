@@ -5,13 +5,13 @@ use crate::app::{
 use leptos::*;
 
 #[component]
-pub fn KalamaSinPage(cx: Scope) -> impl IntoView {
-    let tp_hidden = create_rw_signal(cx, false);
-    let link_win_hidden = create_rw_signal(cx, false);
-    let kalama_sin_hidden = create_rw_signal(cx, false);
-    let webring_hidden = create_rw_signal(cx, false);
-    let file_hidden = create_rw_signal(cx, true);
-    let loading_hidden = create_rw_signal(cx, false);
+pub fn KalamaSinPage() -> impl IntoView {
+    let tp_hidden = create_rw_signal(false);
+    let link_win_hidden = create_rw_signal(false);
+    let kalama_sin_hidden = create_rw_signal(false);
+    let webring_hidden = create_rw_signal(false);
+    let file_hidden = create_rw_signal(true);
+    let loading_hidden = create_rw_signal(false);
 
     let footer_items = vec![
         ("lipu pi toki pona", tp_hidden),
@@ -20,10 +20,10 @@ pub fn KalamaSinPage(cx: Scope) -> impl IntoView {
         ("sike pona", webring_hidden),
         ("\"Inspiration\"", loading_hidden),
     ];
-    let (file_src, set_file_src) = create_signal(cx, None);
-    let z_idx = Some(create_rw_signal(cx, 1));
+    let (file_src, set_file_src) = create_signal(None);
+    let z_idx = Some(create_rw_signal(1));
 
-    view! { cx,
+    view! {
         <LinkWindow      pos=WindowPos::Val((20, 20))   size=(255, 255) hidden=tp_hidden         z_idx=z_idx id="tp-link-win"         title="lipu pi toki pona".to_string() bg_img="/assets/itan.svg"        src="/tp" diag_tp=true/>
         <LinkWindow      pos=WindowPos::Val((20, 347))  size=(255, 255) hidden=link_win_hidden   z_idx=z_idx id="kalama-sin-link-win" title="lon ilo RedCircle".to_string() bg_img="/assets/kalama-sin.webp" src="https://redcircle.com/shows/kalama-sin" external=true/>
         <KalamaSinWindow pos=WindowPos::Val((310, 20))  size=(440, 582) hidden=kalama_sin_hidden z_idx=z_idx file_win_src=set_file_src/>
@@ -37,17 +37,16 @@ pub fn KalamaSinPage(cx: Scope) -> impl IntoView {
 
 #[component]
 fn KalamaSinWindow(
-    cx: Scope,
     pos: WindowPos,
     size: (u32, u32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
     file_win_src: WriteSignal<Option<&'static str>>,
 ) -> impl IntoView {
-    let size = create_rw_signal(cx, size);
+    let size = create_rw_signal(size);
     let fws = file_win_src;
 
-    let content = WindowContent::Page(view! { cx, <div style="padding: 5px" tabindex=0>
+    let content = WindowContent::Page(view! { <div style="padding: 5px" tabindex=0>
         <p>
             "mi pali e sitelen anpa lon "<ExternalLink href="https://redcircle.com/shows/kalama-sin" display="kalama sin"/>". pali mi li pona "
             <ExternalLink href="https://www.youtube.com/playlist?list=PLjOmpMyMxd8Qs2mAXcLk817tQy_AQj09u" display="lon ilo Jutu"/>
@@ -86,21 +85,20 @@ fn KalamaSinWindow(
         </ul>
     </div> });
 
-    view! { cx, <Window id="kalama-sin-win" title="lipu pi kalama sin".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx scroll=true/> }
+    view! { <Window id="kalama-sin-win" title="lipu pi kalama sin".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx scroll=true/> }
 }
 
 // #[component]
 // fn KalamaSinWindow(
-//     cx: Scope,
 //     pos: WindowPos,
 //     size: (u32, u32),
 //     hidden: RwSignal<bool>,
 //     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 // ) -> impl IntoView {
-//     let size = create_rw_signal(cx, size);
-//     let content = view! { cx, <div style="padding: 5px" tabindex=0>
+//     let size = create_rw_signal(size);
+//     let content = view! { <div style="padding: 5px" tabindex=0>
 //         <p>""</p>
 //     </div> };
 
-//     view! { cx, <Window id="kalama-sin-win" title="kalama sin transcripts".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx/> }
+//     view! { <Window id="kalama-sin-win" title="kalama sin transcripts".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx/> }
 // }

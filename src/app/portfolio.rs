@@ -5,14 +5,14 @@ use crate::app::{
 use leptos::*;
 
 #[component]
-pub fn PortfolioPage(cx: Scope) -> impl IntoView {
-    let loading_hidden = create_rw_signal(cx, false);
-    let about_hidden = create_rw_signal(cx, false);
-    let education_hidden = create_rw_signal(cx, false);
-    let skills_hidden = create_rw_signal(cx, false);
-    let projects_hidden = create_rw_signal(cx, false);
-    let file_hidden = create_rw_signal(cx, true);
-    let ad_hidden = create_rw_signal(cx, false);
+pub fn PortfolioPage() -> impl IntoView {
+    let loading_hidden = create_rw_signal(false);
+    let about_hidden = create_rw_signal(false);
+    let education_hidden = create_rw_signal(false);
+    let skills_hidden = create_rw_signal(false);
+    let projects_hidden = create_rw_signal(false);
+    let file_hidden = create_rw_signal(true);
+    let ad_hidden = create_rw_signal(false);
 
     let footer_items = vec![
         ("\"Inspiration\"", loading_hidden),
@@ -21,10 +21,10 @@ pub fn PortfolioPage(cx: Scope) -> impl IntoView {
         ("Projects", projects_hidden),
         ("Skills", skills_hidden),
     ];
-    let (file_src, set_file_src) = create_signal(cx, None);
-    let z_idx = create_rw_signal(cx, 1);
+    let (file_src, set_file_src) = create_signal(None);
+    let z_idx = create_rw_signal(1);
 
-    view! { cx,
+    view! {
         <LoadingWindow   pos=WindowPos::Val((435, 204)) size=(225, 202) hidden=loading_hidden   z_idx=Some(z_idx) variant=LoadingWindowVariant::HomePageLink/>
         <AboutWindow     pos=WindowPos::Val((20, 20))   size=(640, 112) hidden=about_hidden     z_idx=Some(z_idx)/>
         <EducationWindow pos=WindowPos::Val((20, 204))  size=(380, 572) hidden=education_hidden z_idx=Some(z_idx)/>
@@ -40,14 +40,13 @@ pub fn PortfolioPage(cx: Scope) -> impl IntoView {
 
 #[component]
 fn AboutWindow(
-    cx: Scope,
     pos: WindowPos,
     size: (u32, u32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
-    let size = create_rw_signal(cx, size);
-    let content = WindowContent::Page(view! { cx, <div style="padding: 5px" tabindex=0><p>
+    let size = create_rw_signal(size);
+    let content = WindowContent::Page(view! { <div style="padding: 5px" tabindex=0><p>
         "Hello! I'm Ethan, and was born in April 2001. "
         "I'm passionate about making software, writing music, and learning languages. Links: "
         <ExternalLink href="http://www.discordapp.com/users/207897365141520384" display="discord"/>", "
@@ -57,21 +56,20 @@ fn AboutWindow(
         <span class="title">"jan Itan"</span><i>" (toki pona community)"</i>". "<b>"Thanks for coming to my site!"</b>
     </p> </div> });
 
-    view! { cx,
+    view! {
         <Window id="about-win" title="About Me".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx/>
     }
 }
 
 #[component]
 fn EducationWindow(
-    cx: Scope,
     pos: WindowPos,
     size: (u32, u32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
-    let size = create_rw_signal(cx, size);
-    let content = WindowContent::Page(view! { cx, <div style="padding: 5px" tabindex=0>
+    let size = create_rw_signal(size);
+    let content = WindowContent::Page(view! { <div style="padding: 5px" tabindex=0>
         <h4>"Bachelor's Degree in Computer Science"</h4>
         <div class="spaced">
             "I spent 2019-2023 at the "<ExternalLink href="https://www.uidaho.edu/" display="University of Idaho"/>
@@ -116,28 +114,27 @@ fn EducationWindow(
         " (back when it was still completely free!), which was very influential for me starting out."</p>
     </div> });
 
-    view! { cx,
+    view! {
         <Window id="education-win" title="Education".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx/>
     }
 }
 
 #[component]
 fn SkillsWindow(
-    cx: Scope,
     pos: WindowPos,
     size: (u32, u32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
-    let size = create_rw_signal(cx, size);
-    let active_tab = create_rw_signal(cx, "Technical");
+    let size = create_rw_signal(size);
+    let active_tab = create_rw_signal("Technical");
 
     let content = WindowContent::Tabs((
         active_tab,
         vec![
             (
                 "Technical",
-                view! { cx, <div style="padding: 5px"><ul>
+                view! { <div style="padding: 5px"><ul>
                     <li class="spaced">"I'm proficient in multiple "<b>"programming languages"</b>":"<ul>
                         <li><span class="title">"C / C++"</span>" were the primary languages taught at my univirsity, so I'm very comfortable with them."</li>
                         <li><span class="title">"Rust"</span>" is currently my favorite language. I learned about it in 2022 "
@@ -181,7 +178,7 @@ fn SkillsWindow(
             ),
             (
                 "Audio / Visual",
-                view! { cx, <div style="padding: 5px"><ul>
+                view! { <div style="padding: 5px"><ul>
                     <li><b>"Audio"</b><ul>
                         <li class="spaced">
                             "I purchased "<ExternalLink href="https://www.ableton.com/en/live/" display="Ableton Live" title_style=true/>
@@ -212,7 +209,7 @@ fn SkillsWindow(
             ),
             (
                 "Other",
-                view! { cx, <div style="padding: 5px"><ul>
+                view! { <div style="padding: 5px"><ul>
                     <li class="spaced">"I speak "<b>"three languages"</b>":"<ul>
                         <li><span class="title">"English"</span>" (native)"</li>
                         <li><span class="title">"Spanish"</span>" (fluent)"</li>
@@ -229,30 +226,29 @@ fn SkillsWindow(
         ],
     ));
 
-    view! { cx,
+    view! {
         <Window id="skills-win" title="Skills".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx scroll=true/>
     }
 }
 
 #[component]
 fn ProjectsWindow(
-    cx: Scope,
     pos: WindowPos,
     size: (u32, u32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
     file_win_src: WriteSignal<Option<&'static str>>,
 ) -> impl IntoView {
-    let size = create_rw_signal(cx, size);
+    let size = create_rw_signal(size);
     let fws = file_win_src;
-    let active_tab = create_rw_signal(cx, "From CS Classes");
+    let active_tab = create_rw_signal("From CS Classes");
 
     let content = WindowContent::Tabs((
         active_tab,
         vec![
             (
                 "From CS Classes",
-                view! { cx, <div style="padding: 5px"><ul>
+                view! { <div style="padding: 5px"><ul>
                     <li class="spaced">
                         <ExternalLink href="https://catalog.uidaho.edu/courses/cs/#:~:text=CS%20415" display="CS415 | Computational Biology: Sequence Alignment" bold=true/><br/>
                         "Description: \"Design and analyze algorithms that address the computational problems posed by biological sequence data, "
@@ -313,7 +309,7 @@ fn ProjectsWindow(
             ),
             (
                 "Other Projects",
-                view! { cx, <div style="padding: 5px"><ul>
+                view! { <div style="padding: 5px"><ul>
                     <li class="spaced">
                         "I made "<b>"this very portfolio website"</b>" with "
                         <ExternalLink href="https://leptos.dev/" display="leptos"/>" (a full-stack web framework built in "
@@ -341,7 +337,7 @@ fn ProjectsWindow(
         ],
     ));
 
-    view! { cx,
+    view! {
         <Window id="projects-win" title="Projects".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx scroll=true/>
     }
 }

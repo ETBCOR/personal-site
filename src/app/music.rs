@@ -5,25 +5,28 @@ use crate::app::{
 use leptos::*;
 
 #[component]
-pub fn MusicPage(cx: Scope) -> impl IntoView {
-    let loading_hidden = create_rw_signal(cx, false);
-    let my_music_hidden = create_rw_signal(cx, false);
-    let spotify_hidden = create_rw_signal(cx, false);
-    let john_hidden = create_rw_signal(cx, false);
+pub fn MusicPage() -> impl IntoView {
+    let loading_hidden = create_rw_signal(false);
+    let my_music_hidden = create_rw_signal(false);
+    let spotify_hidden = create_rw_signal(false);
+    let john_hidden = create_rw_signal(false);
+    let faves_hidden = create_rw_signal(false);
 
     let footer_items = vec![
         ("\"Inspiration\"", loading_hidden),
         ("My Music", my_music_hidden),
         ("Playlists", spotify_hidden),
         ("Johnvertisement", john_hidden),
+        ("My Favorites", faves_hidden),
     ];
-    let z_idx = Some(create_rw_signal(cx, 1));
+    let z_idx = Some(create_rw_signal(1));
 
-    view! { cx,
+    view! {
         <LoadingWindow         pos=WindowPos::Val((20, 20))  size=(255, 255) hidden=loading_hidden  z_idx=z_idx variant=LoadingWindowVariant::HomePageLink/>
         <LinkWindow            pos=WindowPos::Val((20, 347)) size=(255, 255) hidden=my_music_hidden z_idx=z_idx id="my-music-win" title="My Music (coming soon)".to_string() bg_img="" src="/music"/>
         <SpotifyPlaylistWindow pos=WindowPos::Val((310, 20)) size=(440, 582) hidden=spotify_hidden  z_idx=z_idx/>
         <JohnWindow            pos=WindowPos::Val((20, 674)) size=(730, 90)  hidden=john_hidden     z_idx=z_idx/>
+        <FavesWindow           pos=WindowPos::Val((785, 20)) size=(440, 746) hidden=faves_hidden    z_idx=z_idx/>
         <Footer items=footer_items/>
         <GoatCounter path="/music"/>
     }
@@ -31,20 +34,19 @@ pub fn MusicPage(cx: Scope) -> impl IntoView {
 
 #[component]
 fn SpotifyPlaylistWindow(
-    cx: Scope,
     pos: WindowPos,
     size: (u32, u32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
-    let size = create_rw_signal(cx, size);
-    let active_tab = create_rw_signal(cx, "Main");
+    let size = create_rw_signal(size);
+    let active_tab = create_rw_signal("Main");
     let content = WindowContent::Tabs((
         active_tab,
         vec![
             (
                 "Main",
-                view! { cx, <div class="tab-outer" style="padding: 5px" tabindex=0>
+                view! { <div class="tab-outer" style="padding: 5px" tabindex=0>
                     <SpotifyPlaylist src="1QPAKgnxEMYOBJFVmRhwM1"/>
                     <SpotifyPlaylist src="0DXYn6zngiQp5AQNOToO3i"/>
                     <SpotifyPlaylist src="3K8Kg0C1GVI14q3KUBqfUd"/>
@@ -56,7 +58,7 @@ fn SpotifyPlaylistWindow(
             ),
             (
                 "Mood",
-                view! { cx, <div class="tab-outer" style="padding: 5px" tabindex=0>
+                view! { <div class="tab-outer" style="padding: 5px" tabindex=0>
                     <SpotifyPlaylist src="5JS3lDWT6W7vkghXsQHiQn"/>
                     <SpotifyPlaylist src="1q7j8e6UWAC4p78QizSOqk"/>
                     <SpotifyPlaylist src="6iVCPGSpMstM56Ajj0NSYI"/>
@@ -71,7 +73,7 @@ fn SpotifyPlaylistWindow(
             ),
             (
                 "Genres",
-                view! { cx, <div class="tab-outer" style="padding: 5px" tabindex=0>
+                view! { <div class="tab-outer" style="padding: 5px" tabindex=0>
                     <SpotifyPlaylist src="4RCXWsAR5yT7P8pfaYKQK9"/>
                     <SpotifyPlaylist src="0ZarPheYW5A3Ut14uvvCYa"/>
                     <SpotifyPlaylist src="1eYJLMDpgoKD0F4LUH2Ezs"/>
@@ -96,18 +98,14 @@ fn SpotifyPlaylistWindow(
         ],
     ));
 
-    view! { cx,
+    view! {
         <Window id="spotify-win" title="My Public Spotify Playlists".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx scroll=true rainbow=true/>
     }
 }
 
 #[component]
-fn SpotifyPlaylist(
-    cx: Scope,
-    src: &'static str,
-    #[prop(default = true)] spaced: bool,
-) -> impl IntoView {
-    view! { cx,
+fn SpotifyPlaylist(src: &'static str, #[prop(default = true)] spaced: bool) -> impl IntoView {
+    view! {
         <iframe
             src=move || format!("https://open.spotify.com/embed/playlist/{src}?utm_source=generator")
             style="width: 400px; height: 152px; border-radius:12px"
@@ -121,31 +119,68 @@ fn SpotifyPlaylist(
 }
 
 #[component]
-pub fn MusicLinkWindow(
-    cx: Scope,
+fn FavesWindow(
     pos: WindowPos,
     size: (u32, u32),
     hidden: RwSignal<bool>,
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
 ) -> impl IntoView {
-    let size = create_rw_signal(cx, size);
-    let content = WindowContent::Page(view! { cx, <div style="cursor: pointer">
+    let size = create_rw_signal(size);
+    let active_tab = create_rw_signal("Artists");
+    let content = WindowContent::Tabs((
+        active_tab,
+        vec![
+            (
+                "Artists",
+                view! { <div class="tab-outer" style="padding: 5px" tabindex=0>
+                    <p style="text-align: center">"This is my (WIP) list of favorite artists. I might change the order from time to time."</p>
+                </div> },
+            ),
+            (
+                "Albums",
+                view! { <div class="tab-outer" style="padding: 5px" tabindex=0>
+                    <p style="text-align: center">"This is my (WIP) list of favorite albums."</p>
+                </div> },
+            ),
+            (
+                "Songs",
+                view! { <div class="tab-outer" style="padding: 5px" tabindex=0>
+                    <p style="text-align: center">"This is my (WIP) list of favorite songs."</p>
+                </div> },
+            ),
+        ],
+    ));
+
+    view! {
+        <Window id="faves-win" title="My Favorite Music".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx scroll=true rainbow=true/>
+    }
+}
+
+#[component]
+pub fn MusicLinkWindow(
+    pos: WindowPos,
+    size: (u32, u32),
+    hidden: RwSignal<bool>,
+    #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
+) -> impl IntoView {
+    let size = create_rw_signal(size);
+    let content = WindowContent::Page(view! { <div style="cursor: pointer">
         <video
             style="width: 100%"
             muted
             autoplay
             loop="true"
             poster="/assets/music-icon.png"
-            on:mousedown=move |_| leptos_router::use_navigate(cx)("/music", Default::default()).unwrap()
+            on:mousedown=move |_| leptos_router::use_navigate()("/music", Default::default())
             on:contextmenu=move |e| e.prevent_default()
             tabindex=0
-            on:keydown=move |k| if k.key() == "Enter" { leptos_router::use_navigate(cx)("/music", Default::default()).unwrap() }
+            on:keydown=move |k| if k.key() == "Enter" { leptos_router::use_navigate()("/music", Default::default()) }
         >
             <source src="/assets/music-icon.webm" type="video/webm"/>
         </video>
     </div> });
 
-    view! { cx,
+    view! {
         <Window id="music-link-win" title="Music".to_string() content=content pos=pos size=size hidden=hidden expandable=false z_idx=z_idx rainbow=true/>
     }
 }

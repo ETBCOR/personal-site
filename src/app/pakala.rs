@@ -17,13 +17,13 @@ const MESSAGES: [&str; 12] = [
 ];
 
 #[component]
-pub fn PakalaPage(cx: Scope) -> impl IntoView {
-    let chat_hidden = create_rw_signal(cx, false);
+pub fn PakalaPage() -> impl IntoView {
+    let chat_hidden = create_rw_signal(false);
 
     let footer_items = vec![];
 
-    let msg = create_rw_signal(cx, MESSAGES[0]);
-    let msg_idx: RwSignal<usize> = create_rw_signal(cx, 0);
+    let msg = create_rw_signal(MESSAGES[0]);
+    let msg_idx: RwSignal<usize> = create_rw_signal(0);
     let next_msg = move || {
         msg_idx.update(|i| *i = *i + 1);
         let idx = msg_idx();
@@ -31,12 +31,12 @@ pub fn PakalaPage(cx: Scope) -> impl IntoView {
         msg.set(if idx < MESSAGES.len() {
             MESSAGES[idx]
         } else {
-            let _ = leptos_router::use_navigate(cx)("/", Default::default());
+            let _ = leptos_router::use_navigate()("/", Default::default());
             ""
         });
     };
 
-    view! { cx,
+    view! {
         <div style="background-color: black; position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px; z-index: -3"></div>
         <div id="nanpa-suli">
             <video
