@@ -29,7 +29,7 @@ pub fn KalamaSinPage() -> impl IntoView {
         <KalamaSinWindow pos=WindowPos::Val((310, 20))  size=(440, 582) hidden=kalama_sin_hidden z_idx=z_idx file_win_src=set_file_src/>
         <FileWindow      pos=WindowPos::Val((782, 20))  size=(700, 744) hidden=file_hidden       z_idx=z_idx src=file_src/>
         <WebringWindow   pos=WindowPos::Val((20, 674))  size=(430, 70)  hidden=webring_hidden    z_idx=z_idx webring=Webring::SikePona/>
-        <LoadingWindow   pos=WindowPos::Val((480, 674)) size=(270, 70) hidden=loading_hidden     z_idx=z_idx variant=LoadingWindowVariant::TP/>
+        <LoadingWindow   pos=WindowPos::Val((480, 674)) size=(270, 70)  hidden=loading_hidden    z_idx=z_idx variant=LoadingWindowVariant::TP/>
         <Footer items=footer_items/>
         <GoatCounter path="/tp/kalama_sin"/>
     }

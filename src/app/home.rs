@@ -15,6 +15,7 @@ fn HomePage(recursions: usize, mut sigs: Vec<(WindowPos, RwSignal<bool>)>) -> im
     let (mut meta_pos, meta_hidden) = sigs[5];
     let (mut ad_pos, ad_hidden) = sigs[6];
     let (mut john_pos, john_hidden) = sigs[7];
+    let (mut guestbook_pos, guestbook_hidden) = sigs[8];
 
     let footer_items = vec![
         ("\"Inspiration\"", loading_hidden),
@@ -24,6 +25,7 @@ fn HomePage(recursions: usize, mut sigs: Vec<(WindowPos, RwSignal<bool>)>) -> im
         ("Webring", webring_hidden),
         ("Meta", meta_hidden),
         ("Johnvertisement", john_hidden),
+        ("Guestbook", guestbook_hidden),
     ];
     let z_idx = if recursions == 0 {
         Some(create_rw_signal(1))
@@ -33,28 +35,31 @@ fn HomePage(recursions: usize, mut sigs: Vec<(WindowPos, RwSignal<bool>)>) -> im
 
     if recursions == 1 {
         if let WindowPos::Sig(p) = loading_pos {
-            loading_pos = WindowPos::SigOffset(p);
+            loading_pos = WindowPos::OffsetSignal(p);
         };
         if let WindowPos::Sig(p) = portfolio_pos {
-            portfolio_pos = WindowPos::SigOffset(p);
+            portfolio_pos = WindowPos::OffsetSignal(p);
         };
         if let WindowPos::Sig(p) = music_pos {
-            music_pos = WindowPos::SigOffset(p);
+            music_pos = WindowPos::OffsetSignal(p);
         };
         if let WindowPos::Sig(p) = tp_pos {
-            tp_pos = WindowPos::SigOffset(p);
+            tp_pos = WindowPos::OffsetSignal(p);
         };
         if let WindowPos::Sig(p) = webring_pos {
-            webring_pos = WindowPos::SigOffset(p);
+            webring_pos = WindowPos::OffsetSignal(p);
         };
         if let WindowPos::Sig(p) = meta_pos {
-            meta_pos = WindowPos::SigOffset(p);
+            meta_pos = WindowPos::OffsetSignal(p);
         };
         if let WindowPos::Sig(p) = ad_pos {
-            ad_pos = WindowPos::SigOffset(p);
+            ad_pos = WindowPos::OffsetSignal(p);
         };
         if let WindowPos::Sig(p) = john_pos {
-            john_pos = WindowPos::SigOffset(p);
+            john_pos = WindowPos::OffsetSignal(p);
+        };
+        if let WindowPos::Sig(p) = guestbook_pos {
+            guestbook_pos = WindowPos::OffsetSignal(p);
         };
         sigs = vec![
             (loading_pos, loading_hidden),
@@ -65,6 +70,7 @@ fn HomePage(recursions: usize, mut sigs: Vec<(WindowPos, RwSignal<bool>)>) -> im
             (meta_pos, meta_hidden),
             (ad_pos, ad_hidden),
             (john_pos, john_hidden),
+            (guestbook_pos, guestbook_hidden),
         ];
     }
 
@@ -75,8 +81,9 @@ fn HomePage(recursions: usize, mut sigs: Vec<(WindowPos, RwSignal<bool>)>) -> im
         <LinkWindow      pos=tp_pos        size=(170, 178) hidden=tp_hidden        z_idx=z_idx id="tp-link-win"        title="toki pona".to_string() bg_img="/assets/itan.svg" src="/tp" diag_tp=true/>
         <WebringWindow   pos=webring_pos   size=(430, 70)  hidden=webring_hidden   z_idx=z_idx webring=Webring::Bucket/>
         <AdWindow        pos=ad_pos        size=(200, 100) hidden=ad_hidden        z_idx=z_idx/>
-        <JohnWindow      pos=john_pos      size=(665, 82)  hidden=john_hidden      z_idx=z_idx/>
         <MetaWindow      pos=meta_pos      size=(200, 437) hidden=meta_hidden      z_idx=z_idx recursions={recursions + 1} sigs=sigs/>
+        <JohnWindow      pos=john_pos      size=(665, 82)  hidden=john_hidden      z_idx=z_idx/>
+        <LinkWindow      pos=guestbook_pos size=(200, 200) hidden=guestbook_hidden z_idx=z_idx id="guestbook-link-win" title="Guestbook".to_string() bg_img="assets/itan.svg" src="https://etbcor.123guestbook.com/" external=true/>
         <div class:hidden=move || {recursions > 0}>
             <div style="height: 65px"></div> // large spacer
             <Footer items=footer_items/>     // footer
@@ -95,6 +102,7 @@ pub fn HomePageEntry() -> impl IntoView {
     let meta_hidden = create_rw_signal(false);
     let ad_hidden = create_rw_signal(false);
     let john_hidden = create_rw_signal(false);
+    let guestbook_hidden = create_rw_signal(false);
 
     let loading_pos = WindowPos::Sig(create_rw_signal((20, 20)));
     let portfolio_pos = WindowPos::Sig(create_rw_signal((280, 20)));
@@ -104,6 +112,7 @@ pub fn HomePageEntry() -> impl IntoView {
     let meta_pos = WindowPos::Sig(create_rw_signal((485, 192)));
     let ad_pos = WindowPos::Sig(create_rw_signal((485, 20)));
     let john_pos = WindowPos::Sig(create_rw_signal((20, 701)));
+    let guestbook_pos = WindowPos::Sig(create_rw_signal((720, 20)));
 
     let sigs = vec![
         (loading_pos, loading_hidden),
@@ -114,6 +123,7 @@ pub fn HomePageEntry() -> impl IntoView {
         (meta_pos, meta_hidden),
         (ad_pos, ad_hidden),
         (john_pos, john_hidden),
+        (guestbook_pos, guestbook_hidden),
     ];
 
     view! {

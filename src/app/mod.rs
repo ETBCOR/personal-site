@@ -73,7 +73,7 @@ pub enum WindowContent {
 pub enum WindowPos {
     Val((i32, i32)),
     Sig(RwSignal<(i32, i32)>),
-    SigOffset(RwSignal<(i32, i32)>),
+    OffsetSignal(RwSignal<(i32, i32)>),
 }
 
 #[component]
@@ -96,7 +96,7 @@ fn Window(
     let pos = match pos {
         WindowPos::Val(v) => create_rw_signal(v),
         WindowPos::Sig(s) => s,
-        WindowPos::SigOffset(s) => {
+        WindowPos::OffsetSignal(s) => {
             offset = true;
             s
         }
