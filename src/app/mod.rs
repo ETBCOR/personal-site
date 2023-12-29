@@ -87,6 +87,7 @@ fn Window(
     #[prop(default = None)] z_idx: Option<RwSignal<usize>>,
     #[prop(default = true)] expandable: bool,
     #[prop(default = false)] expanded: bool,
+    #[prop(default = None)] min_button: Option<(RwSignal<bool>, RwSignal<(u32, u32)>)>,
     #[prop(default = false)] diag: bool,
     #[prop(default = false)] scroll: bool,
     #[prop(default = false)] rainbow: bool,
@@ -268,6 +269,16 @@ fn Window(
             >
                 { get_title }
                 <div class="win-buttons">
+                    { match min_button {
+                        Some((deeper, size)) => { Some(view! { <a
+                            class="win-min"
+                            title="minimize window"
+                            on:mousedown=move |_| {deeper.set(false); size.set((200, 437))}
+                            on:keydown=move |k| if k.key() == "Enter" {deeper.set(false); size.set((200, 437))}
+                            tabindex=0
+                        ></a> }) }
+                        None => { None } }
+                    }
                     { if expandable { Some(view! { <a
                         class="win-expand"
                         title="expand window"

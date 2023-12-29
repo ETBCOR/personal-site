@@ -83,7 +83,6 @@ fn HomePage(recursions: usize, mut sigs: Vec<(WindowPos, RwSignal<bool>)>) -> im
         <AdWindow        pos=ad_pos        size=(200, 100) hidden=ad_hidden        z_idx=z_idx/>
         <MetaWindow      pos=meta_pos      size=(200, 437) hidden=meta_hidden      z_idx=z_idx recursions={recursions + 1} sigs=sigs/>
         <JohnWindow      pos=john_pos      size=(665, 82)  hidden=john_hidden      z_idx=z_idx/>
-        <LinkWindow      pos=guestbook_pos size=(200, 200) hidden=guestbook_hidden z_idx=z_idx id="guestbook-link-win" title="Guestbook".to_string() bg_img="assets/itan.svg" src="https://etbcor.123guestbook.com/" external=true/>
         <div class:hidden=move || {recursions > 0}>
             <div style="height: 65px"></div> // large spacer
             <Footer items=footer_items/>     // footer
@@ -126,8 +125,11 @@ pub fn HomePageEntry() -> impl IntoView {
         (guestbook_pos, guestbook_hidden),
     ];
 
+    let z_idx = Some(create_rw_signal(1));
+
     view! {
         <HomePage recursions=0 sigs=sigs/>
+        <LinkWindow      pos=guestbook_pos size=(200, 100) hidden=guestbook_hidden z_idx=z_idx id="guestbook-link-win" title="Guestbook".to_string() bg_img="assets/itan.svg" src="https://etbcor.123guestbook.com/" external=true/>
         <GoatCounter path="/"/>
     }
 }
@@ -175,6 +177,6 @@ fn MetaWindow(
     </div> });
 
     view! {
-        <Window id="meta-win" title="Meta, man...".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx rainbow=true/>
+        <Window id="meta-win" title="Meta...".to_string() content=content pos=pos size=size hidden=hidden z_idx=z_idx min_button=Some((deeper, size)) rainbow=true/>
     }
 }

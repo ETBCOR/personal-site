@@ -316,6 +316,25 @@ footer {
 
 .win-expand:hover {
 	background-image: url("/assets/expand-window-hover.png");
+	cursor: zoom-in;
+}
+
+.win-min {
+	background-image: url("/assets/min-window.png");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-color: #ffff63;
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+	margin-right: 7px;
+	cursor: pointer;
+	box-shadow: 2px 2px #462255;
+}
+
+.win-min:hover {
+	background-image: url("/assets/min-window-hover.png");
+	cursor: zoom-out;
 }
 
 .external-link>span {
