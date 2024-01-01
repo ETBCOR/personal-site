@@ -32,7 +32,7 @@ pub fn App() -> impl IntoView {
         <Router>
             <main>
                 <Routes>
-                    <Route path="/"               view=home::HomePageEntry/>
+                    <Route path="/"               view=home::HomePageWrap/>
                     <Route path="/portfolio"      view=portfolio::PortfolioPage/>
                     <Route path="/music"          view=music::MusicPage/>
                     <Route path="/tp"             view=tp::TokiPonaPage/>
@@ -105,11 +105,13 @@ fn Window(
     let dpos = create_rw_signal((0, 0));
 
     let expanded = create_rw_signal(expanded);
-    let this_z_idx = create_rw_signal(if id.eq("ad-win") || !z_idx.is_some() {
-        0
-    } else {
-        z_idx.unwrap().get_untracked()
-    });
+    let this_z_idx = create_rw_signal(
+        if id.eq("ad-win") || id.eq("john-win") || !z_idx.is_some() {
+            0
+        } else {
+            z_idx.unwrap().get_untracked()
+        },
+    );
 
     let drag = move |e: MouseEvent| {
         if let Some(z_idx) = z_idx {
