@@ -17,16 +17,16 @@ pub fn MusicPage() -> impl IntoView {
         ("My Music", my_music_hidden),
         ("Playlists", spotify_hidden),
         ("Johnvertisement", john_hidden),
-        ("My Favorites", faves_hidden),
+        // ("My Favorites", faves_hidden),
     ];
     let z_idx = Some(create_rw_signal(1));
 
     view! {
         <LoadingWindow         pos=WindowPos::Val((20, 20))  size=(255, 255) hidden=loading_hidden  z_idx=z_idx variant=LoadingWindowVariant::HomePageLink/>
-        <LinkWindow            pos=WindowPos::Val((20, 347)) size=(255, 255) hidden=my_music_hidden z_idx=z_idx id="my-music-win" title="My Music (coming soon)".to_string() bg_img="" src="/music"/>
+        <LinkWindow            pos=WindowPos::Val((20, 347)) size=(255, 255) hidden=my_music_hidden z_idx=z_idx id="my-music-win" title="My Music".to_string() bg_img="/assets/wireless-nature.png" src="https://mesmr.bandcamp.com" external=true/>
         <SpotifyPlaylistWindow pos=WindowPos::Val((310, 20)) size=(440, 582) hidden=spotify_hidden  z_idx=z_idx/>
         <JohnWindow            pos=WindowPos::Val((20, 674)) size=(730, 90)  hidden=john_hidden     z_idx=z_idx/>
-        <FavesWindow           pos=WindowPos::Val((785, 20)) size=(440, 746) hidden=faves_hidden    z_idx=z_idx/>
+        // <FavesWindow           pos=WindowPos::Val((785, 20)) size=(440, 746) hidden=faves_hidden    z_idx=z_idx/>
         <Footer items=footer_items/>
         <GoatCounter path="/music"/>
     }

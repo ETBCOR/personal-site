@@ -3,7 +3,7 @@ use crate::app::{
     AdWindow, Footer, GoatCounter, JohnWindow, LinkWindow, LoadingWindow, LoadingWindowVariant,
     Webring, WebringWindow, Window, WindowContent, WindowPos,
 };
-use leptos::logging::log;
+// use leptos::logging::log;
 use leptos::*;
 use web_sys::MouseEvent;
 
@@ -21,7 +21,6 @@ fn HomePage(
     let (mut meta_pos, meta_hidden) = sigs[5];
     let (mut ad_pos, ad_hidden) = sigs[6];
     let (mut john_pos, john_hidden) = sigs[7];
-    let (mut guestbook_pos, guestbook_hidden) = sigs[8];
 
     let footer_items = vec![
         ("\"Inspiration\"", loading_hidden),
@@ -31,7 +30,6 @@ fn HomePage(
         ("Webring", webring_hidden),
         ("Meta", meta_hidden),
         ("Johnvertisement", john_hidden),
-        ("Guestbook", guestbook_hidden),
     ];
 
     if recursions == 1 {
@@ -59,9 +57,6 @@ fn HomePage(
         if let WindowPos::Sig(p) = john_pos {
             john_pos = WindowPos::OffsetSignal(p);
         };
-        if let WindowPos::Sig(p) = guestbook_pos {
-            guestbook_pos = WindowPos::OffsetSignal(p);
-        };
 
         sigs = vec![
             (loading_pos, loading_hidden),
@@ -72,7 +67,6 @@ fn HomePage(
             (meta_pos, meta_hidden),
             (ad_pos, ad_hidden),
             (john_pos, john_hidden),
-            (guestbook_pos, guestbook_hidden),
         ];
     }
 
@@ -104,7 +98,6 @@ pub fn HomePageWrap() -> impl IntoView {
     let meta_hidden = create_rw_signal(false);
     let ad_hidden = create_rw_signal(false);
     let john_hidden = create_rw_signal(false);
-    let guestbook_hidden = create_rw_signal(false);
 
     let loading_pos = WindowPos::Sig(create_rw_signal((20, 20)));
     let portfolio_pos = WindowPos::Sig(create_rw_signal((280, 20)));
@@ -114,7 +107,6 @@ pub fn HomePageWrap() -> impl IntoView {
     let meta_pos = WindowPos::Sig(create_rw_signal((485, 192)));
     let ad_pos = WindowPos::Sig(create_rw_signal((485, 20)));
     let john_pos = WindowPos::Sig(create_rw_signal((20, 701)));
-    let guestbook_pos = WindowPos::Sig(create_rw_signal((720, 20)));
 
     let sigs = vec![
         (loading_pos, loading_hidden),
@@ -125,13 +117,11 @@ pub fn HomePageWrap() -> impl IntoView {
         (meta_pos, meta_hidden),
         (ad_pos, ad_hidden),
         (john_pos, john_hidden),
-        (guestbook_pos, guestbook_hidden),
     ];
 
     let z_idx = create_rw_signal(1);
     view! {
         <HomePage recursions=0 z_idx=z_idx sigs=sigs/>
-        <LinkWindow      pos=guestbook_pos size=(200, 100) hidden=guestbook_hidden z_idx=Some(z_idx) id="guestbook-link-win" title="Guestbook".to_string() bg_img="assets/lipu-toki.png" src="https://etbcor.123guestbook.com/" external=true/>
         <JohnWindow      pos=john_pos      size=(665, 82)  hidden=john_hidden      z_idx=Some(z_idx)/>
         <GoatCounter path="/"/>
     }

@@ -39,6 +39,10 @@ ul {
 	padding-left: 20px;
 }
 
+.sitelen-pona {
+	font-family: nasin-nanpa;
+}
+
 #cyberpunk {
 	position: fixed;
 	transform-origin: 100% 102%;
@@ -125,7 +129,7 @@ footer {
 
 @font-face {
 	font-family: nasin-nanpa;
-	src: url("/assets/nasin-nanpa-2.7.1.otf");
+	src: url("/assets/nasin-nanpa.otf");
 }
 
 #chat-bubble {
@@ -266,6 +270,10 @@ footer {
 	background-image: linear-gradient(to right, #93E1D8, #DDFFF7)
 }
 
+#spotify-win>.win-content>.tab-outer {
+	padding-left: 10px;
+}
+
 // images
 .favicon {
 	background-image: url("/assets/favicon.ico");
@@ -372,19 +380,6 @@ footer {
 	cursor: wait;
 }
 
-#my-music-win>.win-content>div {
-	background-image: url("/assets/wireless-nature.png");
-	background-position: center;
-	background-repeat: no-repeat;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-}
-
-#spotify-win>.win-content>.tab-outer {
-	overflow: auto;
-}
-
 // mobile view
 @media (max-width: 900px) {
 	.win-outer {
@@ -411,7 +406,6 @@ footer {
 	}
 
 	#music-link-win>.win-content,
-	// #meta-win>.win-content,
 	.meta-preview {
 		overflow: hidden;
 	}

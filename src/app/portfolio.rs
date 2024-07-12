@@ -47,8 +47,8 @@ fn AboutWindow(
 ) -> impl IntoView {
     let size = create_rw_signal(size);
     let content = WindowContent::Page(view! { <div style="padding: 5px" tabindex=0><p>
-        "Hello! I'm Ethan, and was born in April 2001. "
-        "I'm passionate about making software, writing music, and learning languages. Links: "
+        "Hello! I'm Ethan (born April 2001). "
+        "Some of my passions include: making music, making software, and learning languages. Links: "
         <ExternalLink href="http://www.discordapp.com/users/207897365141520384" display="discord"/>", "
         <ExternalLink href="mailto:etbcor@gmail.com" display="email"/>", "
         <ExternalLink href="https://www.github.com/ETBCOR" display="GitHub"/>". "
@@ -102,16 +102,18 @@ fn EducationWindow(
         </div>
         <div class="spaced"></div>
 
+        <br/>
         <h4>"K thru 12"</h4>
-        "I was homeschooled from kindergarten through high school, with two exceptions:"
+        "I was completely homeschooled before College with two exceptions:"
         <ol>
             <li>"I did a year of Montessori in 5th grade"</li>
             <li>"in high school, I was half-time homeschooled and half-time public school (at Idaho Falls High School)"</li>
         </ol>
 
-        <p>"I gained an interest for coding around the age of 10. A friend of mine showed me "
+        <br/>
+        <p>"I gained an interest for coding around the age of 10 after a friend showed me "
         <ExternalLink href="https://www.codecademy.com/" display="codecademy.com"/>
-        " (back when it was still completely free!), which was very influential for me starting out."</p>
+        "."</p>
     </div> });
 
     view! {
@@ -184,7 +186,8 @@ fn SkillsWindow(
                             "I purchased "<ExternalLink href="https://www.ableton.com/en/live/" display="Ableton Live" title_style=true/>
                             " in 2018, and I've been using it to make music in my free time ever since. I've honed my production skills "
                             "quite a bit, including a few years of experimenting with other DAWs before settling on Live. "
-                            "I'm planning to release my first album soon!"
+                            "My first album is available now on Bandcamp! Check it out: "
+                            <ExternalLink href="https://mesmr.bandcamp.com/album/wireless-nature" display="Wireless Nature"/>
                         </li>
                         <li class="spaced">
                             "I volunteered at my church for several years in high school operating the sound booth for the live band, "
