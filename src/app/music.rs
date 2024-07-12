@@ -10,7 +10,7 @@ pub fn MusicPage() -> impl IntoView {
     let my_music_hidden = create_rw_signal(false);
     let spotify_hidden = create_rw_signal(false);
     let john_hidden = create_rw_signal(false);
-    let faves_hidden = create_rw_signal(false);
+    // let faves_hidden = create_rw_signal(false);
 
     let footer_items = vec![
         ("\"Inspiration\"", loading_hidden),
